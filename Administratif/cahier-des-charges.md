@@ -1,10 +1,10 @@
 # Introduction
 
-Faire des petites évaluations, sur des sujets simples tels que du vocabulaire ou de la conjugaison, peut s'avérer chronophage. _Le temps passé à faire ces évaluations simples empiète alors sur du potentiel temps de leçon, ou d'une évaluation plus complexe, et donc sur la quantité de connaissances transmissibles en une année._
+Faire des petites évaluations, sur des sujets simples tels que du vocabulaire ou de la conjugaison, peut s'avérer chronophage.
 
 Ce projet se veut une solution à ce problème. Il permet à un professeur de créer des évaluations simples, que les élèves peuvent passer chez eux ou sur leur téléphone, et qui sera ensuite automatiquement noté, permettant tant aux élèves qu'aux professeur un gain de temps non négligeable.
 
-Le résultat de se projet sera un site internet accessible par navigateur qui permettra une personnalisation la plus complète possible de sujets d'évaluation de vocabulaire, conjugaison, traductions simples et discrimination auditive.
+Le résultat de ce projet sera un site internet accessible par navigateur qui permettra une personnalisation la plus complète possible de sujets d'évaluation de vocabulaire, conjugaison, traductions simples et discrimination auditive.
 
 # Table des matières
 
