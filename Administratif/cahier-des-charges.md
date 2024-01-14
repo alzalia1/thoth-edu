@@ -21,18 +21,19 @@ Le résultat de se projet sera un site internet accessible par navigateur qui pe
 - [II. Utilisation - Élèves](#ii-utilisation---élèves)
   - [1. Participation à un contrôle](#1-participation-à-un-contrôle)
 - [III. Fonctionnement](#iii-fonctionnement)
-  - [1. Base de donnée](#1-base-de-donnée)
-    - [A. Organisation de la base de donnée](#a-organisation-de-la-base-de-donnée)
-    - [B. Accès (Écriture/Lecture)](#b-accès-écriturelecture)
+  - [1. Organisation de la base de donnée](#1-organisation-de-la-base-de-donnée)
+    - [A. Professeurs](#a-professeurs)
+    - [B. Evaluation](#b-evaluation)
+    - [C. Accès élève](#c-accès-élève)
   - [2. Respect du RGPD](#2-respect-du-rgpd)
-  - [3. Organisation du site internet](#3-organisation-du-site-internet)
-  - [4. Interface/Liaison DB-Programme-Site](#4-interfaceliaison-db-programme-site)
 
 # I. Utilisation - Professeur
 
 Cette catégorie abordera les différentes utilisations possibles par un professeur de la plateforme ThothEdu.
 
 ## 1. Création d'un compte professeur
+
+Afin de bénéficier d'un statut d'enseignant, les professeurs pourront créer leur compte. Seront demandés un pseudonyme et un mot de passe.
 
 ## 2. Création de contrôles
 
@@ -100,7 +101,7 @@ Un mode de création libre est également mis à disposition des enseignants s'i
 
 Le professeur, une fois son évaluation créée, peut créer un idenditifiant unique au contrôle, qui pourra être utilisé par les élèves.
 
-De plus le professeur peut définir un temps validité de l'évaluation, après lequel l'identifiant ne sera plus valide.
+De plus le professeur peut définir un temps de validité de l'évaluation, après lequel l'identifiant ne sera plus valide.
 
 ## 3. Visualisation des résultats
 
@@ -114,20 +115,42 @@ Cette catégorie abordera les modalités d'utilisation de la plateforme pour les
 
 ## 1. Participation à un contrôle
 
-Chaque contrôle est associé à un identifiant. Il suffit pour l'élève de rentrer l'identifiant et un pseudonyme, reconnaissable du professeur. Il accédera alors au contrôle.
+Chaque contrôle est associé à un identifiant. Il suffit pour l'élève de rentrer l'identifiant du contrôle, puis un pseudonyme, reconnaissable du professeur. Il accédera alors au contrôle.
 
 De là, il réponds aux questions, et peut envoyer son évaluation une fois terminé.
 
 # III. Fonctionnement
 
-## 1. Base de donnée
+Cette catégorie aborde tous les aspects fonctionnels du site pas encore décrits.
 
-### A. Organisation de la base de donnée
+## 1. Organisation de la base de donnée
 
-### B. Accès (Écriture/Lecture)
+![Schéma relationnel de base de donnée](schemaBDD.svg)
+
+### A. Professeurs
+
+La table "Professeur" est composée de deux champs :
+
+- **Pseudonyme** (_TEXT_) [Clé primaire unique] : Ce champ correspond au pseudonyme du professeur, soit le nom de son compte.
+- **MdP** (_TEXT_) : Le mot de passe associé au compte
+
+### B. Evaluation
+
+La table "Evaluation" est composée de quatre champs :
+
+- **Nom** (_TEXT_) [Clé primaire] : Le nom du contrôlé, donné par le professeur
+- **Chemin HTML** (_TEXT_) : Chemin vers le fichier html du contrôle
+- **Chemin CSV** (_TEXT_) : Chemin vers le fichier csv, comprenant les résultats du contrôle, associé au contrôle
+- **Professeur** (_TEXT_) [Clé étrangère] : Ce champ relie un contrôle au professeur qui l'a créé
+
+### C. Accès élève
+
+La table "Accès élève" est composée de quatre champs :
+
+- **Identifiant** (_Text_) [Clé primaire unique] : Ce champ correspond à l'identifiant que les élèves doivent entrer pour accéder à l'évaluation
+- **Modèle** (_TEXT_) [Clé étrangère] : Ce champ fait référence au modèle de l'évaluation qui sera utilisé pour cet accès
+- **Date début** / **Date fin** (_DATE_) : Respectivement la date de début et de fin d'accès à l'évaluation. Avant/après ces dates, le contrôle n'est pas accessible des élèves.
 
 ## 2. Respect du RGPD
 
-## 3. Organisation du site internet
-
-## 4. Interface/Liaison DB-Programme-Site
+Pour respecter cela, le minimum d'informations personnelles sera demandé. En effet, pour reconnaitre les élèves, le procédé est déjà écrit plus haut et chaque professeur aura un pseudonyme.
