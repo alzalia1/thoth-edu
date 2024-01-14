@@ -11,30 +11,30 @@ Le résultat de se projet sera un site internet accessible par navigateur qui pe
 - [Introduction](#introduction)
 - [Table des matières](#table-des-matières)
 - [I. Utilisation - Professeur](#i-utilisation---professeur)
-  - [1. Création de contrôles](#1-création-de-contrôles)
+  - [1. Création d'un compte professeur](#1-création-dun-compte-professeur)
+  - [2. Création de contrôles](#2-création-de-contrôles)
     - [A. Modèles](#a-modèles)
     - [B. Création libre](#b-création-libre)
     - [C. Fonctionnement](#c-fonctionnement)
-  - [2. Visualisation des résultats](#2-visualisation-des-résultats)
-    - [A. Interface de résultats](#a-interface-de-résultats)
+    - [D. Diffusion](#d-diffusion)
+  - [3. Visualisation des résultats](#3-visualisation-des-résultats)
 - [II. Utilisation - Élèves](#ii-utilisation---élèves)
   - [1. Participation à un contrôle](#1-participation-à-un-contrôle)
 - [III. Fonctionnement](#iii-fonctionnement)
   - [1. Base de donnée](#1-base-de-donnée)
     - [A. Organisation de la base de donnée](#a-organisation-de-la-base-de-donnée)
     - [B. Accès (Écriture/Lecture)](#b-accès-écriturelecture)
-  - [2. Correction automatique](#2-correction-automatique)
-    - [A. Barème](#a-barème)
-    - [B. Programme](#b-programme)
-  - [3. Respect du RGPD](#3-respect-du-rgpd)
-  - [4. Organisation du site internet](#4-organisation-du-site-internet)
-  - [5. Interface/Liaison DB-Programme-Site](#5-interfaceliaison-db-programme-site)
+  - [2. Respect du RGPD](#2-respect-du-rgpd)
+  - [3. Organisation du site internet](#3-organisation-du-site-internet)
+  - [4. Interface/Liaison DB-Programme-Site](#4-interfaceliaison-db-programme-site)
 
 # I. Utilisation - Professeur
 
 Cette catégorie abordera les différentes utilisations possibles par un professeur de la plateforme ThothEdu.
 
-## 1. Création de contrôles
+## 1. Création d'un compte professeur
+
+## 2. Création de contrôles
 
 ThothEdu permet la création de contrôles de la part du professeur. Voici les caractéristiques et le fonctionnement de cette création.
 
@@ -62,15 +62,61 @@ Les champs sub-mentionnés sont expliqués dans [I.1.C. Fonctionnement](#c-fonct
 
 ### B. Création libre
 
+Un mode de création libre est également mis à disposition des enseignants s'ils souhaitent créer une évaluation à partir de n'importe quel type de champ, et sans configuration au préalable. Il n'y a aucun champ créé à l'origine.
+
 ### C. Fonctionnement
 
-## 2. Visualisation des résultats
+1. **Type de champs**
 
-### A. Interface de résultats
+   1. Vérification de texte
+
+      Le champ vérification de texte permet de corriger un texte selon des paramètres plus ou moins complexes. Les points enlevés à chaque erreurs sont personnalisables, plusieurs degré de sévérité sont disponibles.
+
+   2. Audio
+
+      Le champ audio permet de rajouter un fichier audio à écouter, et est accompagné d'un champ de vérification de texte pour mettre les mots attendus dans l'audio.
+
+2. **Paramètres de la vérification de texte**
+
+   1. Accent : Le professeur peut activer la tolérance aux absences d'accents si besoin
+
+   2. Pluriel : Le professeur peut activer ou non la tolérance au pluriel. Si c'est le cas, il devra indiquer le pluriel possible.
+
+   3. Déterminant : Le professeur peut ajouter ou non la nécessité d'un déterminant
+
+   4. Personnes : Le professeur peut choisir quelles personnes sont demandées, et quand ce paramètres est activés, cela est précisé dans la consigne.
+
+   5. Pronoms personnels : Le professeur peut choisir d'accepter ou non les pronoms personnels (ce paramètre sera précisé dans la consigne).
+
+3. **Paramètres du champ audio**
+
+   Le champ audio permet simplement de définir (ou non) un nombre d'écoutes fini et limité.
+
+4. **Création d'une copie**
+
+   Lors de la création d'une copie, le professeur doit tout écrire, que ce soit le mot à traduire ou sa traduction. Il peut à sa guise ajouter ou enlever des champs, ou des consignes. Il peut choisir de régler des paramètres propres à chaque champ ou bien de bien de laisser les paramètres généralisés à toutes les champs d'une copie.
+
+### D. Diffusion
+
+Le professeur, une fois son évaluation créée, peut créer un idenditifiant unique au contrôle, qui pourra être utilisé par les élèves.
+
+De plus le professeur peut définir un temps validité de l'évaluation, après lequel l'identifiant ne sera plus valide.
+
+## 3. Visualisation des résultats
+
+Thoth Edu permet aux professeurs de visualiser les résultats et réponses de chaque élèves dans une page dédiée. Chaque contrôle fait l'objet d'une page, où le professeur voit une liste d'élèves, ainsi que leur note sur le contrôle étudié. Cliquer sur un nom d'élève amène à une page plus détaillée.
+
+Des options d'exports en tableau (csv, ou compatible Excel/LibreOffice Calc) permettent au professeur de stocker sur leur machine soit les notes, soit les notes ainsi que toutes les réponses.
 
 # II. Utilisation - Élèves
 
+Cette catégorie abordera les modalités d'utilisation de la plateforme pour les élèves.
+
 ## 1. Participation à un contrôle
+
+Chaque contrôle est associé à un identifiant. Il suffit pour l'élève de rentrer l'identifiant et un pseudonyme, reconnaissable du professeur. Il accédera alors au contrôle.
+
+De là, il réponds aux questions, et peut envoyer son évaluation une fois terminé.
 
 # III. Fonctionnement
 
@@ -80,14 +126,8 @@ Les champs sub-mentionnés sont expliqués dans [I.1.C. Fonctionnement](#c-fonct
 
 ### B. Accès (Écriture/Lecture)
 
-## 2. Correction automatique
+## 2. Respect du RGPD
 
-### A. Barème
+## 3. Organisation du site internet
 
-### B. Programme
-
-## 3. Respect du RGPD
-
-## 4. Organisation du site internet
-
-## 5. Interface/Liaison DB-Programme-Site
+## 4. Interface/Liaison DB-Programme-Site
