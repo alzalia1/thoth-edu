@@ -2,7 +2,9 @@
 
 Faire des petites évaluations, sur des sujets simples tels que du vocabulaire ou de la conjugaison, peut s'avérer chronophage.
 
-Ce projet se veut une solution à ce problème. Il permet à un professeur de créer des évaluations simples, que les élèves peuvent passer chez eux ou sur leur téléphone, et qui seront ensuite automatiquement notés, permettant tant aux élèves qu'aux professeurs un gain de temps non négligeable.
+Ce projet se veut une solution à ce problème. Il permet au professeur de créer des évaluations simples sur des compétences ou des connaissances nécessaires à des activités langagières plus larges (compréhension ou expression) L'élève peut ainsi appréhender son degré de maîtrise de ces notions en fonction de la note qu'il obtient et peut alors décider de les approfondir (ayant mieux ciblé les difficultés auxquelles il s'est heurté). Il devient alors acteur de sa progression et peut décider d'améliorer ses résultats en retravaillant les notions non acquises.
+
+Ces évaluations pourront être passées à la maison (évaluations formatives) ou en classe.
 
 Le résultat de ce projet sera un site internet accessible par navigateur qui permettra une personnalisation la plus complète possible de sujets d'évaluation de vocabulaire, conjugaison, traductions simples et discrimination auditive.
 
