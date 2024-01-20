@@ -5,7 +5,7 @@ connectButton.addEventListener("click", openConnectWindow);
 validateButton.addEventListener("click", openAccessWindow);
 
 function openConnectWindow() {
-    window.location.href = `professeur/connexion.html`;
+    window.location.href = `Pages/professeur/connexion.html`;
 }
 
 async function openAccessWindow() {
@@ -19,7 +19,7 @@ async function openAccessWindow() {
             );
         }
 
-        window.location.href = `acces/${inputContent}`;
+        window.location.href = `Pages/acces/${inputContent}`;
     } catch (error) {
         const errorConnecting = document.getElementById("errorConnecting");
         errorConnecting.textContent = "Veuillez indiquer un ID valide ! ";
