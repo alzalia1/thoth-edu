@@ -12,7 +12,7 @@ async function openAccessWindow() {
     let inputContent = document.getElementById("idInputField").value;
 
     try {
-        let response = await fetch(`acces/${inputContent}`);
+        let response = await fetch(`Pages/acces/${inputContent}`);
         if (!response.ok) {
             throw new Error(
                 `La page n'existe pas. Code d'erreur : ${response.status}`
