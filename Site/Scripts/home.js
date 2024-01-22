@@ -9,7 +9,8 @@ function openConnectWindow() {
 }
 
 async function openAccessWindow() {
-    let inputContent = document.getElementById("idInputField").value;
+    let inputContent = document.getElementById("idInputField").value; //.toLowerCase().trim();
+    alert(inputContent);
 
     try {
         let response = await fetch(`Pages/acces/${inputContent}.html`);
@@ -19,7 +20,7 @@ async function openAccessWindow() {
             );
         }
 
-        window.location.href = `Pages/acces/${inputContent}`;
+        window.location.href = `Pages/acces/${inputContent}.html`;
     } catch (error) {
         const errorConnecting = document.getElementById("errorConnecting");
         errorConnecting.textContent = "Veuillez indiquer un ID valide ! ";
