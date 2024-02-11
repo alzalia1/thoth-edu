@@ -1,60 +1,22 @@
-class verifText:
-    def __init__(self):
-        """
-        Initialisation,
-        Paramètres à compléter
-        """
-        self.consigne = None
-        self.reponse = None
-        self.accent = None
-        self.pluriel = None
-        self.determinant = None
-        self.personnes = None
-        self.pronomsPersos = None
+class HtmlParams:
+    def __init__(self, class_name, _id):
+        self.class_name = class_name
+        self.id = _id
 
-    def cons(self):
-        """
-        Je sais pas comment ça doit marcher ça
-        Le consigne doit être automatique ou rentrée par le professeur ?
-        """
-        return
 
-    def rep(self):
-        """
-        Je sais pas comment ça doit marcher ça
-        Ca c'est ton pb Alzalia je touche pas au JSON pour l'instant
-        """
-        return
+class MainParams:
+    def __init__(self, accent, pluriel, determinant, personnes, pronoms_persos):
+        self.accent = accent
+        self.pluriel = pluriel
+        self.determinant = determinant
+        self.personnes = personnes
+        self.pronoms_persos = pronoms_persos
 
-    # Paramètres
-    # Concrètement je sais pas comment on va gérer ça alors je vais faire plusieurs façon à voir laquelle sera adoptée/la plus adaptée
 
-    # Méthode 1
-    def acc(self, bool):
-        self.accent = bool
-
-    # Méthode 2
-    def true_plur(self):
-        self.pluriel = True
-
-    def false_plur(self):
-        self.pluriel = False
-
-    # Méthode Pers 1
-    def pers(
-        self, lBool
-    ):  # lBool est une liste de True ou False pour choisir pour chaque personne si elle est demandée ou pas
-        self.personnes = lBool
-
-    # Méthode Pers 2
-    def pers(
-        self, lPers
-    ):  # lPers est une liste de 1 à 6 str, chacun une personne différente pour choisir les personnes à utiliser
-        self.personnes = lPers
-
-    # Même que les 2 premières méthodes, à voir laquelle choisir
-    # def deter(self):
-    #     return
-
-    # def pronP(self):
-    #     return
+class VerifTexte:
+    def __init__(self, consigne, reponseProf, reponseEleve, html_params, main_params):
+        self.consigne = consigne
+        self.reponseProf = reponseProf
+        self.reponseEleve = reponseEleve
+        self.html_params = HtmlParams(**html_params)
+        self.main_params = MainParams(**main_params)

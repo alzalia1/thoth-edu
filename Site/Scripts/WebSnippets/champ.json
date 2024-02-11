@@ -1,0 +1,16 @@
+{
+  "consigne": "",
+  "reponseProf": "",
+  "reponseEleve": "",
+  "htmlParams": {
+    "class": "champ",
+    "id": ""
+  },
+  "mainParams": {
+    "accent": "",
+    "pluriel": "",
+    "determinant": "",
+    "personnes": "",
+    "pronomsPersos": ""
+  }
+}

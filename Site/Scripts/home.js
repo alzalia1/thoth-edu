@@ -9,8 +9,10 @@ function openConnectWindow() {
 }
 
 async function openAccessWindow() {
-    let inputContent = document.getElementById("idInputField").value; //.toLowerCase().trim();
-    alert(inputContent);
+    let inputContent = document
+        .getElementById("idInputField")
+        .value.toLowerCase()
+        .trim();
 
     try {
         let response = await fetch(`Pages/acces/${inputContent}.html`);
