@@ -1,5 +1,4 @@
 import sys
-sys.path.append('/home/ubuntu/thoth-edu/thoth-edu/Backend')
-sys.path.append('/home/ubuntu/.local/python3.12/site-packages')
+sys.path.insert(0, '/home/debian/thoth-edu/thoth-edu/Backend')
 
 from main import app as application
