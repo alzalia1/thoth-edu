@@ -30,7 +30,7 @@ data_path = os.path.join(script_dir, "data.json")
 
 @app.route("/")
 def home():
-    return "Hello :)"
+    return "Hello :) Vous êtes bien arrivé sur la page 'home' du système d'API ThothEdu !"
 
 
 @app.route("/save-json", methods=["POST"])

@@ -5,7 +5,7 @@ connectButton.addEventListener("click", openConnectWindow);
 validateButton.addEventListener("click", openAccessWindow);
 
 function openConnectWindow() {
-    window.location.href = `Pages/professeur/connexion.html`;
+    window.location.href = `https://professeur.thoth-edu.fr/`;
 }
 
 async function openAccessWindow() {
