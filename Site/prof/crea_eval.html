@@ -4,9 +4,88 @@
         <meta charset="UTF-8" />
         <link href="/shared/style/main.css" rel="stylesheet" />
         <link href="style/crea_eval.css" rel="stylesheet" />
-        <script src="scripts/crea_eval.js" async></script>
+        <script type="module" src="scripts/crea_eval.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Création d'évaluation</title>
     </head>
-    <body></body>
+    <body>
+        <h1>Création d'une évaluation</h1>
+        <div id="general_info">
+            <label>Nom de l'évaluation : </label>
+            <input
+                type="text"
+                id="nom_eval"
+                placeholder="Nom de l'évaluation"
+            />
+        </div>
+        <div id="questions">
+            <h2>Questions</h2>
+            <div id="questionsList">
+                <div class="question" hidden>
+                    <h3 class="Number">Question n°1</h3>
+                    <div class="sideA_Up">
+                        <label>Consigne : </label>
+                        <input
+                            type="text"
+                            class="consigne"
+                            placeholder="Consigne de la question"
+                        />
+                        <br />
+                        <label>Réponse : </label>
+                        <input
+                            type="text"
+                            class="reponse"
+                            placeholder="Réponse à la question"
+                        />
+                    </div>
+                    <div class="sideA_Down">
+                        <button class="paramsButton">Paramètres</button>
+
+                        <div class="params">
+                            <h4>Paramètres</h4>
+                            <div class="paramsNotation">
+                                <h5 class="paramsSubTitle">
+                                    Paramètres de notation
+                                </h5>
+                                <label>Points : </label>
+                                <input
+                                    type="number"
+                                    class="points"
+                                    placeholder="Points de la question"
+                                    min="0"
+                                />
+                                <br />
+                                <label>Accents</label>
+                                <input type="checkbox" class="accents" />
+                            </div>
+                            <div class="paramsConsigne">
+                                <h5 class="paramsSubTitle">
+                                    Paramètres de consigne
+                                </h5>
+                                <label>Pluriel</label>
+                                <input type="checkbox" class="pluriel" />
+                                <br />
+                                <label>Personnes</label>
+                                <input type="checkbox" class="personnes" />
+                            </div>
+                            <button class="save">Sauvegarder</button>
+                            <button class="delete">Supprimer</button>
+                        </div>
+                    </div>
+                    <div class="sideB">
+                        <h4>Prévisualisation</h4>
+                        <p class="previewConsigne"></p>
+                        <p class="previewSubConsigne"></p>
+                        <input
+                            type="text"
+                            class="previewReponse"
+                            disabled
+                            placeholder="Veuillez écrire votre réponse ici"
+                        />
+                    </div>
+                </div>
+            </div>
+            <button id="addQuestion">Ajouter une question</button>
+        </div>
+    </body>
 </html>

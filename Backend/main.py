@@ -22,8 +22,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 # Route pour la bdd (A MODIFIER)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://../database/user.sqlite3"
-CORS(app, origins="https://thoth-edu.fr")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../database/data.sqlite3"
+CORS(app, origins=["https://thoth-edu.fr", "https://professeur.thoth-edu.fr"])
 db = SQLAlchemy(app)
 
 # Get the directory of the current script
@@ -35,8 +35,8 @@ data_path = os.path.join(script_dir, "data.json")
 
 # Création de la classe utilisateur
 class User(db.Model):
-    id = db.Column(db.String(80), unique=True, nullable=False)
-    mdp = db.Column(db.String(120), unique=True, nullable=False)
+    id = db.Column(db.String(80), unique=True, nullable=False, primary_key=True)
+    mdp = db.Column(db.String(120), unique=False, nullable=False)
     accents = db.Column(db.String(200), unique=False, nullable=True)
 
 
