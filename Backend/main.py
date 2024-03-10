@@ -13,7 +13,7 @@
 
 # Il est préférable que la fonction réelle s'éxécute dans un fichier de route (voir le dossier routes)
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 import json
 from flask_cors import CORS
 import os
@@ -72,4 +72,16 @@ def inscription():
     new_user = User(id=data["id"], mdp=data["mdp"], accents=data["accents"])
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"message": "User created successfully"}), 201
+    return jsonify({"message": "Utilisateur créé avec succès !"}), 201
+
+
+@app.route("/user/login", methods=["GET"])
+def connexion():
+    data = request.get_json()
+    user = User.query.filter_by(username=data["id"]).first()
+
+    if user and user.password == data["mdp"]:
+        session["user_id"] = user.id
+        return jsonify({"message": "Connexion réussie"}), 200
+    else:
+        return jsonify({"message": "Mot de passe ou identifiant invalide"}), 401
