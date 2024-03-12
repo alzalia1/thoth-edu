@@ -49,7 +49,7 @@ data_path = os.path.join(script_dir, "data.json")
 class User(db.Model):
     id = db.Column(db.String(80), unique=True, nullable=False, primary_key=True)
     mdp = db.Column(db.String(120), unique=False, nullable=False)
-    accents = db.Column(db.String(200))
+    accents = db.Column(db.String(200), unique=False, nullable=True)
 
 
 @app.route("/")
