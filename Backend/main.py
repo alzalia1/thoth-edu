@@ -19,12 +19,24 @@ from flask_cors import CORS
 import os
 import routes as r
 from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import (
+    create_access_token,
+    JWTManager,
+    jwt_required,
+    get_jwt_identity,
+)
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 # Route pour la bdd (A MODIFIER)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://../database/user.sqlite3"
-CORS(app, origins="https://thoth-edu.fr")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../database/data.sqlite3"
+CORS(app, origins=["https://thoth-edu.fr", "https://professeur.thoth-edu.fr"])
 db = SQLAlchemy(app)
+# Setup the Flask-JWT-extended extension
+app.config["JWT_SECRET_KEY"] = "super-secret"
+jwt = JWTManager(app)
+# Pour le hashing
+bcrypt = Bcrypt(app)
 
 # Get the directory of the current script
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -35,15 +47,15 @@ data_path = os.path.join(script_dir, "data.json")
 
 # Création de la classe utilisateur
 class User(db.Model):
-    id = db.Column(db.String(80), unique=True, nullable=False)
-    mdp = db.Column(db.String(120), unique=True, nullable=False)
-    accents = db.Column(db.String(200), unique=False, nullable=True)
+    id = db.Column(db.String(80), unique=True, nullable=False, primary_key=True)
+    mdp = db.Column(db.String(120), unique=False, nullable=False)
+    accents = db.Column(db.String(200))
 
 
 @app.route("/")
 def home():
     return (
-        "Hello :) Vous êtes bien arrivé sur la page 'home' du système d'API ThothEdu !"
+        "Hello T.T Vous êtes bien arrivé sur la page 'home' du système d'API ThothEdu !"
     )
 
 
@@ -69,10 +81,17 @@ def save_json():
 def inscription():
     data = request.get_json()
     # { "id" : "Bob" ; "mdp" : "mdp" ; "accents" : "é" }
-    new_user = User(id=data["id"], mdp=data["mdp"], accents=data["accents"])
+    new_user = User(
+        id=data["id"],
+        mdp=bcrypt.generate_password_hash(data["mdp"]).decode("utf-8"),
+        accents=data["accents"],
+    )
+    user = User.query.filter_by(username=data["id"]).first()
+    if user.id == data["id"]:
+        return jsonify({"message": "False"}), 200  # Identifiant déjà existant
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"message": "Utilisateur créé avec succès !"}), 201
+    return jsonify({"message": "True"}), 201  # Utilisateur créé
 
 
 @app.route("/user/login", methods=["GET"])
@@ -80,8 +99,13 @@ def connexion():
     data = request.get_json()
     user = User.query.filter_by(username=data["id"]).first()
 
-    if user and user.password == data["mdp"]:
-        session["user_id"] = user.id
-        return jsonify({"message": "Connexion réussie"}), 200
-    else:
-        return jsonify({"message": "Mot de passe ou identifiant invalide"}), 401
+    if not user or user.mdp != bcrypt.generate_password_hash(data["mdp"]).decode(
+        "utf-8"
+    ):
+        return (
+            jsonify({"message": "False"}),
+            401,
+        )  # MdP erroné ou identifiant inexistant
+
+    access_token = create_access_token(identity=user)
+    return jsonify(access_token=access_token)

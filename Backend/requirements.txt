@@ -1,4 +1,5 @@
 flask
 flask-cors
-mod_wsgi
 flask-sqlalchemy
+flask-jwt-extended
+flask-bcrypt
