@@ -8,6 +8,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
+from datetime import timedelta
 import os
 
 app = Flask(__name__)
@@ -18,14 +19,31 @@ db = SQLAlchemy(app)
 # Setup the Flask-JWT-extended extension
 app.config["JWT_SECRET_KEY"] = "super-secret"
 jwt = JWTManager(app)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 # Pour le hashing
 bcrypt = Bcrypt(app)
 
+
 # Création de la classe utilisateur
 class User(db.Model):
-    id = db.Column(db.String(80), unique=True, nullable=False, primary_key=True)
-    mdp = db.Column(db.String(120), unique=False, nullable=False)
-    accents = db.Column(db.String(200), unique=False, nullable=True)
+    id = db.Column(db.String, unique=True, nullable=False, primary_key=True)
+    mdp = db.Column(db.String, nullable=False)
+    accents = db.Column(db.String)
+
+
+class Eval(db.Model):
+    id = db.Column(db.Interger, primary_key=True, autoincrement=True)
+    nom = db.Column(db.String, nullable=False)
+    cheminJSON = db.Column(db.String)
+    cheminCSV = db.Column(db.String)
+    idProf = db.Column(db.String, db.ForeignKey("User.id"), nullable=False)
+
+
+class Acces(db.Model):
+    id = db.Column(db.String, unique=True, nullable=False, primary_key=True)
+    dateDeb = db.Column(db.String, nullable=False)
+    dateFin = db.Column(db.String, nullable=False)
+    modele = db.Column(db.String, db.ForeignKey("Eval.id"), nullable=False)
 
 
 # Sert à l'exemple save-json uniquement, peut-être supprimé n'importe quand.

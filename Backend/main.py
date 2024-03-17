@@ -15,12 +15,13 @@ import json
 
 # Import routes (and other modules)
 import routes as r
-from appInit import (app,data_path)
+from appInit import app, data_path
 
 
 @app.route("/")
 def home():
     return r.home()
+
 
 # Cette fonction sert simplement d'exemple, elle peut être supprimée quand plus nécessaire !
 @app.route("/save-json", methods=["POST"])
@@ -45,10 +46,9 @@ def save_json():
 def signup():
     data = request.get_json()
     return r.signup(data)
-    
 
 
 @app.route("/user/login", methods=["GET"])
 def connexion():
     data = request.get_json()
-    return r.login(data)
+    return r.user.login(data)
