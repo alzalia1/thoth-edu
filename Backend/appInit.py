@@ -1,7 +1,6 @@
 """
 Fichier de définition de l'app, de la db et d'autres classes utiles.
 """
-
 # Import libraries
 from flask import Flask
 from flask_cors import CORS
@@ -13,7 +12,7 @@ import os
 
 app = Flask(__name__)
 # Route pour la bdd (A MODIFIER)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../database/data.sqlite3"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/ubuntu/database/data.db"
 CORS(app, origins=["https://thoth-edu.fr", "https://professeur.thoth-edu.fr"])
 db = SQLAlchemy(app)
 # Setup the Flask-JWT-extended extension
@@ -31,19 +30,32 @@ class User(db.Model):
     accents = db.Column(db.String)
 
 
+# Création de la classe eval
 class Eval(db.Model):
-    id = db.Column(db.Interger, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nom = db.Column(db.String, nullable=False)
     cheminJSON = db.Column(db.String)
     cheminCSV = db.Column(db.String)
-    idProf = db.Column(db.String, db.ForeignKey("User.id"), nullable=False)
+    idProf = db.Column(db.String, db.ForeignKey("user.id"), nullable=False)
 
 
+# Création de la classe acces
 class Acces(db.Model):
     id = db.Column(db.String, unique=True, nullable=False, primary_key=True)
     dateDeb = db.Column(db.String, nullable=False)
     dateFin = db.Column(db.String, nullable=False)
-    modele = db.Column(db.String, db.ForeignKey("Eval.id"), nullable=False)
+    modele = db.Column(db.String, db.ForeignKey("eval.id"), nullable=False)
+
+
+# Création des tables
+"""
+with app.app_context():
+    try:
+        db.create_all()
+        print("Tables created successfully.")
+    except Exception as e:
+        print("An error occurred while creating tables:", e)
+"""
 
 
 # Sert à l'exemple save-json uniquement, peut-être supprimé n'importe quand.

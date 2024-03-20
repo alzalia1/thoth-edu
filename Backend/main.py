@@ -45,10 +45,10 @@ def save_json():
 @app.route("/user/signup", methods=["POST"])
 def signup():
     data = request.get_json()
-    return r.signup(data)
+    return r.us.signup(data)
 
 
 @app.route("/user/login", methods=["GET"])
 def connexion():
     data = request.get_json()
-    return r.user.login(data)
+    return r.us.login(data)
