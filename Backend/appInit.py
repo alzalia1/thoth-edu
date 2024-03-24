@@ -1,6 +1,7 @@
 """
 Fichier de définition de l'app, de la db et d'autres classes utiles.
 """
+
 # Import libraries
 from flask import Flask
 from flask_cors import CORS
@@ -13,7 +14,12 @@ import os
 app = Flask(__name__)
 # Route pour la bdd (A MODIFIER)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/ubuntu/database/data.db"
-CORS(app, origins=["https://thoth-edu.fr", "https://professeur.thoth-edu.fr"])
+CORS(
+    app,
+    resources={
+        r"/.*": {"origins": ["https://thoth-edu.fr", "https://professeur.thoth-edu.fr"]}
+    },
+)
 db = SQLAlchemy(app)
 # Setup the Flask-JWT-extended extension
 app.config["JWT_SECRET_KEY"] = "super-secret"
@@ -33,7 +39,6 @@ class User(db.Model):
 # Création de la classe eval
 class Eval(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nom = db.Column(db.String, nullable=False)
     cheminJSON = db.Column(db.String)
     cheminCSV = db.Column(db.String)
     idProf = db.Column(db.String, db.ForeignKey("user.id"), nullable=False)
