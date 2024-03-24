@@ -48,7 +48,7 @@ def signup():
     return r.user.signup(data)
 
 
-@app.route("/user/login", methods=["GET"])
+@app.route("/user/login", methods=["POST"])
 def connexion():
     data = request.get_json()
     return r.user.login(data)
