@@ -1,6 +1,7 @@
 # Import libraries
 from flask import jsonify
-import sqlite3
+
+# import sqlite3
 
 # Import app
 from appInit import db, User, bcrypt
@@ -8,18 +9,18 @@ from appInit import db, User, bcrypt
 
 def signup(data):
     # { "id" : "Bob" ; "mdp" : "mdp" ; "accents" : "é" }
-    new_user = User(
+    newUser = User(
         id=data["id"],
         mdp=bcrypt.generate_password_hash(data["mdp"]).decode("utf-8"),
         accents=data["accents"],
     )
 
-    user = User.query.filter_by(username=data["id"]).first()
+    newUser = User.query.filter_by(id=data["id"]).first()
 
-    if user.id == data["id"]:
+    if newUser.id == data["id"]:
         return (jsonify({"message": "False"}),)  # Identifiant déjà existant
 
-    db.session.add(new_user)
+    db.session.add(newUser)
     db.session.commit()
 
     # conn = sqlite3.connect("../../databse/data.db")
