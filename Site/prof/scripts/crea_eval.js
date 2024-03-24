@@ -1,12 +1,16 @@
-import { addQuestion } from "./modules/addQuestions.js";
+import { addTrad, addConjug, questions } from "./modules/addQuestions.js";
 
 addEventListener("DOMContentLoaded", () => {
     const questionsDiv = document.getElementById("questionsList");
 
-    addQuestion(questionsDiv);
+    addTrad(questionsDiv);
 
     const addQuestionButton = document.getElementById("addQuestion");
     addQuestionButton.addEventListener("click", () => {
-        addQuestion(questionsDiv);
+        addConjug(questionsDiv);
     });
 });
+
+window.getQuestions = function () {
+    return questions;
+};
