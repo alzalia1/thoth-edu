@@ -20,7 +20,5 @@ function sendDataToBackend(formData) {
     })
         .then((response) => response.json())
         .then((data) => localStorage.setItem("jwt-token", data.access_token))
-        .catch((error) =>
-            console.error("Erreur lors de l'envoi des données :", error)
-        );
+        .catch((error) => console.error("Erreur lors de l'envoi des données :", error));
 }
