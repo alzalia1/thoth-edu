@@ -4,7 +4,7 @@ document.getElementById("confirm").addEventListener("click", function (event) {
     const formData = {
         id: document.getElementById("id").value,
         mdp: document.getElementById("passwd").value,
-        accents: ["", ""],
+        accents: { "": ["", ""] },
     };
 
     // Envoi des données au backend
