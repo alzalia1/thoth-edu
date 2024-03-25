@@ -8,7 +8,7 @@ from appInit import User, bcrypt
 
 def login(data):
     """test"""
-    user = User.query.filter_by(username=data["id"]).first()
+    user = User.query.filter_by(id=data["id"]).first()
 
     if not user or user.mdp != bcrypt.generate_password_hash(data["mdp"]).decode(
         "utf-8"

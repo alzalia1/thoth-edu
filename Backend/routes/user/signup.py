@@ -15,9 +15,18 @@ def signup(data):
         accents=data["accents"],
     )
 
-    newUser = User.query.filter_by(id=data["id"]).first()
+    user = None
 
-    if newUser.id == data["id"]:
+    assert user != None, data
+
+    user = User.query.filter_by(id=data["id"]).first()
+
+    if user == None:
+        db.session.add(newUser)
+        db.session.commit()
+        return (jsonify({"message": "True"}),)  # Utilisateur créé
+
+    if user.id == data["id"]:
         return (jsonify({"message": "False"}),)  # Identifiant déjà existant
 
     db.session.add(newUser)

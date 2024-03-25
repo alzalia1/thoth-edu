@@ -47,6 +47,7 @@ class Eval(db.Model):
 # Création de la classe acces
 class Acces(db.Model):
     id = db.Column(db.String, unique=True, nullable=False, primary_key=True)
+    nom = db.Column(db.String, nullable=False)
     dateDeb = db.Column(db.String, nullable=False)
     dateFin = db.Column(db.String, nullable=False)
     modele = db.Column(db.String, db.ForeignKey("eval.id"), nullable=False)
@@ -61,9 +62,3 @@ with app.app_context():
     except Exception as e:
         print("An error occurred while creating tables:", e)
 """
-
-
-# Sert à l'exemple save-json uniquement, peut-être supprimé n'importe quand.
-# Ne pas oublier de supprimer l'import de data_path dans main.py !
-script_dir = os.path.dirname(os.path.realpath(__file__))
-data_path = os.path.join(script_dir, "data.json")

@@ -8,4 +8,3 @@ from .home import home
 from . import user
 from . import eval
 from . import crea
-from . import dashboard
