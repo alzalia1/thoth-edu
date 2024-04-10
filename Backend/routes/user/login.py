@@ -20,7 +20,7 @@ def login(data):
                     "reason": "Mot de passe erroné ou identifiant inexistant",
                     "access_token": "none",
                 }
-            ),
+            )
         )  # MdP erroné ou identifiant inexistant
 
     access_token = create_access_token(identity=user)

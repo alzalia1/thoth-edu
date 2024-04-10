@@ -12,8 +12,11 @@ from datetime import timedelta
 import os
 
 app = Flask(__name__)
-# Route pour la bdd (A MODIFIER)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/ubuntu/database/data.db"
+# ! Route pour la bdd (A MODIFIER)
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    "sqlite:////home/ubuntu/thoth-edu/database/data.db"
+)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 CORS(
     app,
     resources={
@@ -54,11 +57,9 @@ class Acces(db.Model):
 
 
 # Création des tables
-"""
 with app.app_context():
     try:
         db.create_all()
         print("Tables created successfully.")
     except Exception as e:
         print("An error occurred while creating tables:", e)
-"""
