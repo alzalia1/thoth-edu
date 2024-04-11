@@ -10,9 +10,7 @@ def login(data):
     """test"""
     user = User.query.filter_by(id=data["id"]).first()
 
-    if not user or user.mdp != bcrypt.generate_password_hash(data["mdp"]).decode(
-        "utf-8"
-    ):
+    if not user or bcrypt.checkpw(bcrypt.generate_password_hash(data["mdp"]).decode("utf-8"), user.mdp):
         return (
             jsonify(
                 {
