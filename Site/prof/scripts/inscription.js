@@ -20,5 +20,5 @@ function sendDataToBackend(formData) {
         body: JSON.stringify(formData),
     })
         .then((response) => (window.location.href = `https://professeur.thoth-edu.fr/`))
-        .catch((error) => console.error("Erreur lors de l'envoi des données :", error));
+        .catch((error) => alert("Erreur lors de l'envoi des données :", error));
 }

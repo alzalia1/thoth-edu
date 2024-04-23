@@ -18,7 +18,20 @@ function sendDataToBackend(formData) {
         },
         body: JSON.stringify(formData),
     })
-        .then((response) => response.json())
-        .then((data) => localStorage.setItem("jwt-token", data.access_token))
+        .then((response) => {
+            if (response.headers.get("content-type").includes("application/json")) {
+                return response.json();
+            } else {
+                throw new Error("Server response is not JSON");
+            }
+        })
+        .then((data) => {
+            if (data.status == "fail") {
+                alert("Erreur : " + data.reason);
+            } else {
+                localStorage.setItem("jwt-token", data.access_token);
+                window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+            }
+        })
         .catch((error) => console.error("Erreur lors de l'envoi des données :", error));
 }
