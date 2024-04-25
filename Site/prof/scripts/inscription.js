@@ -19,6 +19,13 @@ function sendDataToBackend(formData) {
         },
         body: JSON.stringify(formData),
     })
-        .then((response) => (window.location.href = `https://professeur.thoth-edu.fr/`))
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status == "success") {
+                window.location.href = `https://professeur.thoth-edu.fr`;
+            } else {
+                alert("Oh non ! Une erreur est survenue :", data.reason);
+            }
+        })
         .catch((error) => alert("Erreur lors de l'envoi des données :", error));
 }
