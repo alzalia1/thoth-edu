@@ -89,6 +89,10 @@ saveButton.addEventListener("click", () => {
                 questions: [],
             };
 
+            if (evalParam) {
+                evalData.id = evalParam;
+            }
+
             questions.forEach((question) => {
                 evalData.questions.push(question.eval);
             });
