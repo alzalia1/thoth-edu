@@ -19,7 +19,7 @@ fetch("https://api.thoth-edu.fr/user/check", {
     })
     .catch((error) => {
         window.stop();
-        alert("Vous n'êtes pas censé être ici ! Veuillez vous connecter avant.");
+        alert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
         console.log(error);
         window.location.href = `https://professeur.thoth-edu.fr/`;
     });
@@ -49,6 +49,7 @@ function page() {
         .then((data) => (userI = data))
         .catch((error) => alert("Erreur lors de l'envoi des données :", error));
 
+    /*
     userI = {
         username: "testy",
         evals: [
@@ -57,6 +58,7 @@ function page() {
             { name: "D - App7", id: "uAUia8" },
         ],
     };
+    */
     // Setting the page
     localStorage.setItem("username", userI.username);
     const username = document.getElementById("username");

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <link href="/shared/style/main.css" rel="stylesheet" />
+        <link href="../style/controle.css" rel="stylesheet" />
+        <script type="module" src="../scripts/controle.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Contrôle</title>
+    </head>
+    <body>
+        <header>
+            <div id="left">
+                <p id="username"></p>
+            </div>
+
+            <div id="center">
+                <a href="https://thoth-edu.fr">
+                    THOTH <br />
+                    EDU
+                </a>
+            </div>
+
+            <div id="right">
+                <a href="https://professeur.thoth-edu.fr/dashboard">
+                    <img
+                        src="/shared/ressources/icone_home.jpg"
+                        alt="dashboard"
+                        title="dashboard"
+                    />
+                </a>
+                <a>
+                    <img
+                        src="/shared/ressources/icone_deconnexion.jpg"
+                        alt="déconnexion"
+                        title="déconnexion"
+                    />
+                </a>
+            </div>
+        </header>
+
+        <div id="infos">
+            <h1 id="EVname"></h1>
+
+            <p id="EVacces"></p>
+            <p id="EVreps"></p>
+            <p id="EVmoy"></p>
+        </div>
+
+        <div id="options">
+            <button id="create_access">Créer un nouvel accès</button>
+            <div id="newAccess" hidden>
+                <label>Nom de l'accès</label>
+                <br />
+                <input type="text" id="NAname" placeholder="Entrez un nom" />
+
+                <br />
+
+                <label>Questions rangées aléatoirement</label>
+                <input type="checkbox" id="NArandom" />
+
+                <br />
+
+                <label>Date de début</label> <br />
+                <input type="datetime-local" id="NAstart" />
+
+                <br />
+
+                <label>Date de fin</label> <br />
+                <input type="datetime-local" id="NAend" />
+
+                <br />
+
+                <label id="NAerror"></label> <br />
+                <button id="saveNewAccess">Sauvegarder</button>
+            </div>
+            <button id="edit">Modifier l'évaluation</button>
+            <button id="delete">Supprimer l'évaluation</button>
+        </div>
+
+        <div id="acces"></div>
+    </body>
+</html>
