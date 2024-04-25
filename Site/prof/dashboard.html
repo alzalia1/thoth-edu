@@ -4,36 +4,44 @@
         <meta charset="UTF-8" />
         <link href="/shared/style/main.css" rel="stylesheet" />
         <link href="style/dashboard.css" rel="stylesheet" />
-        <script src="scripts/dashboard.js" async></script>
+        <script type="module" src="scripts/dashboard.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Dashboard</title>
     </head>
     <body>
         <header>
-            <p>indentifiant</p>
-            <div>
-                <a href="thoth-edu.fr">
-                    <p>THOTH </br> EDU</p>
+            <div id="left">
+                <p id="username"></p>
+            </div>
+
+            <div id="center">
+                <a href="https://thoth-edu.fr">
+                    THOTH <br />
+                    EDU
                 </a>
-                <a href="dashboard">
-                    <img src="/shared/ressources/icone_maison.png" alt="home" title="home">
+            </div>
+
+            <div id="right">
+                <a href="https://professeur.thoth-edu.fr/dashboard">
+                    <img
+                        src="/shared/ressources/icone_home.jpg"
+                        alt="dashboard"
+                        title="dashboard"
+                    />
                 </a>
-                <a href="dashboard">
-                    <img src="/shared/ressources/icone_deconnexion.jpg" alt="déconnexion" title="déconnexion">
+                <a>
+                    <img
+                        src="/shared/ressources/icone_deconnexion.jpg"
+                        alt="déconnexion"
+                        title="déconnexion"
+                    />
                 </a>
             </div>
         </header>
 
         <div>
-            <button onclick="window.location.href='crea_eval';">
-                Nouveau Contrôle
-            </button>
+            <button id="newEval">Nouveau Contrôle</button>
         </div>
-        <div>
-            <!--ici il y aura les dossiers et fichier des prof, a remplir en js-->
-            <div> <!--popup a faire et surment à remplir en js-->
-
-            </div>
-        </div>
+        <div id="evals"></div>
     </body>
 </html>
