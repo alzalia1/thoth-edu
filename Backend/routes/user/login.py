@@ -10,17 +10,17 @@ def login(data):
     """test"""
     user = User.query.filter_by(id=data["id"]).first()
 
-    if not user or bcrypt.checkpw(bcrypt.generate_password_hash(data["mdp"]).decode("utf-8"), user.mdp):
+    if not user or bcrypt.check_password_hash(bcrypt.generate_password_hash(data["mdp"]).decode("utf-8"), user.mdp):
         return (
             jsonify(
                 {
                     "status": "fail",
                     "reason": "Mot de passe erroné ou identifiant inexistant",
-                    "access_token": "none",
+                    "access_token": "none"
                 }
             )
         )  # MdP erroné ou identifiant inexistant
 
-    access_token = create_access_token(identity=user)
+    access_token = create_access_token(identity=user.id)
     data = {"status": "success", "reason": "none", "access_token": access_token}
     return jsonify(data)
