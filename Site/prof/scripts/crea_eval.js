@@ -105,7 +105,13 @@ saveButton.addEventListener("click", () => {
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.status == "success") {
-                        console.log("ok");
+                        alert("Évaluation sauvegardée avec succès");
+                        localStorage.setItem("evalPending", "none");
+                        if (evalParam) {
+                            window.location.href = `https://professeur.thoth-edu.fr/dashboard/controle?e=${evalParam}`;
+                        } else {
+                            window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+                        }
                     } else {
                         console.log("pas ok" + data.reason);
                     }
