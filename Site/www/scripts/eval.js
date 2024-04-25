@@ -83,7 +83,7 @@ addEventListener("DOMContentLoaded", () => {
                             }, 5000);
                         }
                     })
-                    .catch((error) => alert("Erreur lors de l'envoi des données :", error));
+                    .catch((error) => alert("Erreur lors de l'envoi des données : " + error));
             }
         }
     });

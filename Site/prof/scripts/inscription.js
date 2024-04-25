@@ -21,10 +21,11 @@ function sendDataToBackend(formData) {
     })
         .then((response) => response.json())
         .then((data) => {
+            console.log(data);
             if (data.status == "success") {
                 window.location.href = `https://professeur.thoth-edu.fr`;
             } else {
-                alert("Oh non ! Une erreur est survenue :", data.reason);
+                alert("Oh non ! Une erreur est survenue : " + data.reason);
             }
         })
         .catch((error) => alert("Erreur lors de l'envoi des données :", error));
