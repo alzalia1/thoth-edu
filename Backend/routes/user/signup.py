@@ -19,12 +19,12 @@ def signup(data):
     if user == None:
         db.session.add(newUser)
         db.session.commit()
-        return (jsonify({"message": "True"}))  # Utilisateur créé
+        return (jsonify({"status": "success"}))  # Utilisateur créé
 
     if user.id == data["id"]:
-        return (jsonify({"message": "False"}))  # Identifiant déjà existant
+        return (jsonify({"status": "fail", "reason" : "utilisateur déjà existant"}))  # Identifiant déjà existant
 
     db.session.add(newUser)
     db.session.commit()
 
-    return (jsonify({"message": "True"}))  # Utilisateur créé
+    return (jsonify({"status": "success"}))  # Utilisateur créé
