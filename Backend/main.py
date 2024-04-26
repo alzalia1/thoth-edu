@@ -12,6 +12,7 @@
 # Import libraries
 from flask import request, jsonify
 import json
+from flask_jwt_extended import jwt_required
 
 # Import routes (and other modules)
 import routes as r
@@ -33,3 +34,9 @@ def signup():
 def connexion():
     data = request.get_json()
     return r.user.login(data)
+
+
+@app.route("/user/check", methods=["POST"])
+@jwt_required()
+def check():
+    return jsonify({ "status" : "success" })

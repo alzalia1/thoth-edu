@@ -7,10 +7,24 @@ from appInit import app, db, User, bcrypt, Eval
 
 
 def save(data):
+    """Sauvegarde ou met à jour le contenu d'une évaluation"""
+    if data["id"]:
 
-    eval = Eval(cheminJSON=data[eval], idProf=get_jwt_identity(data["token"]))
+        evals = Eval.query.filter_by(id=data["id"]).first()
+
+        if not evals:
+            return jsonify(
+                {"status": "fail", "reason": "Identifiant d'évaluation non valide"}
+            )
+
+    eval = Eval(idProf=get_jwt_identity(data["token"]))
 
     db.session.add(eval)
     db.session.commit()
 
-    return jsonify({"status": "success"})
+    evals = Eval.query.filter_by(cheminJSON=data["eval"]).all()
+
+    if evals:
+        return jsonify({"status": "success"})
+
+    return jsonify({"status": "failed"})

@@ -41,7 +41,8 @@ class User(db.Model):
 
 # Création de la classe eval
 class Eval(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String, primary_key=True)
+    nom = db.Column(db.String)
     cheminJSON = db.Column(db.String)
     cheminCSV = db.Column(db.String)
     idProf = db.Column(db.String, db.ForeignKey("user.id"), nullable=False)
