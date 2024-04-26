@@ -89,13 +89,18 @@ saveButton.addEventListener("click", () => {
                 questions: [],
             };
 
-            if (evalParam) {
-                evalData.id = evalParam;
-            }
-
             questions.forEach((question) => {
                 evalData.questions.push(question.eval);
             });
+
+            let formData = {
+                eval: evalData,
+                token: localStorage.getItem("jwt-token"),
+            };
+
+            if (evalParam) {
+                formData.id = evalParam;
+            }
 
             // Sending data
             fetch("https://api.thoth-edu.fr/crea/save", {
@@ -104,7 +109,7 @@ saveButton.addEventListener("click", () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
                 },
-                body: JSON.stringify(evalData),
+                body: JSON.stringify(formData),
             })
                 .then((response) => response.json())
                 .then((data) => {
