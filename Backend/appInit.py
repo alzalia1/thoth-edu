@@ -25,7 +25,7 @@ CORS(
 )
 db = SQLAlchemy(app)
 # Setup the Flask-JWT-extended extension
-app.config["JWT_SECRET_KEY"] = "super-secret"
+app.config["JWT_SECRET_KEY"] = "YofkxbEsdL"
 jwt = JWTManager(app)
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 # Pour le hashing

@@ -39,4 +39,4 @@ def connexion():
 @app.route("/user/check", methods=["POST"])
 @jwt_required()
 def check():
-    return jsonify({ "status" : "success" })
+    return jsonify({"status": "success"})

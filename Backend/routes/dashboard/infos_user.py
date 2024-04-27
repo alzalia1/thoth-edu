@@ -3,7 +3,7 @@ from flask import jsonify
 from flask_jwt_extended import get_jwt_identity
 
 # Import app
-from appInit import app, db, User, Eval
+from appInit import User, Eval
 
 
 def infos_user(data):

@@ -1,6 +1,5 @@
 # Import libraries
 from flask import jsonify
-import sqlite3
 
 # Import app
 from appInit import db, User, bcrypt
@@ -19,12 +18,14 @@ def signup(data):
     if user == None:
         db.session.add(newUser)
         db.session.commit()
-        return (jsonify({"status": "success"}))  # Utilisateur créé
+        return jsonify({"status": "success"})  # Utilisateur créé
 
     if user.id == data["id"]:
-        return (jsonify({"status": "fail", "reason" : "utilisateur déjà existant"}))  # Identifiant déjà existant
+        return jsonify(
+            {"status": "fail", "reason": "utilisateur déjà existant"}
+        )  # Identifiant déjà existant
 
     db.session.add(newUser)
     db.session.commit()
 
-    return (jsonify({"status": "success"}))  # Utilisateur créé
+    return jsonify({"status": "success"})  # Utilisateur créé
