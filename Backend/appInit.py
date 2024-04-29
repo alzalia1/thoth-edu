@@ -26,8 +26,9 @@ CORS(
 db = SQLAlchemy(app)
 # Setup the Flask-JWT-extended extension
 app.config["JWT_SECRET_KEY"] = "YofkxbEsdL"
-jwt = JWTManager(app)
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+# app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+jwt = JWTManager()
+jwt.init_app(app)
 # Pour le hashing
 bcrypt = Bcrypt(app)
 
@@ -64,3 +65,14 @@ with app.app_context():
         print("Tables created successfully.")
     except Exception as e:
         print("An error occurred while creating tables:", e)
+
+
+# Création des fonctions pour JWTManager
+@jwt.user_lookup_loader
+def load_user(user_id):
+    return User.query.filter_by(id=user_id).one_or_none()
+
+
+@jwt.user_identity_loader
+def user_identity(user):
+    return user.id

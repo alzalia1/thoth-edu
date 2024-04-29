@@ -31,6 +31,6 @@ def login(data):
             }
         )  # MdP erroné
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=user)
     data = {"status": "success", "reason": "none", "access_token": access_token}
     return jsonify(data)
