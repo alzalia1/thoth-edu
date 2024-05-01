@@ -8,7 +8,7 @@ fetch("https://api.thoth-edu.fr/user/check", {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
     },
-    body: JSON.stringify({}),
+    body: JSON.stringify({token: localStorage.getItem("jwt-token")}),
 })
     .then((response) => response.json())
     .then((data) => console.log("Données envoyées avec succès !"))
