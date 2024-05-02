@@ -1,9 +1,10 @@
 # Import libraries
 from flask import jsonify
-from flask_jwt_extended import create_access_token
+import jwt
+import time
 
 # Import app
-from appInit import User, bcrypt
+from appInit import User, bcrypt, secret
 
 
 def login(data):
@@ -11,8 +12,6 @@ def login(data):
     user = User.query.filter_by(id=data["id"]).first()
 
     hashedPassword = bcrypt.generate_password_hash(data["mdp"]).decode("utf-8")
-
-    print(bcrypt.check_password_hash(user.mdp, data["mdp"]))
 
     if not user:
         return jsonify(
@@ -31,6 +30,10 @@ def login(data):
             }
         )  # MdP erroné
 
-    access_token = create_access_token(identity=user)
+    access_token = jwt.encode(
+        {"sub": user.id, "iat": time.time(), "exp": time.time() + 3600},
+        secret,
+        algorithm="HS256",
+    )
     data = {"status": "success", "reason": "none", "access_token": access_token}
     return jsonify(data)

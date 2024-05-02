@@ -6,10 +6,10 @@ Fichier de définition de l'app, de la db et d'autres classes utiles.
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
 import os
+import jwt
 
 app = Flask(__name__)
 # ! Route pour la bdd (A MODIFIER)
@@ -24,11 +24,8 @@ CORS(
     },
 )
 db = SQLAlchemy(app)
-# Setup the Flask-JWT-extended extension
-app.config["JWT_SECRET_KEY"] = "YofkxbEsdL"
-# app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
-jwt = JWTManager()
-jwt.init_app(app)
+# Setup for tokens
+secret = "YofkxbEsdL"
 # Pour le hashing
 bcrypt = Bcrypt(app)
 
@@ -65,14 +62,3 @@ with app.app_context():
         print("Tables created successfully.")
     except Exception as e:
         print("An error occurred while creating tables:", e)
-
-
-# Création des fonctions pour JWTManager
-@jwt.user_lookup_loader
-def load_user(user_id):
-    return User.query.filter_by(id=user_id).one_or_none()
-
-
-@jwt.user_identity_loader
-def user_identity(user):
-    return user.id

@@ -11,10 +11,8 @@ fetch("https://api.thoth-edu.fr/user/check", {
 })
     .then((response) => response.json())
     .then((data) => {
-        if (data.status == "success") {
-            page();
-        } else {
-            throw Error("Connexion non autorisée");
+        if (data.status == "fail") {
+            throw Error();
         }
     })
     .catch((error) => {
@@ -33,9 +31,6 @@ function page() {
 
     // Getting user infos
     let userI = {};
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const userParam = urlParams.get("u");
 
     fetch("https://api.thoth-edu.fr/dashboard/infos_user", {
         method: "POST",
@@ -43,27 +38,31 @@ function page() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
         },
-        body: JSON.stringify({ id: userParam }),
+        body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
     })
         .then((response) => response.json())
-        .then((data) => (userI = data))
+        .then((data) => {
+            userI = data;
+            /*
+            userI = {
+                username: "testy",
+                evals: [
+                    { name: "C - Esp4", id: "45Uia8" },
+                    { name: "A - Esp5", id: "4520a8" },
+                    { name: "D - App7", id: "uAUia8" },
+                ],
+            };
+            */
+            console.log(userI);
+            // Setting the page
+            localStorage.setItem("username", userI.username);
+            const username = document.getElementById("username");
+            username.textContent = localStorage.getItem("username");
+
+            const evalsDiv = document.getElementById("evals");
+            construct(evalsDiv, userI.evals, { url: "controle", param: "e" });
+        })
         .catch((error) => alert("Erreur lors de l'envoi des données :", error));
-
-    /*
-    userI = {
-        username: "testy",
-        evals: [
-            { name: "C - Esp4", id: "45Uia8" },
-            { name: "A - Esp5", id: "4520a8" },
-            { name: "D - App7", id: "uAUia8" },
-        ],
-    };
-    */
-    // Setting the page
-    localStorage.setItem("username", userI.username);
-    const username = document.getElementById("username");
-    username.textContent = localStorage.getItem("username");
-
-    const evalsDiv = document.getElementById("evals");
-    construct(evalsDiv, userI.evals, { url: "controle", param: "e" });
 }
+
+page();

@@ -7,7 +7,6 @@ from appInit import app, db, Acces, bcrypt, Eval
 
 def getEval(data):
 
-    evalCherchee = None
     evalCherchee = Acces.query.filter_by(id=data["id"]).first()
 
     assert evalCherchee != None, "Problème dans la requête"

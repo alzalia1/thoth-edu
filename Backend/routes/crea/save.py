@@ -71,11 +71,20 @@ def save(data):
         # On ouvre le fichier csv pour modifier les données, à l'aide de l'emplacement du fichier, dans les attributs de 'evals'
         lienJSON = evals.cheminJSON
 
+        listeQuestions = [
+            data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
+        ]
+        entete = [
+            "idEleve",
+            "idAcces",
+            "dateRep",
+        ]  # + ["id_Q"+str(i), "question_Q"+str(i), "rep_Q"+str(i), "note_Q"+str(i) for i in range(1, len(listeQuestions)+1)]
+        contenu = []
+
         with open(lienJSON, "w") as fichierEval:
             writer = csv.writer(fichierEval)
-            writer.writerow(["id", "question"])
-            for i, question in enumerate(len(data["eval"]["questions"])):
-                writer.writerow([i + 1, str(question)])
+            writer.writerow(entete)
+            writer.writerows()
 
     # Pour une nouvelle évaluation, nous avons besoin d'initialiser tous les attributs
     # id ; nom ; cheminJSON ; cheminCSV ; idProf

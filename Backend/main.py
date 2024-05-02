@@ -12,11 +12,14 @@
 # Import libraries
 from flask import request, jsonify
 import json
-from flask_jwt_extended import jwt_required
+import jwt
+import time
+
+# from flask_jwt_extended import jwt_required
 
 # Import routes (and other modules)
 import routes as r
-from appInit import app
+from appInit import app, secret
 
 
 @app.route("/")
@@ -37,6 +40,12 @@ def connexion():
 
 
 @app.route("/user/check", methods=["POST"])
-@jwt_required()
 def check():
-    return jsonify({"status": "success"})
+    data = request.get_json()
+    return r.user.check(data)
+
+
+@app.route("/dashboard/infos_user", methods=["POST"])
+def infos_user():
+    data = request.get_json()
+    return r.dashboard.infos_user(data)
