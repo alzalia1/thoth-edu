@@ -1,28 +1,72 @@
 import { construct } from "./modules/dashConstruct.js";
 
-// Check if user is allowed !
-fetch("https://api.thoth-edu.fr/user/check", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
-    },
-    body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
-})
-    .then((response) => response.json())
-    .then((data) => {
-        if (data.status == "fail") {
-            throw Error();
-        }
-    })
-    .catch((error) => {
-        window.stop();
-        alert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
-        console.log(error);
-        window.location.href = `https://professeur.thoth-edu.fr/`;
-    });
+// System to check and refresh user's token !
 
-function page() {
+let userCheckInProgress = false;
+let userCheckTimeoutId = null;
+// let isWindowFocused = true;
+
+async function user_check() {
+    if (userCheckInProgress) {
+        return;
+    }
+
+    userCheckInProgress = true;
+
+    await fetch("https://api.thoth-edu.fr/user/check", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
+        },
+        body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status == "fail") {
+                throw Error();
+            } else {
+                localStorage.setItem("jwt-token", data.new);
+            }
+        })
+        .catch((error) => {
+            window.stop();
+            alert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
+            console.log(error);
+            window.location.href = `https://professeur.thoth-edu.fr/`;
+        })
+        .finally(() => {
+            userCheckInProgress = false;
+            if (userCheckTimeoutId !== null) {
+                clearTimeout(userCheckTimeoutId);
+            }
+            userCheckTimeoutId = setTimeout(() => {
+                user_check();
+            }, 1800000);
+        });
+}
+
+/* Si la sortie de l'onglet soit désactiver le rafraichissement
+document.addEventListener("visibilitychange", async () => {
+    if (document.visibilityState === "visible") {
+        await user_check();
+    }
+});
+
+window.addEventListener("focus", async () => {
+    isWindowFocused = true;
+    await user_check();
+});
+
+window.addEventListener("blur", async () => {
+    isWindowFocused = false;
+    clearTimeout(userCheckTimeoutId);
+});
+*/
+
+await user_check();
+
+async function page() {
     // Vers crea_eval
     const newEval = document.getElementById("newEval");
     newEval.addEventListener("click", () => {
@@ -32,7 +76,7 @@ function page() {
     // Getting user infos
     let userI = {};
 
-    fetch("https://api.thoth-edu.fr/dashboard/infos_user", {
+    await fetch("https://api.thoth-edu.fr/dashboard/infos_user", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -43,26 +87,26 @@ function page() {
         .then((response) => response.json())
         .then((data) => {
             userI = data;
-            /*
-            userI = {
-                username: "testy",
-                evals: [
-                    { name: "C - Esp4", id: "45Uia8" },
-                    { name: "A - Esp5", id: "4520a8" },
-                    { name: "D - App7", id: "uAUia8" },
-                ],
-            };
-            */
-            console.log(userI);
-            // Setting the page
-            localStorage.setItem("username", userI.username);
-            const username = document.getElementById("username");
-            username.textContent = localStorage.getItem("username");
-
-            const evalsDiv = document.getElementById("evals");
-            construct(evalsDiv, userI.evals, { url: "controle", param: "e" });
         })
         .catch((error) => alert("Erreur lors de l'envoi des données :", error));
-}
 
-page();
+    /*
+        userI = {
+            username: "testy",
+            evals: [
+                { name: "C - Esp4", id: "45Uia8" },
+                { name: "A - Esp5", id: "4520a8" },
+                { name: "D - App7", id: "uAUia8" },
+            ],
+        };
+    */
+    console.log(userI);
+    // Setting the page
+    localStorage.setItem("username", userI.username);
+    const username = document.getElementById("username");
+    username.textContent = localStorage.getItem("username");
+
+    const evalsDiv = document.getElementById("evals");
+    construct(evalsDiv, userI.evals, { url: "controle", param: "e" });
+}
+await page();

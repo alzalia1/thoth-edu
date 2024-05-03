@@ -1,30 +1,51 @@
 import { construct } from "./modules/dashConstruct.js";
 
-// Check if user is allowed !
-fetch("https://api.thoth-edu.fr/user/check", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
-    },
-    body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
-})
-    .then((response) => response.json())
-    .then((data) => {
-        if (data.status == "success") {
-            page();
-        } else {
-            throw Error("Connexion non autorisée");
-        }
-    })
-    .catch((error) => {
-        window.stop();
-        alert("Vous n'êtes pas censé être ici ! Veuillez vous connecter avant.");
-        console.log(error);
-        window.location.href = `https://professeur.thoth-edu.fr/`;
-    });
+// System to check and refresh user's token !
+let userCheckInProgress = false;
+let userCheckTimeoutId = null;
 
-function page() {
+async function user_check() {
+    if (userCheckInProgress) {
+        return;
+    }
+
+    userCheckInProgress = true;
+
+    await fetch("https://api.thoth-edu.fr/user/check", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
+        },
+        body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status == "fail") {
+                throw Error();
+            } else {
+                localStorage.setItem("jwt-token", data.new);
+            }
+        })
+        .catch((error) => {
+            window.stop();
+            alert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
+            console.log(error);
+            window.location.href = `https://professeur.thoth-edu.fr/`;
+        })
+        .finally(() => {
+            userCheckInProgress = false;
+            if (userCheckTimeoutId !== null) {
+                clearTimeout(userCheckTimeoutId);
+            }
+            userCheckTimeoutId = setTimeout(() => {
+                user_check();
+            }, 1800000);
+        });
+}
+await user_check();
+
+async function page() {
     // Getting eval info
     let evalI = {};
     const queryString = window.location.search;
@@ -160,7 +181,7 @@ function page() {
                         if (data.status == "fail") {
                             alert("Il y a eu un problème : ", data.reason);
                         } else {
-                            window.location.href = `https://professeur.thoth-edu.fr`;
+                            window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
                         }
                     })
                     .catch((error) => alert("Erreur lors de l'envoi des données :", error));
@@ -176,3 +197,4 @@ function page() {
         window.location.href = `https://professeur.thoth-edu.fr/crea_eval?eval=${evalParam}`;
     });
 }
+await page();
