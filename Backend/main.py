@@ -49,3 +49,21 @@ def check():
 def infos_user():
     data = request.get_json()
     return r.dashboard.infos_user(data)
+
+
+@app.route("/crea/save", methods=["POST"])
+def save():
+    data = request.get_json()
+    return r.crea.save(data)
+
+
+@app.route("/dashboard/eval/get", methods=["POST"])
+def getDashboard():
+    data = request.get_json()
+    return r.dashboard.eval.get(data)
+
+
+@app.route("/crea/get", methods=["POST"])
+def getEval():
+    data = request.get_json()
+    return r.crea.get(data)
