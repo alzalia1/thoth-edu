@@ -5,9 +5,11 @@ import csv
 from random import randint
 import os
 import jwt
+import json
+
 
 # Import app
-from appInit import db, Eval, secret, User
+from appInit import db, Eval, secret
 
 
 listeID = [
@@ -71,6 +73,7 @@ def save(data):
 
         # On ouvre le fichier csv pour modifier les données, à l'aide de l'emplacement du fichier, dans les attributs de 'evals'
         lienCSV = evalMAJ.cheminCSV
+        lienJSON = evalMAJ.cheminJSON
 
         listeQuestionsMAJ = [
             data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
@@ -91,6 +94,9 @@ def save(data):
             writer.writerow(enteteMAJ)
             writer.writerow(contenuMAJ)
 
+        with open(lienJSON, "w") as fichierEval:
+            json.dump(jsonify(data["eval"]), fichierEval)
+
     # Pour une nouvelle évaluation, nous avons besoin d'initialiser tous les attributs
     # id ; nom ; cheminJSON ; cheminCSV ; idProf
     nouvelID = creationID()
@@ -108,7 +114,7 @@ def save(data):
 
     if not os.path.exists(f"/home/debian/thoth-edu/database/evals/{idProf}"):
         nouveauCheminCSVINIT = os.path.join(
-            f"/home/debian/thoth-edu/database/evals/{idProf}", idProf
+            f"/home/debian/thoth-edu/database/evals/", idProf
         )
         os.makedirs(nouveauCheminCSVINIT, exist_ok=True)
 
@@ -141,5 +147,8 @@ def save(data):
         writer = csv.writer(fichierEval)
         writer.writerow(enteteInit)
         writer.writerow(contenuInit)
+
+    with open(nouveauCheminJSON, "w") as fichierEval:
+        json.dump(jsonify(data["eval"]), fichierEval)
 
     return jsonify({"status": "success"})

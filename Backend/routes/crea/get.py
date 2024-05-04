@@ -1,6 +1,7 @@
 # Import libraries
 from flask import jsonify
 import csv
+import json
 
 # Import app
 from appInit import Eval
@@ -13,10 +14,8 @@ def get(data):
     if eval == None:
         return jsonify({"status": "fail", "reason": "ID faux"})
 
-    with open(eval.cheminJSON, "w") as fichierEval:
-        reader = csv.reader(fichierEval)
-        reader.readrow()
-        contenuEval = reader.readrow()
+    with open(eval.cheminJSON, "r") as fichierEval:
+        dataAReturn = json.load(fichierEval)
 
-    aReturn = {"eval": contenuEval}
+    aReturn = {"eval": dataAReturn}
     return jsonify(aReturn)
