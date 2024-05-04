@@ -95,7 +95,7 @@ def save(data):
             writer.writerow(contenuMAJ)
 
         with open(lienJSON, "w") as fichierEval:
-            json.dump(jsonify(data["eval"]), fichierEval)
+            json.dump(data["eval"], fichierEval)
 
     # Pour une nouvelle évaluation, nous avons besoin d'initialiser tous les attributs
     # id ; nom ; cheminJSON ; cheminCSV ; idProf
@@ -149,6 +149,6 @@ def save(data):
         writer.writerow(contenuInit)
 
     with open(nouveauCheminJSON, "w") as fichierEval:
-        json.dump(jsonify(data["eval"]), fichierEval)
+        json.dump(data["eval"], fichierEval)
 
     return jsonify({"status": "success"})

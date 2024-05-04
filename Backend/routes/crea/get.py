@@ -14,8 +14,14 @@ def get(data):
     if eval == None:
         return jsonify({"status": "fail", "reason": "ID faux"})
 
+    print(eval.cheminJSON)
+
     with open(eval.cheminJSON, "r") as fichierEval:
-        dataAReturn = json.load(fichierEval)
+        contenu = fichierEval.read()
+        dataAReturn = json.loads(contenu)
+
+    print(dataAReturn)
 
     aReturn = {"eval": dataAReturn}
+
     return jsonify(aReturn)
