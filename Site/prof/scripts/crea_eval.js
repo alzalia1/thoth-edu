@@ -130,6 +130,8 @@ async function page() {
 
                 if (evalParam) {
                     formData.id = evalParam;
+                } else {
+                    formData.id = "none";
                 }
 
                 // Sending data
