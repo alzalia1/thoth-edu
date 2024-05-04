@@ -52,7 +52,7 @@ async function page() {
     const urlParams = new URLSearchParams(queryString);
     const evalParam = urlParams.get("e");
 
-    fetch("https://api.thoth-edu.fr/dashboard/eval/get", {
+    await fetch("https://api.thoth-edu.fr/dashboard/eval/get", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -197,4 +197,5 @@ async function page() {
         window.location.href = `https://professeur.thoth-edu.fr/crea_eval?eval=${evalParam}`;
     });
 }
-await page();
+
+page();

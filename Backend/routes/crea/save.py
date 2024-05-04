@@ -4,9 +4,10 @@ from flask_jwt_extended import get_jwt_identity
 import csv
 from random import randint
 import os
+import jwt
 
 # Import app
-from appInit import app, db, User, bcrypt, Eval
+from appInit import db, Eval, secret, User
 
 
 listeID = [
@@ -59,7 +60,7 @@ def creationID():
 def save(data):
     """Sauvegarde ou met à jour le contenu d'une évaluation"""
     # Si ce n'est pas la première sauvegarde on modifie juste le fichier existant
-    if data["id"]:
+    if data["id"] != "none":
 
         evalMAJ = Eval.query.filter_by(id=data["id"]).first()
 
@@ -69,7 +70,7 @@ def save(data):
             )
 
         # On ouvre le fichier csv pour modifier les données, à l'aide de l'emplacement du fichier, dans les attributs de 'evals'
-        lienJSON = evalMAJ.cheminJSON
+        lienCSV = evalMAJ.cheminCSV
 
         listeQuestionsMAJ = [
             data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
@@ -83,9 +84,9 @@ def save(data):
         )
         contenuMAJ = [None, None, None]
         for i, quest in enumerate(data["eval"]["questions"]):
-            contenuMAJ.append(i, quest, None, None)
+            contenuMAJ = contenuMAJ + [i, quest, None, None]
 
-        with open(lienJSON, "w") as fichierEval:
+        with open(lienCSV, "w") as fichierEval:
             writer = csv.writer(fichierEval)
             writer.writerow(enteteMAJ)
             writer.writerow(contenuMAJ)
@@ -97,18 +98,19 @@ def save(data):
     while nouvelID in Eval.query.filter_by(id=nouvelID):
         nouvelID = creationID()
 
-    idProf = get_jwt_identity(data["token"]).id
+    decoded_jwt = jwt.decode(data["token"], secret, algorithms=["HS256"])
+    idProf = decoded_jwt["sub"]
 
     nouveauCheminJSON = (
-        f"/home/debian/thoth-edu/database/evals/${idProf}/${nouvelID}.json"
+        f"/home/debian/thoth-edu/database/evals/{idProf}/{nouvelID}.json"
     )
-    nouveauCheminCSV = (
-        f"/home/debian/thoth-edu/database/evals/${idProf}/${nouvelID}.csv"
-    )
+    nouveauCheminCSV = f"/home/debian/thoth-edu/database/evals/{idProf}/{nouvelID}.csv"
 
-    if not os.path.exists(nouveauCheminJSON):
-        nouveauCheminJSONINIT = os.path.join(nouveauCheminJSON, idProf)
-        os.makedirs(nouveauCheminJSONINIT, exist_ok=True)
+    if not os.path.exists(f"/home/debian/thoth-edu/database/evals/{idProf}"):
+        nouveauCheminCSVINIT = os.path.join(
+            f"/home/debian/thoth-edu/database/evals/{idProf}", idProf
+        )
+        os.makedirs(nouveauCheminCSVINIT, exist_ok=True)
 
     evalInit = Eval(
         id=nouvelID,
@@ -133,9 +135,9 @@ def save(data):
     )
     contenuInit = [None, None, None]
     for i, quest in enumerate(data["eval"]["questions"]):
-        contenuInit.append(i, quest, None, None)
+        contenuInit = contenuInit + [i, quest, None, None]
 
-    with open(nouveauCheminJSON, "w") as fichierEval:
+    with open(nouveauCheminCSV, "w") as fichierEval:
         writer = csv.writer(fichierEval)
         writer.writerow(enteteInit)
         writer.writerow(contenuInit)
