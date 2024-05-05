@@ -6,20 +6,18 @@
         <link href="style/connexion.css" rel="stylesheet" />
         <script src="scripts/connexion.js" async></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+        <title>Connexion</title>
     </head>
     <body>
         <header>
             <p3>Élève ?</p3>
-            <button
-                onclick="window.location.href='/thoth-edu/Site/www/eval.html';"
-            >
+            <button onclick="window.location.href='https://thoth-edu.fr';">
                 accéder à une évaluation
             </button>
         </header>
         <div>
             <p2>Pas encore inscrit ?</p2>
-            <button onclick="window.location.href='inscription.html';">
+            <button onclick="window.location.href='inscription';">
                 Inscription
             </button>
         </div>
@@ -28,13 +26,17 @@
             <div>
                 <p2>identifiant :</p2>
                 <br />
-                <input placeholder="entrer votre identifiant" />
+                <input placeholder="entrer votre identifiant" id="id" />
                 <br />
                 <p2>mot de passe :</p2>
                 <br />
-                <input placeholder="entrer votre mot de passe" />
+                <input
+                    placeholder="entrer votre mot de passe"
+                    type="password"
+                    id="passwd"
+                />
                 <br />
-                <button>valider</button>
+                <button id="confirm">valider</button>
             </div>
         </div>
     </body>

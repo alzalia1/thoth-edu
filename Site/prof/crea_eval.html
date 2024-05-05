@@ -4,9 +4,58 @@
         <meta charset="UTF-8" />
         <link href="/shared/style/main.css" rel="stylesheet" />
         <link href="style/crea_eval.css" rel="stylesheet" />
-        <script src="scripts/crea_eval.js" async></script>
+        <script type="module" src="scripts/crea_eval.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Création d'évaluation</title>
     </head>
-    <body></body>
+    <body>
+        <header>
+            <div id="left">
+                <p id="username"></p>
+            </div>
+
+            <div id="center">
+                <a href="https://thoth-edu.fr">
+                    THOTH <br />
+                    EDU
+                </a>
+            </div>
+
+            <div id="right">
+                <a href="https://professeur.thoth-edu.fr/dashboard">
+                    <img
+                        src="/shared/ressources/icone_home.jpg"
+                        alt="dashboard"
+                        title="dashboard"
+                    />
+                </a>
+                <a>
+                    <img
+                        src="/shared/ressources/icone_deconnexion.jpg"
+                        alt="déconnexion"
+                        title="déconnexion"
+                    />
+                </a>
+            </div>
+        </header>
+        <h1>Création d'une évaluation</h1>
+        <div id="general_info">
+            <label>Nom de l'évaluation : </label>
+            <input type="text" id="nom_eval" placeholder="Nom de l'évaluation" />
+            <p id="nbQuestions">Nombre de questions :</p>
+            <p id="nbPoints">Total de points :</p>
+            <button id="save">Sauvegarder</button>
+        </div>
+        <div id="questions">
+            <h2>Questions</h2>
+            <div id="questionsList"></div>
+            <div id="addButtons">
+                <button id="addQuestion">Ajouter une question</button>
+                <div id="addType" hidden>
+                    <button id="addConjug">Conjugaison</button>
+                    <button id="addTrad">Traduction</button>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

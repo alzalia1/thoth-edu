@@ -3,23 +3,21 @@
     <head>
         <meta charset="UTF-8" />
         <link href="/shared/style/main.css" rel="stylesheet" />
-        <link href="style/connexion.css" rel="stylesheet" />
-        <script src="scripts/connexion.js" async></script>
+        <link href="style/inscription.css" rel="stylesheet" />
+        <script src="scripts/inscription.js" async></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+        <title>Inscription</title>
     </head>
     <body>
         <header>
             <p3>Élève ?</p3>
-            <button
-                onclick="window.location.href='/thoth-edu/Site/www/eval.html';"
-            >
+            <button onclick="window.location.href='https://thoth-edu.fr';">
                 accéder à une évaluation
             </button>
         </header>
         <div>
-            <p2>Déjà un copmte ? </p2>
-            <button onclick="window.location.href='connexion.html';">
+            <p2>Déjà un compte ? </p2>
+            <button onclick="window.location.href='connexion';">
                 Connexion
             </button>
         </div>
@@ -29,13 +27,17 @@
             <div>
                 <p2>identifiant :</p2>
                 <br />
-                <input placeholder="entrer un identifiant" />
+                <input placeholder="entrer un identifiant" id="id" />
                 <br />
                 <p2>mot de passe :</p2>
                 <br />
-                <input placeholder="entrer un mot de passe" />
+                <input
+                    type="password"
+                    placeholder="entrer un mot de passe"
+                    id="passwd"
+                />
                 <br />
-                <button>valider</button>
+                <button id="confirm">valider</button>
             </div>
         </div>
     </body>

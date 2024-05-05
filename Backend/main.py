@@ -1,87 +1,75 @@
 # main.py
 
-# Pour créer une nouvelle route (accessible via https://api.thoth-edu.fr/{nom de la route}), utiliser la structure suivante :
+# Pour créer une nouvelle route (accessible via https://api.thoth-edu.fr/{{route}}), utiliser la structure suivante :
 
-# @app.route("/{nom de la route}")
-# def {nom de la fonction associée}({arguments ?}):
+# @app.route("/{{route}}")
+# def {nom de la fonction associée}():
+#     data = request.get_json()
+#     return r.{{nom de la fonction route}}(data)
 
-#     $$ contenu de la fonction
+# Il est préférable que la fonction réelle s'éxécute dans un fichier de route
 
-#     $$ création d'un message à retourner
-
-#     return message
-
-# Il est préférable que la fonction réelle s'éxécute dans un fichier de route (voir le dossier routes)
-
-from flask import Flask, request, jsonify, session
+# Import libraries
+from flask import request, jsonify
 import json
-from flask_cors import CORS
-import os
+import jwt
+import time
+
+# from flask_jwt_extended import jwt_required
+
+# Import routes (and other modules)
 import routes as r
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-# Route pour la bdd (A MODIFIER)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite://../database/user.sqlite3"
-CORS(app, origins="https://thoth-edu.fr")
-db = SQLAlchemy(app)
-
-# Get the directory of the current script
-script_dir = os.path.dirname(os.path.realpath(__file__))
-
-# Construct the path to data.json
-data_path = os.path.join(script_dir, "data.json")
-
-
-# Création de la classe utilisateur
-class User(db.Model):
-    id = db.Column(db.String(80), unique=True, nullable=False)
-    mdp = db.Column(db.String(120), unique=True, nullable=False)
-    accents = db.Column(db.String(200), unique=False, nullable=True)
+from appInit import app, secret
 
 
 @app.route("/")
 def home():
-    return (
-        "Hello :) Vous êtes bien arrivé sur la page 'home' du système d'API ThothEdu !"
-    )
+    return r.home()
 
 
-@app.route("/save-json", methods=["POST"])
-def save_json():
+@app.route("/user/signup", methods=["POST"])
+def signup():
     data = request.get_json()
-
-    try:
-        with open(data_path, "w") as json_file:
-            json_file.write(json.dumps(data, indent=2))
-        message = "Données sauvegardées avec succès !"
-    except Exception as e:
-        message = (
-            f"Une erreur s'est produite lors de la sauvegarde des données : {str(e)}"
-        )
-
-    response = jsonify({"message": message})
-
-    return response
+    return r.user.signup(data)
 
 
-@app.route("/user/signin", methods=["POST"])
-def inscription():
-    data = request.get_json()
-    # { "id" : "Bob" ; "mdp" : "mdp" ; "accents" : "é" }
-    new_user = User(id=data["id"], mdp=data["mdp"], accents=data["accents"])
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({"message": "Utilisateur créé avec succès !"}), 201
-
-
-@app.route("/user/login", methods=["GET"])
+@app.route("/user/login", methods=["POST"])
 def connexion():
     data = request.get_json()
-    user = User.query.filter_by(username=data["id"]).first()
+    return r.user.login(data)
 
-    if user and user.password == data["mdp"]:
-        session["user_id"] = user.id
-        return jsonify({"message": "Connexion réussie"}), 200
-    else:
-        return jsonify({"message": "Mot de passe ou identifiant invalide"}), 401
+
+@app.route("/user/check", methods=["POST"])
+def check():
+    data = request.get_json()
+    return r.user.check(data)
+
+
+@app.route("/dashboard/infos_user", methods=["POST"])
+def infos_user():
+    data = request.get_json()
+    return r.dashboard.infos_user(data)
+
+
+@app.route("/crea/save", methods=["POST"])
+def save():
+    data = request.get_json()
+    return r.crea.save(data)
+
+
+@app.route("/dashboard/eval/get", methods=["POST"])
+def getDashboard():
+    data = request.get_json()
+    return r.dashboard.eval.get(data)
+
+
+@app.route("/crea/get", methods=["POST"])
+def getEval():
+    data = request.get_json()
+    return r.crea.get(data)
+
+
+@app.route("/dashboard/eval/create_access", methods=["POST"])
+def createAccess():
+    data = request.get_json()
+    return r.dashboard.eval.createAccess(data)
