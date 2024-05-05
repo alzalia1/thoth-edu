@@ -78,12 +78,21 @@ def createAccess(data):
     else:
         ID = data["id_access"]
 
+    if data["random"] == "on":
+        randomBool = True
+    else:
+        randomBool = False
+
+    print(randomBool, data["random"])
+
+    randomBool = None
+
     nouvelAcces = Acces(
         id=ID,
         nom=data["name"],
-        dateDebb=data["time"]["start"],
+        dateDeb=data["time"]["start"],
         dateFin=data["time"]["end"],
-        random=data["random"],
+        random=randomBool,
         modele=data["id_eval"],
     )
 

@@ -7,9 +7,9 @@ from appInit import app, db, Acces, Eval
 
 
 def etatAcces(acces):
-    if time.time() < acces.dateDeb:
+    if time.time() < int(acces.dateDeb):
         return 0
-    elif time.time() > acces.dateFin:
+    elif time.time() > int(acces.dateFin):
         return 2
     return 1
 
