@@ -5,8 +5,6 @@ from random import randint
 # Import app
 from appInit import Acces, db
 
-# return jsonify({ "status" : "success" })
-# return jsonify({ "status" : "fail", "reason" : "" })
 
 listeID = [
     "a",

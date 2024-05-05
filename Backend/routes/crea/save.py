@@ -78,13 +78,15 @@ def save(data):
         listeQuestionsMAJ = [
             data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
         ]
-        enteteMAJ = (
-            ["idEleve", "idAcces", "dateRep"]
-            + ["id_Q" + str(i) for i in range(1, len(listeQuestionsMAJ) + 1)]
-            + ["question_Q" + str(i) for i in range(1, len(listeQuestionsMAJ) + 1)]
-            + ["rep_Q" + str(i) for i in range(1, len(listeQuestionsMAJ) + 1)]
-            + ["note_Q" + str(i) for i in range(1, len(listeQuestionsMAJ) + 1)]
-        )
+        enteteMAJ = ["idEleve", "idAcces", "dateRep"]
+        for i, quest in enumerate(listeQuestionsMAJ):
+            enteteMAJ = enteteMAJ + [
+                "id_Q" + str(i),
+                "question_Q" + str(i),
+                "rep_Q" + str(i),
+                "note_Q" + str(i),
+            ]
+        print(enteteInit)
         contenuMAJ = [None, None, None]
         for i, quest in enumerate(data["eval"]["questions"]):
             contenuMAJ = contenuMAJ + [i, quest, None, None]
@@ -135,13 +137,15 @@ def save(data):
         listeQuestionsInit = [
             data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
         ]
-        enteteInit = (
-            ["idEleve", "idAcces", "dateRep"]
-            + ["id_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
-            + ["question_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
-            + ["rep_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
-            + ["note_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
-        )
+        enteteInit = ["idEleve", "idAcces", "dateRep"]
+        for i, quest in enumerate(listeQuestionsInit):
+            enteteInit = enteteInit + [
+                "id_Q" + str(i),
+                "question_Q" + str(i),
+                "rep_Q" + str(i),
+                "note_Q" + str(i),
+            ]
+        print(enteteInit)
         contenuInit = [None, None, None]
         for i, quest in enumerate(data["eval"]["questions"]):
             contenuInit = contenuInit + [i, quest, None, None]
@@ -154,4 +158,4 @@ def save(data):
         with open(nouveauCheminJSON, "w") as fichierEval:
             json.dump(data["eval"], fichierEval)
 
-        return jsonify({"status": "success"})
+    return jsonify({"status": "success"})

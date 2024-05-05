@@ -73,3 +73,9 @@ def getEval():
 def createAccess():
     data = request.get_json()
     return r.dashboard.eval.createAccess(data)
+
+
+@app.route("/dashboard/eval/delete", methods=["POST"])
+def deleteEval():
+    data = request.get_json()
+    return r.dashboard.eval.delete(data)
