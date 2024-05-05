@@ -1,3 +1,19 @@
 body {
-  background-color: #272727;
+    background-color: #004643;
+}
+
+.bouton {
+    background-color: rgb(249, 188, 96);
+    color: rgb(0, 30, 29);
+    opacity: 1;
+    transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg)
+        rotateY(0deg) rotateZ(0deg) skew(0deg);
+    transform-style: preserve-3d;
+}
+.boite {
+    background-color: antiquewhite;
+    height: 200;
+    width: 25%;
+    margin: auto auto;
+    text-align: center;
 }
