@@ -97,58 +97,61 @@ def save(data):
         with open(lienJSON, "w") as fichierEval:
             json.dump(data["eval"], fichierEval)
 
-    # Pour une nouvelle évaluation, nous avons besoin d'initialiser tous les attributs
-    # id ; nom ; cheminJSON ; cheminCSV ; idProf
-    nouvelID = creationID()
-
-    while nouvelID in Eval.query.filter_by(id=nouvelID):
+    else:
+        # Pour une nouvelle évaluation, nous avons besoin d'initialiser tous les attributs
+        # id ; nom ; cheminJSON ; cheminCSV ; idProf
         nouvelID = creationID()
 
-    decoded_jwt = jwt.decode(data["token"], secret, algorithms=["HS256"])
-    idProf = decoded_jwt["sub"]
+        while nouvelID in Eval.query.filter_by(id=nouvelID):
+            nouvelID = creationID()
 
-    nouveauCheminJSON = (
-        f"/home/debian/thoth-edu/database/evals/{idProf}/{nouvelID}.json"
-    )
-    nouveauCheminCSV = f"/home/debian/thoth-edu/database/evals/{idProf}/{nouvelID}.csv"
+        decoded_jwt = jwt.decode(data["token"], secret, algorithms=["HS256"])
+        idProf = decoded_jwt["sub"]
 
-    if not os.path.exists(f"/home/debian/thoth-edu/database/evals/{idProf}"):
-        nouveauCheminCSVINIT = os.path.join(
-            f"/home/debian/thoth-edu/database/evals/", idProf
+        nouveauCheminJSON = (
+            f"/home/debian/thoth-edu/database/evals/{idProf}/{nouvelID}.json"
         )
-        os.makedirs(nouveauCheminCSVINIT, exist_ok=True)
+        nouveauCheminCSV = (
+            f"/home/debian/thoth-edu/database/evals/{idProf}/{nouvelID}.csv"
+        )
 
-    evalInit = Eval(
-        id=nouvelID,
-        nom=data["eval"]["name"],
-        cheminJSON=nouveauCheminJSON,
-        cheminCSV=nouveauCheminCSV,
-        idProf=idProf,
-    )
+        if not os.path.exists(f"/home/debian/thoth-edu/database/evals/{idProf}"):
+            nouveauCheminCSVINIT = os.path.join(
+                f"/home/debian/thoth-edu/database/evals/", idProf
+            )
+            os.makedirs(nouveauCheminCSVINIT, exist_ok=True)
 
-    db.session.add(evalInit)
-    db.session.commit()
+        evalInit = Eval(
+            id=nouvelID,
+            nom=data["eval"]["name"],
+            cheminJSON=nouveauCheminJSON,
+            cheminCSV=nouveauCheminCSV,
+            idProf=idProf,
+        )
 
-    listeQuestionsInit = [
-        data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
-    ]
-    enteteInit = (
-        ["idEleve", "idAcces", "dateRep"]
-        + ["id_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
-        + ["question_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
-        + ["rep_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
-        + ["note_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
-    )
-    contenuInit = [None, None, None]
-    for i, quest in enumerate(data["eval"]["questions"]):
-        contenuInit = contenuInit + [i, quest, None, None]
+        db.session.add(evalInit)
+        db.session.commit()
 
-    with open(nouveauCheminCSV, "w") as fichierEval:
-        writer = csv.writer(fichierEval)
-        writer.writerow(enteteInit)
-        writer.writerow(contenuInit)
+        listeQuestionsInit = [
+            data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
+        ]
+        enteteInit = (
+            ["idEleve", "idAcces", "dateRep"]
+            + ["id_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
+            + ["question_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
+            + ["rep_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
+            + ["note_Q" + str(i) for i in range(1, len(listeQuestionsInit) + 1)]
+        )
+        contenuInit = [None, None, None]
+        for i, quest in enumerate(data["eval"]["questions"]):
+            contenuInit = contenuInit + [i, quest, None, None]
 
-    with open(nouveauCheminJSON, "w") as fichierEval:
-        json.dump(data["eval"], fichierEval)
+        with open(nouveauCheminCSV, "w") as fichierEval:
+            writer = csv.writer(fichierEval)
+            writer.writerow(enteteInit)
+            writer.writerow(contenuInit)
 
-    return jsonify({"status": "success"})
+        with open(nouveauCheminJSON, "w") as fichierEval:
+            json.dump(data["eval"], fichierEval)
+
+        return jsonify({"status": "success"})
