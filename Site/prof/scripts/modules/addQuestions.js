@@ -1012,10 +1012,10 @@ function params(divA, questionElement, question) {
     const paramsButton = document.createElement("button");
     paramsButton.textContent = "⚙";
     paramsButton.addEventListener("click", () => {
-        if (question.elements.popup.style.display == "none") {
-            question.elements.popup.style.display = "block";
-        } else {
+        if (question.elements.popup.style.display == "block") {
             question.elements.popup.style.display = "none";
+        } else {
+            question.elements.popup.style.display = "block";
         }
     });
 

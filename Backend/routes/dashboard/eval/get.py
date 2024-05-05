@@ -23,7 +23,7 @@ def get(data):
 
     listeAcces = Acces.query.filter_by(modele=data["id"]).all()
     dicoAcces = [
-        {"id": acces.id, "nom": acces.nom, "status": etatAcces(acces), "note": 0}
+        {"id": acces.id, "name": acces.nom, "status": etatAcces(acces), "note": 0}
         for acces in listeAcces
     ]
 
