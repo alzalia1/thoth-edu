@@ -99,10 +99,21 @@ async function page() {
 
     // Creating access
     const createAccess = document.getElementById("create_access");
-    const newAccessDiv = document.getElementById("newAccess");
+    const newAccessDivBig = document.getElementById("newAccessBig");
     createAccess.addEventListener("click", () => {
-        newAccessDiv.hidden = !newAccessDiv.hidden;
+        if (newAccessDivBig.style.display == "block") {
+            newAccessDivBig.style.display = "none";
+        } else {
+            newAccessDivBig.style.display = "block";
+        }
     });
+
+    window.addEventListener("click", function (event) {
+        if (event.target == newAccessDivBig) {
+            newAccessDivBig.style.display = "none";
+        }
+    });
+
     const saveNewAccess = document.getElementById("saveNewAccess");
     saveNewAccess.addEventListener("click", () => {
         const name = document.getElementById("NAname");
@@ -140,7 +151,7 @@ async function page() {
                     name: name.value,
                     id_eval: evalParam,
                     id_access: "none",
-                    random: random.value,
+                    random: random.checked,
                     time: {
                         start: Date.parse(start.value),
                         end: Date.parse(end.value),
