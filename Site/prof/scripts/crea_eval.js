@@ -54,9 +54,10 @@ async function page() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const evalParam = urlParams.get("eval");
+    const evalName = document.getElementById("nom_eval");
     if (!(evalParam == null)) {
         // Loads questions if passed parameter
-        fetch("https://api.thoth-edu.fr/crea/get", {
+        await fetch("https://api.thoth-edu.fr/crea/get", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -65,7 +66,10 @@ async function page() {
             body: JSON.stringify({ id: evalParam }),
         })
             .then((response) => response.json())
-            .then((data) => load(data.eval.questions))
+            .then((data) => {
+                evalName.value = data.eval.name;
+                load(data.eval.questions);
+            })
             .catch((error) => alert("Erreur lors de l'envoi des données :" + error));
     } else if (
         localStorage.getItem("evalPending") &&
@@ -110,12 +114,11 @@ async function page() {
         );
         if (confirm) {
             // Making the correct data format
-            const evalName = document.getElementById("nom_eval").value;
             if (evalName == "") {
                 alert("Vous devez indiquer un nom pour l'évaluation");
             } else {
                 let evalData = {
-                    name: evalName,
+                    name: evalName.value,
                     questions: [],
                 };
 
@@ -177,9 +180,8 @@ async function page() {
     };
 
     window.simulateSave = function () {
-        const evalName = document.getElementById("nom_eval").value;
         let evalData = {
-            name: evalName,
+            name: evalName.value,
             questions: [],
         };
 

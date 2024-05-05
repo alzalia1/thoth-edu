@@ -524,7 +524,7 @@ export function addQuestion(type, question = null) {
 
 export function load(questionList) {
     questionList.forEach((question) => {
-        addQuestion(question.type, question);
+        addQuestion(question.type, { eval: question });
     });
 }
 
