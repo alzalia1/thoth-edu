@@ -1,4 +1,4 @@
-import { addQuestion, questions, load } from "./modules/addQuestions.js";
+import { addQuestion, questions, loadFromID, loadFromPending } from "./modules/addQuestions.js";
 
 // System to check and refresh user's token !
 let userCheckInProgress = false;
@@ -68,7 +68,7 @@ async function page() {
             .then((response) => response.json())
             .then((data) => {
                 evalName.value = data.eval.name;
-                load(data.eval.questions);
+                loadFromID(data.eval.questions);
             })
             .catch((error) => alert("Erreur lors de l'envoi des données :" + error));
     } else if (
@@ -79,7 +79,7 @@ async function page() {
             "Une ancienne évaluation mal enregistrée a été détectée. Voulez-vous la recharger ?"
         );
         if (reload) {
-            load(JSON.parse(localStorage.getItem("evalPending")));
+            loadFromPending(JSON.parse(localStorage.getItem("evalPending")));
         }
     }
 

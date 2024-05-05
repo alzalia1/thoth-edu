@@ -522,9 +522,15 @@ export function addQuestion(type, question = null) {
     updateLocalStorage();
 }
 
-export function load(questionList) {
+export function loadFromID(questionList) {
     questionList.forEach((question) => {
         addQuestion(question.type, { eval: question });
+    });
+}
+
+export function loadFromPending(questionList) {
+    questionList.forEach((question) => {
+        addQuestion(question.eval.type, question);
     });
 }
 
@@ -842,6 +848,7 @@ function reponse(divA, question, type, create) {
                             tableauCreate(question);
                             updateLocalStorage();
                         });
+                        thh.append(th);
                         tr.appendChild(thh);
 
                         for (let j = 0; j < question.eval.reponse.temps.length; j++) {
