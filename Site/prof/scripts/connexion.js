@@ -1,3 +1,5 @@
+import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
+
 document.getElementById("confirm").addEventListener("click", function (event) {
     event.preventDefault();
 
@@ -27,7 +29,7 @@ function sendDataToBackend(formData) {
         })
         .then((data) => {
             if (data.status == "fail") {
-                alert("Erreur : " + data.reason);
+                Palert("Erreur : " + data.reason);
             } else {
                 localStorage.setItem("jwt-token", data.access_token);
                 window.location.href = `https://professeur.thoth-edu.fr/dashboard`;

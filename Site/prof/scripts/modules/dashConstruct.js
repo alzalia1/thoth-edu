@@ -1,3 +1,5 @@
+import { Pconfirm, Palert, Pinput } from "../../../shared/scripts/modules/utils.js";
+
 /**
  * Permet de construire une liste dans une div
  * @param {HTMLDivElement} pDiv - Div dans laquelle insérer la liste

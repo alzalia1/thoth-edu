@@ -1,4 +1,5 @@
 import { construct, answers } from "./modules/addEleve.js";
+import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
 
 // Get the id  and check it exists
 
@@ -38,7 +39,7 @@ fetch("https://api.thoth-edu.fr/eval/get_eval", {
 })
     .then((response) => response.json())
     .then((data) => (evalContent = data))
-    .catch((error) => alert("Erreur lors de l'envoi des données :", error));
+    .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
 
 addEventListener("DOMContentLoaded", () => {
     // Building the questions
@@ -54,8 +55,39 @@ addEventListener("DOMContentLoaded", () => {
     const save = document.getElementById("save");
     save.addEventListener("click", () => {
         if (!studentName.value) {
-            alert("Veuillez rentrer un nom selon les consignes du professeur.");
+            Palert("Veuillez rentrer un nom selon les consignes du professeur.");
         } else {
+            Pconfirm(
+                "Vous ne pourrez plus modifier vos réponses une fois cette évaluation rendue. Veuillez confirmer que vous souhaitez rendre.",
+                () => {
+                    let sendBackForm = {
+                        id: evalParam,
+                        responses: answers,
+                    };
+
+                    fetch("https://api.thoth-edu.fr/eval/reps_eleves", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(sendBackForm),
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if (data.status == "success") {
+                                Palert(
+                                    "Vos réponses ont bien été renvoyées. Vous allez être redirigé vers la page d'accueil."
+                                );
+                                setTimeout(() => {
+                                    window.location.href = `https://thoth-edu.fr`;
+                                }, 5000);
+                            }
+                        })
+                        .catch((error) => Palert("Erreur lors de l'envoi des données : " + error));
+                }
+            );
+
+            /*
             let confirmed = window.confirm(
                 "Vous ne pourrez plus modifier vos réponses une fois cette évaluation rendue. Veuillez confirmer que vous souhaitez rendre."
             );
@@ -75,7 +107,7 @@ addEventListener("DOMContentLoaded", () => {
                     .then((response) => response.json())
                     .then((data) => {
                         if (data.status == "success") {
-                            alert(
+                            Palert(
                                 "Vos réponses ont bien été renvoyées. Vous allez être redirigé vers la page d'accueil."
                             );
                             setTimeout(() => {
@@ -83,8 +115,9 @@ addEventListener("DOMContentLoaded", () => {
                             }, 5000);
                         }
                     })
-                    .catch((error) => alert("Erreur lors de l'envoi des données : " + error));
+                    .catch((error) => Palert("Erreur lors de l'envoi des données : " + error));
             }
+            */
         }
     });
 });

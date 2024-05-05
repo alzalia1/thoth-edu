@@ -1,4 +1,5 @@
 import { construct } from "./modules/dashConstruct.js";
+import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
 
 // System to check and refresh user's token !
 
@@ -31,7 +32,7 @@ async function user_check() {
         })
         .catch((error) => {
             window.stop();
-            alert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
+            Palert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
             console.log(error);
             window.location.href = `https://professeur.thoth-edu.fr/`;
         })
@@ -88,7 +89,7 @@ async function page() {
         .then((data) => {
             userI = data;
         })
-        .catch((error) => alert("Erreur lors de l'envoi des données :", error));
+        .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
 
     /*
         userI = {

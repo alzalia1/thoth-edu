@@ -1,3 +1,5 @@
+import { Pconfirm, Palert, Pinput } from "../../../shared/scripts/modules/utils.js";
+
 /**
  * ! WARNING : THIS CODE IS A DANGER TO YOUR SANITY. PROCEDE WITH CAUTION.
  */
@@ -9,6 +11,7 @@ export let questions = [];
 const statPoints = document.getElementById("nbPoints");
 const statQuestions = document.getElementById("nbQuestions");
 const questionsDiv = document.getElementById("questionsList");
+const evalName = document.getElementById("nom_eval");
 
 // == Main question adding logic ==
 
@@ -186,8 +189,11 @@ export function addQuestion(type, question = null) {
     divPreview();
 
     function divPopup() {
+        const bigDivPopup = document.createElement("div");
+        bigDivPopup.classList.add("popup");
         const divPopup = document.createElement("div");
-        divPopup.hidden = true;
+        divPopup.classList.add("interieur-popup");
+        bigDivPopup.style.display = "none";
 
         function point() {
             const pointLabel = document.createElement("label");
@@ -511,13 +517,15 @@ export function addQuestion(type, question = null) {
             determinant();
         }
 
-        questionElement.appendChild(divPopup);
-        question.elements.popup = divPopup;
+        bigDivPopup.appendChild(divPopup);
+        questionElement.appendChild(bigDivPopup);
+        question.elements.popup = bigDivPopup;
     }
     divPopup();
 
     questionsDiv.appendChild(questionElement);
     questions.push(question);
+    renameAllQuestions();
     statPointsLaunch();
     updateLocalStorage();
 }
@@ -529,7 +537,8 @@ export function loadFromID(questionList) {
 }
 
 export function loadFromPending(questionList) {
-    questionList.forEach((question) => {
+    evalName.value = questionList.name;
+    questionList.eval.forEach((question) => {
         addQuestion(question.eval.type, question);
     });
 }
@@ -564,7 +573,11 @@ function statPointsLaunch() {
  * Updates the local storage with the current questions list
  */
 function updateLocalStorage() {
-    localStorage.setItem("evalPending", JSON.stringify(questions));
+    let evalPending = {
+        name: evalName.value,
+        eval: questions,
+    };
+    localStorage.setItem("evalPending", JSON.stringify(evalPending));
 }
 
 // == Type specific adding logic ==
@@ -999,7 +1012,17 @@ function params(divA, questionElement, question) {
     const paramsButton = document.createElement("button");
     paramsButton.textContent = "⚙";
     paramsButton.addEventListener("click", () => {
-        question.elements.popup.hidden = !question.elements.popup.hidden;
+        if (question.elements.popup.style.display == "none") {
+            question.elements.popup.style.display = "block";
+        } else {
+            question.elements.popup.style.display = "none";
+        }
+    });
+
+    window.addEventListener("click", function (event) {
+        if (event.target == question.elements.popup) {
+            question.elements.popup.style.display = "none";
+        }
     });
 
     const deleteButton = document.createElement("button");

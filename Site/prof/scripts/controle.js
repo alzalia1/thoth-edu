@@ -1,4 +1,5 @@
 import { construct } from "./modules/dashConstruct.js";
+import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
 
 // System to check and refresh user's token !
 let userCheckInProgress = false;
@@ -29,7 +30,7 @@ async function user_check() {
         })
         .catch((error) => {
             window.stop();
-            alert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
+            Palert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
             console.log(error);
             window.location.href = `https://professeur.thoth-edu.fr/`;
         })
@@ -62,7 +63,7 @@ async function page() {
     })
         .then((response) => response.json())
         .then((data) => (evalI = data))
-        .catch((error) => alert("Erreur lors de l'envoi des données : " + error));
+        .catch((error) => Palert("Erreur lors de l'envoi des données : " + error));
 
     /*
     evalI = {
@@ -138,6 +139,7 @@ async function page() {
                 body: JSON.stringify({
                     name: name.value,
                     id_eval: evalParam,
+                    id_access: "none",
                     random: random.value,
                     time: {
                         start: Date.parse(start.value),
@@ -150,16 +152,51 @@ async function page() {
                     if (data.status == "success") {
                         window.location.reload();
                     } else {
-                        alert("Oh non ! Quelque chose a mal fonctionné : ", data.reason);
+                        Palert("Oh non ! Quelque chose a mal fonctionné : ", data.reason);
                     }
                 })
-                .catch((error) => alert("Erreur lors de l'envoi des données :", error));
+                .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
         }
     });
 
     // Deleting eval
     const deleteEval = document.getElementById("delete");
     deleteEval.addEventListener("click", () => {
+        Pconfirm(
+            "Vous allez supprimer l'évaluation. Cette action est IRRÉVERSIBLE, et il sera totalement impossible de récupérer les données, quelles qu'elles soient, de l'évaluation, des accès et des copies.",
+            () => {
+                Pinput(
+                    `Veuillez recopier l'id de cette évaluation pour confirmer : \n\n${evalParam}`,
+                    (inputDelete) => {
+                        if (inputDelete == evalParam) {
+                            fetch("https://api.thoth-edu.fr/dashboard/eval/delete", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
+                                },
+                                body: JSON.stringify({ id: evalParam }),
+                            })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                    if (data.status == "fail") {
+                                        Palert("Il y a eu un problème : ", data.reason);
+                                    } else {
+                                        window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+                                    }
+                                })
+                                .catch((error) =>
+                                    Palert("Erreur lors de l'envoi des données :", error)
+                                );
+                        } else {
+                            Palert("Vous avez mal recopié l'id. Veuillez recommencer");
+                        }
+                    }
+                );
+            }
+        );
+
+        /*
         const confirmed = window.confirm(
             "Vous allez supprimer l'évaluation. Cette action est IRRÉVERSIBLE, et il sera totalement impossible de récupérer les données, quelles qu'elles soient, de l'évaluation, des accès et des copies."
         );
@@ -179,16 +216,17 @@ async function page() {
                     .then((response) => response.json())
                     .then((data) => {
                         if (data.status == "fail") {
-                            alert("Il y a eu un problème : ", data.reason);
+                            Palert("Il y a eu un problème : ", data.reason);
                         } else {
                             window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
                         }
                     })
-                    .catch((error) => alert("Erreur lors de l'envoi des données :", error));
+                    .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
             } else {
-                alert("Vous avez mal recopié l'id. Veuillez recommencer");
+                Palert("Vous avez mal recopié l'id. Veuillez recommencer");
             }
         }
+        */
     });
 
     // Editing eval

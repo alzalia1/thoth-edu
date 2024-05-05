@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <link href="/shared/style/main.css" rel="stylesheet" />
         <link href="style/inscription.css" rel="stylesheet" />
-        <script src="scripts/inscription.js" async></script>
+        <script typ="module" src="scripts/inscription.js" async></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Inscription</title>
     </head>
@@ -17,9 +17,7 @@
         </header>
         <div>
             <p2>Déjà un compte ? </p2>
-            <button onclick="window.location.href='connexion';">
-                Connexion
-            </button>
+            <button onclick="window.location.href='connexion';">Connexion</button>
         </div>
 
         <div>
@@ -31,11 +29,7 @@
                 <br />
                 <p2>mot de passe :</p2>
                 <br />
-                <input
-                    type="password"
-                    placeholder="entrer un mot de passe"
-                    id="passwd"
-                />
+                <input type="password" placeholder="entrer un mot de passe" id="passwd" />
                 <br />
                 <button id="confirm">valider</button>
             </div>

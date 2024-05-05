@@ -1,4 +1,5 @@
 import { addQuestion, questions, loadFromID, loadFromPending } from "./modules/addQuestions.js";
+import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
 
 // System to check and refresh user's token !
 let userCheckInProgress = false;
@@ -29,7 +30,7 @@ async function user_check() {
         })
         .catch((error) => {
             window.stop();
-            alert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
+            Palert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
             console.log(error);
             window.location.href = `https://professeur.thoth-edu.fr/`;
         })
@@ -70,17 +71,25 @@ async function page() {
                 evalName.value = data.eval.name;
                 loadFromID(data.eval.questions);
             })
-            .catch((error) => alert("Erreur lors de l'envoi des données :" + error));
+            .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
     } else if (
         localStorage.getItem("evalPending") &&
         localStorage.getItem("evalPending") != "none"
     ) {
+        Pconfirm(
+            "Une ancienne évaluation mal enregistrée a été détectée. Voulez-vous la recharger ?",
+            () => {
+                loadFromPending(JSON.parse(localStorage.getItem("evalPending")));
+            }
+        );
+        /*
         const reload = window.confirm(
             "Une ancienne évaluation mal enregistrée a été détectée. Voulez-vous la recharger ?"
         );
         if (reload) {
             loadFromPending(JSON.parse(localStorage.getItem("evalPending")));
         }
+        */
     }
 
     // Something, I guess
@@ -109,13 +118,69 @@ async function page() {
     // Saving
     const saveButton = document.getElementById("save");
     saveButton.addEventListener("click", () => {
+        Pconfirm(
+            "Vous vous appretez à sauvegarder. Cela vous ramènera sur votre dashboard.",
+            () => {
+                // Making the correct data format
+                if (evalName == "") {
+                    Palert("Vous devez indiquer un nom pour l'évaluation");
+                } else {
+                    let evalData = {
+                        name: evalName.value,
+                        questions: [],
+                    };
+
+                    questions.forEach((question) => {
+                        evalData.questions.push(question.eval);
+                    });
+
+                    let formData = {
+                        eval: evalData,
+                        token: localStorage.getItem("jwt-token"),
+                    };
+
+                    if (evalParam) {
+                        formData.id = evalParam;
+                    } else {
+                        formData.id = "none";
+                    }
+
+                    // Sending data
+                    fetch("https://api.thoth-edu.fr/crea/save", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
+                        },
+                        body: JSON.stringify(formData),
+                    })
+                        .then((response) => response.json())
+                        .then((data) => {
+                            if (data.status == "success") {
+                                Palert("Évaluation sauvegardée avec succès");
+                                localStorage.setItem("evalPending", "none");
+                                if (evalParam) {
+                                    window.location.href = `https://professeur.thoth-edu.fr/dashboard/controle?e=${evalParam}`;
+                                } else {
+                                    window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+                                }
+                            } else {
+                                console.log("pas ok" + data.reason);
+                            }
+                        })
+                        .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
+                }
+            }
+        );
+
+        /*
         const confirm = window.confirm(
             "Vous vous appretez à sauvegarder. Cela vous ramènera sur votre dashboard."
         );
         if (confirm) {
             // Making the correct data format
             if (evalName == "") {
-                alert("Vous devez indiquer un nom pour l'évaluation");
+                Palert("Vous devez indiquer un nom pour l'évaluation");
             } else {
                 let evalData = {
                     name: evalName.value,
@@ -149,7 +214,7 @@ async function page() {
                     .then((response) => response.json())
                     .then((data) => {
                         if (data.status == "success") {
-                            alert("Évaluation sauvegardée avec succès");
+                            Palert("Évaluation sauvegardée avec succès");
                             localStorage.setItem("evalPending", "none");
                             if (evalParam) {
                                 window.location.href = `https://professeur.thoth-edu.fr/dashboard/controle?e=${evalParam}`;
@@ -160,9 +225,10 @@ async function page() {
                             console.log("pas ok" + data.reason);
                         }
                     })
-                    .catch((error) => alert("Erreur lors de l'envoi des données :" + error));
+                    .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
             }
         }
+        */
     });
 
     window.getQuestions = function () {
@@ -191,5 +257,17 @@ async function page() {
 
         console.log(evalData);
     };
+
+    // Also the logic for the "dashboard" button
+
+    const backToDashboard = document.getElementById("dashboard");
+    backToDashboard.addEventListener("click", () => {
+        Pconfirm(
+            "Attention ! Vous vous apprêtez à quitter sans sauvegarder ! Confirmez-vous ?",
+            () => {
+                window.location.href = "https://professeur.thoth-edu.fr/dashboard";
+            }
+        );
+    });
 }
 await page();

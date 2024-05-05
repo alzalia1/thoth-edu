@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <link href="/shared/style/main.css" rel="stylesheet" />
         <link href="style/connexion.css" rel="stylesheet" />
-        <script src="scripts/connexion.js" async></script>
+        <script type="module" src="scripts/connexion.js" async></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Connexion</title>
     </head>
@@ -17,9 +17,7 @@
         </header>
         <div>
             <p2>Pas encore inscrit ?</p2>
-            <button onclick="window.location.href='inscription';">
-                Inscription
-            </button>
+            <button onclick="window.location.href='inscription';">Inscription</button>
         </div>
         <div id="signup">
             <p>Connexion</p>
@@ -30,11 +28,7 @@
                 <br />
                 <p2>mot de passe :</p2>
                 <br />
-                <input
-                    placeholder="entrer votre mot de passe"
-                    type="password"
-                    id="passwd"
-                />
+                <input placeholder="entrer votre mot de passe" type="password" id="passwd" />
                 <br />
                 <button id="confirm">valider</button>
             </div>

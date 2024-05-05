@@ -1,3 +1,5 @@
+import { Pconfirm, Palert, Pinput } from "../../../shared/scripts/modules/utils.js";
+
 export let answers = [];
 
 export function construct(questionsDiv, questions) {

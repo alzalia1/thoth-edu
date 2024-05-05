@@ -1,3 +1,5 @@
+import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
+
 document.getElementById("confirm").addEventListener("click", function (event) {
     event.preventDefault();
 
@@ -25,8 +27,8 @@ function sendDataToBackend(formData) {
             if (data.status == "success") {
                 window.location.href = `https://professeur.thoth-edu.fr`;
             } else {
-                alert("Oh non ! Une erreur est survenue : " + data.reason);
+                Palert("Oh non ! Une erreur est survenue : " + data.reason);
             }
         })
-        .catch((error) => alert("Erreur lors de l'envoi des données :", error));
+        .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
 }
