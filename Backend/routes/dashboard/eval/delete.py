@@ -9,7 +9,7 @@ def delete(data):
 
     evalASuppr = Eval.query.filter_by(id=data["id"]).first()
 
-    db.delete(evalASuppr)
-    db.commit()
+    db.session.delete(evalASuppr)
+    db.session.commit()
 
     return jsonify({"status": "success"})
