@@ -52,6 +52,7 @@ class Acces(db.Model):
     nom = db.Column(db.String, nullable=False)
     dateDeb = db.Column(db.String, nullable=False)
     dateFin = db.Column(db.String, nullable=False)
+    random = db.Column(db.Boolean, nullable=False)
     modele = db.Column(db.String, db.ForeignKey("eval.id"), nullable=False)
 
 

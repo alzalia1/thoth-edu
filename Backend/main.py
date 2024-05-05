@@ -67,3 +67,9 @@ def getDashboard():
 def getEval():
     data = request.get_json()
     return r.crea.get(data)
+
+
+@app.route("/dashboard/eval/create_access", methods=["POST"])
+def createAccess():
+    data = request.get_json()
+    return r.dashboard.eval.createAccess(data)
