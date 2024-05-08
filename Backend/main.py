@@ -79,3 +79,15 @@ def createAccess():
 def deleteEval():
     data = request.get_json()
     return r.dashboard.eval.delete(data)
+
+
+@app.route("/eval/check_access", methods=["POST"])
+def checkAccess():
+    data = request.get_json()
+    return r.eval.checkAccess(data)
+
+
+@app.route("/eval/get_eval", methods=["POST"])
+def getEval():
+    data = request.get_json()
+    return r.eval.getEval(data)

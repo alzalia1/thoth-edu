@@ -5,7 +5,7 @@ from flask import jsonify
 from appInit import Acces
 
 
-def checkAcces(data):
+def checkAccess(data):
     eval = Acces.query.filter_by(id=data[id]).first()
     if eval == None:
         return jsonify({"exist": "no"})

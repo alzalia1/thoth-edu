@@ -86,7 +86,6 @@ def save(data):
                 "rep_Q" + str(i),
                 "note_Q" + str(i),
             ]
-        print(enteteInit)
         contenuMAJ = [None, None, None]
         for i, quest in enumerate(data["eval"]["questions"]):
             contenuMAJ = contenuMAJ + [i, quest, None, None]
@@ -145,7 +144,6 @@ def save(data):
                 "rep_Q" + str(i),
                 "note_Q" + str(i),
             ]
-        print(enteteInit)
         contenuInit = [None, None, None]
         for i, quest in enumerate(data["eval"]["questions"]):
             contenuInit = contenuInit + [i, quest, None, None]

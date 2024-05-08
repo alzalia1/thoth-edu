@@ -75,20 +75,6 @@ def createAccess(data):
         while ID in Acces.query.filter_by(id=ID):
             ID = creationID()
 
-    """
-    else:
-        ID = data["id_access"]
-
-    if data["random"] == "on":
-        randomBool = True
-    else:
-        randomBool = False
-
-    print(randomBool, data["random"])
-
-    randomBool = None
-    """
-
     nouvelAcces = Acces(
         id=ID,
         nom=data["name"],
