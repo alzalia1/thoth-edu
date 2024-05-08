@@ -64,7 +64,7 @@ def getDashboard():
 
 
 @app.route("/crea/get", methods=["POST"])
-def getEval():
+def creaGet():
     data = request.get_json()
     return r.crea.get(data)
 
@@ -88,6 +88,6 @@ def checkAccess():
 
 
 @app.route("/eval/get_eval", methods=["POST"])
-def getEval():
+def evalGetEval():
     data = request.get_json()
     return r.eval.getEval(data)
