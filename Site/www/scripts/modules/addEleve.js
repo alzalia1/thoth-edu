@@ -1,40 +1,61 @@
 import { Pconfirm, Palert, Pinput } from "../../../shared/scripts/modules/utils.js";
 
 export let answers = [];
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const evalParam = urlParams.get("e");
 
-export function construct(questionsDiv, questions) {
+export function construct(questionsDiv, questions, newContent = null) {
     const questionElement = document.createElement("div");
     questionElement.className = "question";
+    console.log(questions);
 
     questions.forEach((question) => {
         if (question.type == "traduction") {
-            let answer = {
-                id: question.id,
-                reponse: "",
-            };
+            let answer = {};
+            if (newContent != null) {
+                answer = newContent.eval.find((el) => el.id == question.id);
+            } else {
+                answer = {
+                    id: question.id,
+                    reponse: "",
+                };
+            }
+
             const divPreview = document.createElement("div");
 
             const titrePreview = document.createElement("h4");
             titrePreview.textContent = "Question n°" + (answers.length + 1).toString();
 
             const consigneLabel = document.createElement("label");
-            consigneLabel.textContent = question.eval.consigne;
+            consigneLabel.textContent = question.consigne;
 
             const reponseInput = document.createElement("input");
             reponseInput.type = "text";
             reponseInput.placeholder = "Écrivez votre réponse ici";
             reponseInput.addEventListener("input", () => {
                 answer.reponse = reponseInput.value;
+                updateLocalStorage();
             });
 
-            divPreview.append(titrePreview, consigneLabel, reponseInput);
+            divPreview.append(
+                titrePreview,
+                consigneLabel,
+                document.createElement("br"),
+                reponseInput
+            );
             questionElement.appendChild(divPreview);
-            answers.append(answer);
+            answers.push(answer);
         } else if (question.type == "conjugaison") {
-            let answer = {
-                id: question.id,
-                reponse: [[]],
-            };
+            let answer = {};
+            if (newContent != null) {
+                answer = newContent.eval.find((el) => el.id == question.id);
+            } else {
+                answer = {
+                    id: question.id,
+                    reponse: [[]],
+                };
+            }
 
             const divPreview = document.createElement("div");
             divPreview.innerHTML = "";
@@ -93,6 +114,7 @@ export function construct(questionsDiv, questions) {
                         input.placeholder = "Verbe conjugué";
                         input.addEventListener("input", () => {
                             answer.reponse[i][j] = input.value;
+                            updateLocalStorage();
                         });
                         td.appendChild(input);
                         tr.appendChild(td);
@@ -105,9 +127,20 @@ export function construct(questionsDiv, questions) {
             }
             body();
 
+            answers.push(answer);
             divPreview.appendChild(table);
+            questionElement.appendChild(divPreview);
         }
     });
 
     questionsDiv.append(questionElement);
+    updateLocalStorage();
+}
+
+function updateLocalStorage() {
+    let evalPending = {
+        id: evalParam,
+        eval: answers,
+    };
+    localStorage.setItem("evalPending", JSON.stringify(evalPending));
 }

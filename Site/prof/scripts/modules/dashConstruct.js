@@ -33,11 +33,11 @@ export function construct(pDiv, list, pageTo) {
 
     // Check the presence of notes/status
     list.forEach((el) => {
-        if (el.status) {
+        if ("status" in el) {
             ref.status = true;
         }
 
-        if (el.note) {
+        if ("note" in el) {
             ref.note = true;
         }
 
@@ -110,7 +110,7 @@ export function construct(pDiv, list, pageTo) {
         // Note if one :
         if (ref.note) {
             const note = document.createElement("td");
-            if (el.note) {
+            if ("note" in el) {
                 note.textContent = el.note.toString();
             }
             div.append(note);

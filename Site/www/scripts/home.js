@@ -17,7 +17,7 @@ const idInputField = document.getElementById("idInputField");
 const errorConnecting = document.getElementById("errorConnecting");
 
 validateButton.addEventListener("click", () => {
-    id = idInputField.value;
+    let id = idInputField.value;
     if (!id) {
         errorConnecting.textContent = "Veuillez entrer un id";
     }
