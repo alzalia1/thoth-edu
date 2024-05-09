@@ -2,8 +2,8 @@ import time
 
 
 def etatAcces(acces):
-    if time.time() < int(acces.dateDeb):
+    if time.time() < float(acces.dateDeb):
         return 0
-    elif time.time() > int(acces.dateFin):
+    elif time.time() > float(acces.dateFin):
         return 2
     return 1
