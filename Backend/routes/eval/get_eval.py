@@ -5,13 +5,7 @@ import csv
 
 # Import app
 from appInit import Acces, Eval
-
-
-def trouverID(question, listeQ):
-    """Forme globale de la listeQ : [id1, question1, inutile1, inutile1, id2, question2, etc]"""
-    for indice in range(len(listeQ) // 4):
-        if listeQ[indice + 1] == question:
-            return listeQ[indice]
+from fonctions.trouverID import trouverID
 
 
 def getEval(data):
@@ -24,8 +18,8 @@ def getEval(data):
         dataAReturn = json.loads(contenu)
 
     # Ouverture du fichier CSV en mode lecture pour trouver les id des questions
-    with open("nom_du_fichier.csv", "r", encoding="utf-8") as fichier_csv:
-        lecteur_csv = csv.reader(fichier_csv, delimiter=",")
+    with open(acces.cheminCSV, "r", encoding="utf-8") as fichierEval:
+        lecteur_csv = csv.reader(fichierEval, delimiter=",")
         next(lecteur_csv)
         ligneQuestions = next(lecteur_csv)
 

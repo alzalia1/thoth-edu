@@ -4,19 +4,7 @@ import csv
 import time
 
 # Import app
-from appInit import Acces, Eval
-
-# return jsonify({ "status" : "success" })
-# return jsonify({ "status" : "fail", "reason" : "" })
-
-# * {
-# *  "id_el" : "ID de l'accès actuel de l'élève",
-# *  "id_access" : "ID de l'accès auquel l'élève répond",
-# *  "reponses" : [
-# *   { "struct. gen. rep. el." },
-# *   { "struct. gen. rep. el." }
-# *  ]
-# * }
+from appInit import Acces
 
 
 def rep_eleves(data):
@@ -26,7 +14,16 @@ def rep_eleves(data):
     # Création de la ligne à ajouter en CSV
     ligneEleve = [data["id_el"], data["id_acces"], time.time()]
 
-    for i in range(len(data["reponses"])):
-        acces = None
+    for i, quest in enumerate(data["reponses"]):
+        for questions in data["questions"]:
+            if questions["id"] == i:
+                repOrdre = questions
+                del questions
+                break
+        ligneEleve = ligneEleve + [i, None, repOrdre["questions"], None]
 
-    return jsonify({"": ""})
+    with open(acces.cheminCSV, "a", newline="", encoding=("utf-8")) as fichierEval:
+        ecrivain_csv = csv.writer(fichierEval)
+        ecrivain_csv.writerow(ligneEleve)
+
+    return jsonify({"status": "success"})
