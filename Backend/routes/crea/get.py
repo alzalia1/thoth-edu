@@ -11,7 +11,7 @@ def get(data):
 
     eval = Eval.query.filter_by(id=data["id"]).first()
 
-    with open(eval.cheminJSON, "r") as fichierEval:
+    with open(eval.cheminJSON, "r", encoding="utf-8") as fichierEval:
         contenu = fichierEval.read()
         dataAReturn = json.loads(contenu)
 

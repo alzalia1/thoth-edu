@@ -19,14 +19,12 @@ def getEval(data):
     acces = Acces.query.filter_by(id=data["id"]).first()
     evalAssociee = Eval.query.filter_by(id=acces.modele).first()
 
-    with open(evalAssociee.cheminJSON, "r") as fichierEval:
+    with open(evalAssociee.cheminJSON, "r", encoding="utf-8") as fichierEval:
         contenu = fichierEval.read()
         dataAReturn = json.loads(contenu)
 
     # Ouverture du fichier CSV en mode lecture pour trouver les id des questions
-    with open("nom_du_fichier.csv", "r") as fichier_csv:
-
-        # Création d'un objet lecteur CSV
+    with open("nom_du_fichier.csv", "r", encoding="utf-8") as fichier_csv:
         lecteur_csv = csv.reader(fichier_csv, delimiter=",")
         next(lecteur_csv)
         ligneQuestions = next(lecteur_csv)

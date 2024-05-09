@@ -46,7 +46,7 @@ def save(data):
         for i, quest in enumerate(data["eval"]["questions"]):
             contenuMAJ = contenuMAJ + [i, quest, None, None]
 
-        with open(lienCSV, "w") as fichierEval:
+        with open(lienCSV, "w", encoding="utf-8") as fichierEval:
             writer = csv.writer(fichierEval)
             writer.writerow(enteteMAJ)
             writer.writerow(contenuMAJ)
@@ -78,17 +78,6 @@ def save(data):
             )
             os.makedirs(nouveauCheminCSVINIT, exist_ok=True)
 
-        evalInit = Eval(
-            id=nouvelID,
-            nom=data["eval"]["name"],
-            cheminJSON=nouveauCheminJSON,
-            cheminCSV=nouveauCheminCSV,
-            idProf=idProf,
-        )
-
-        db.session.add(evalInit)
-        db.session.commit()
-
         listeQuestionsInit = [
             data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
         ]
@@ -104,12 +93,23 @@ def save(data):
         for i, quest in enumerate(data["eval"]["questions"]):
             contenuInit = contenuInit + [i, quest, None, None]
 
-        with open(nouveauCheminCSV, "w") as fichierEval:
+        with open(nouveauCheminCSV, "w", encoding="utf-8") as fichierEval:
             writer = csv.writer(fichierEval)
             writer.writerow(enteteInit)
             writer.writerow(contenuInit)
 
         with open(nouveauCheminJSON, "w") as fichierEval:
             json.dump(data["eval"], fichierEval)
+
+        evalInit = Eval(
+            id=nouvelID,
+            nom=data["eval"]["name"],
+            cheminJSON=nouveauCheminJSON,
+            cheminCSV=nouveauCheminCSV,
+            idProf=idProf,
+        )
+
+        db.session.add(evalInit)
+        db.session.commit()
 
     return jsonify({"status": "success"})
