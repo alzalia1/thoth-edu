@@ -91,3 +91,9 @@ def checkAccess():
 def evalGetEval():
     data = request.get_json()
     return r.eval.getEval(data)
+
+
+@app.route("/eval/rep_eleves", methods=["POST"])
+def repEleves():
+    data = request.get_json()
+    return r.eval.rep_eleves(data)
