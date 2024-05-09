@@ -1,23 +1,17 @@
 # Import libraries
 from flask import jsonify
 import json
+import csv
 
 # Import app
 from appInit import Acces, Eval
 
-# return jsonify({ "status" : "success" })
-# return jsonify({ "status" : "fail", "reason" : "" })
 
-# {
-#  "name" : "nom de l'évaluation",
-#  "questions" : [ {
-#   "id" : "id de la question",
-#   "type" : "type de question",
-#   "consigne" : "consigne"
-#   "points" : "points de la question"
-#   "reponse" : { } // Ce champ est spécifique aux questions conjugaison. Il doit contenir les champs "pronoms" et "temps" tels qu'ils sont enregistrés normalement"
-# } ]
-# }
+def trouverID(question, listeQ):
+    """Forme globale de la listeQ : [id1, question1, inutile1, inutile1, id2, question2, etc]"""
+    for indice in range(len(listeQ) // 4):
+        if listeQ[indice + 1] == question:
+            return listeQ[indice]
 
 
 def getEval(data):
@@ -29,8 +23,21 @@ def getEval(data):
         contenu = fichierEval.read()
         dataAReturn = json.loads(contenu)
 
+    # Ouverture du fichier CSV en mode lecture pour trouver les id des questions
+    with open("nom_du_fichier.csv", "r") as fichier_csv:
+
+        # Création d'un objet lecteur CSV
+        lecteur_csv = csv.reader(fichier_csv, delimiter=",")
+        next(lecteur_csv)
+        ligneQuestions = next(lecteur_csv)
+
+    # Utilisation de la ligne sortie du csv
+    listeQuestions = ligneQuestions.split(",")
+    listeQuestions = listeQuestions[3:]
+
     # Conversion éval prof en eval élève
-    for quest in dataAReturn["questions"]:
+    for i, quest in enumerate(dataAReturn["questions"]):
+        quest["id"] = trouverID(quest, listeQuestions)
         if quest["type"] == "traduction":
             quest["reponse"] = {}
         else:
