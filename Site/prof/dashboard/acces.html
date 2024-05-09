@@ -4,7 +4,8 @@
         <meta charset="UTF-8" />
         <link href="/shared/style/main.css" rel="stylesheet" />
         <link href="../style/acces.css" rel="stylesheet" />
-        <script type="module" src="../scripts/acces.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+        <script type="module" src="../scripts/acces.js" async></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Accès</title>
     </head>
@@ -38,6 +39,54 @@
                 </a>
             </div>
         </header>
+
+        <div id="infos">
+            <h1 id="ACname"></h1>
+            <p id="ACreps"></p>
+            <p id="ACmoy"></p>
+
+            <p id="ACtime">Début : - Fin :</p>
+            <p id="ACrand">Questions aléatoires : Oui</p>
+        </div>
+
+        <div id="options">
+            <button id="editAccess">Modifier l'accès</button>
+            <div id="editAccessBig" class="popup">
+                <div id="editAccessSmall" class="interieur-popup">
+                    <label>Nom de l'accès</label>
+                    <br />
+                    <input type="text" id="NAname" placeholder="Entrez un nom" />
+
+                    <br />
+
+                    <label>Questions rangées aléatoirement</label>
+                    <input type="checkbox" id="NArandom" />
+
+                    <br />
+
+                    <label>Date de début</label> <br />
+                    <input type="datetime-local" id="NAstart" />
+
+                    <br />
+
+                    <label>Date de fin</label> <br />
+                    <input type="datetime-local" id="NAend" />
+
+                    <br />
+
+                    <label id="NAerror"></label> <br />
+                    <button id="saveNewAccess">Sauvegarder</button>
+                </div>
+            </div>
+            <button id="qr-code">Afficher un QR Code</button>
+            <div id="QRBig" class="popup">
+                <div id="QRSmall" class="interieur-popup">
+                    <h1>Scannez-moi !</h1>
+                </div>
+            </div>
+            <button id="delete">Supprimer l'accès</button>
+        </div>
+
         <div id="repList"></div>
     </body>
 </html>

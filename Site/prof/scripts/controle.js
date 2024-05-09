@@ -206,38 +206,6 @@ async function page() {
                 );
             }
         );
-
-        /*
-        const confirmed = window.confirm(
-            "Vous allez supprimer l'évaluation. Cette action est IRRÉVERSIBLE, et il sera totalement impossible de récupérer les données, quelles qu'elles soient, de l'évaluation, des accès et des copies."
-        );
-        if (confirmed) {
-            const inputDelete = prompt(
-                `Veuillez recopier l'id de cette évaluation pour confirmer : \n\n${evalParam}`
-            );
-            if (inputDelete == evalParam) {
-                fetch("https://api.thoth-edu.fr/dashboard/eval/delete", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
-                    },
-                    body: JSON.stringify({ id: evalParam }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.status == "fail") {
-                            Palert("Il y a eu un problème : ", data.reason);
-                        } else {
-                            window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
-                        }
-                    })
-                    .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
-            } else {
-                Palert("Vous avez mal recopié l'id. Veuillez recommencer");
-            }
-        }
-        */
     });
 
     // Editing eval
