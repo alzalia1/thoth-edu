@@ -1,17 +1,10 @@
 # Import libraries
 from flask import jsonify
 import time
+from fonctions.etatAcces import etatAcces
 
 # Import app
 from appInit import app, db, Acces, Eval
-
-
-def etatAcces(acces):
-    if time.time() < int(acces.dateDeb):
-        return 0
-    elif time.time() > int(acces.dateFin):
-        return 2
-    return 1
 
 
 def get(data):

@@ -8,6 +8,17 @@ from appInit import Acces, Eval
 # return jsonify({ "status" : "success" })
 # return jsonify({ "status" : "fail", "reason" : "" })
 
+# {
+#  "name" : "nom de l'évaluation",
+#  "questions" : [ {
+#   "id" : "id de la question",
+#   "type" : "type de question",
+#   "consigne" : "consigne"
+#   "points" : "points de la question"
+#   "reponse" : { } // Ce champ est spécifique aux questions conjugaison. Il doit contenir les champs "pronoms" et "temps" tels qu'ils sont enregistrés normalement"
+# } ]
+# }
+
 
 def getEval(data):
 
@@ -17,6 +28,15 @@ def getEval(data):
     with open(evalAssociee.cheminJSON, "r") as fichierEval:
         contenu = fichierEval.read()
         dataAReturn = json.loads(contenu)
+
+    # Conversion éval prof en eval élève
+    for quest in dataAReturn["questions"]:
+        if quest["type"] == "traduction":
+            quest["reponse"] = {}
+        else:
+            del quest["reponse"]["verbes"]
+        quest["points"] = quest["params"]["points"]
+        del quest["params"]
 
     aReturn = {
         "name": acces.nom,
