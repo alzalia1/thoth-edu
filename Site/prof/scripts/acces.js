@@ -53,7 +53,7 @@ async function page() {
     const urlParams = new URLSearchParams(queryString);
     const accesParam = urlParams.get("a");
 
-    await fetch("https://api.thoth-edu.fr/dashboard/acces/list_reps", {
+    await fetch("https://api.thoth-edu.fr/dashboard/acces/get", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
