@@ -18,7 +18,7 @@ def getEval(data):
         dataAReturn = json.loads(contenu)
 
     # Ouverture du fichier CSV en mode lecture pour trouver les id des questions
-    with open(acces.cheminCSV, "r", encoding="utf-8") as fichierEval:
+    with open(evalAssociee.cheminCSV, "r", encoding="utf-8") as fichierEval:
         lecteur_csv = csv.reader(fichierEval, delimiter=",")
         next(lecteur_csv)
         ligneQuestions = next(lecteur_csv)
