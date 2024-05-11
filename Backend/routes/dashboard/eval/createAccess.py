@@ -23,10 +23,10 @@ Structure générale d'un accès = contenu de data
 def createAccess(data):
 
     if data["id_access"] == "none":
-        ID = creationID()
+        ID = creationID(8)
 
         while ID in Acces.query.filter_by(id=ID):
-            ID = creationID()
+            ID = creationID(8)
 
     nouvelAcces = Acces(
         id=ID,

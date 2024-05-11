@@ -41,8 +41,8 @@ listeID = [
 ]
 
 
-def creationID():
+def creationID(n):
     id = ""
-    while len(id) < 6:
+    while len(id) < n:
         id = id + listeID[randint(0, len(listeID) - 1)]
     return id

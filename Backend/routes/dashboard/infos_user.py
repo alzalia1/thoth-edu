@@ -14,7 +14,7 @@ def infos_user(data):
     evals = Eval.query.filter_by(idProf=user.id).all()
 
     aReturn = {
-        "username": user.id,
+        "username": user.nom,
         "evals": [{"name": evals[i].nom, "id": evals[i].id} for i in range(len(evals))],
     }
     return jsonify(aReturn)

@@ -32,7 +32,8 @@ bcrypt = Bcrypt(app)
 
 # Création de la classe utilisateur
 class User(db.Model):
-    id = db.Column(db.String, unique=True, nullable=False, primary_key=True)
+    id = db.Column(db.String, primary_key=True)
+    nom = db.Column(db.String, unique=True, nullable=False)
     mdp = db.Column(db.String, nullable=False)
     accents = db.Column(db.String)
 

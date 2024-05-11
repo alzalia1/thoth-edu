@@ -57,10 +57,10 @@ def save(data):
     else:
         # Pour une nouvelle évaluation, nous avons besoin d'initialiser tous les attributs
         # id ; nom ; cheminJSON ; cheminCSV ; idProf
-        nouvelID = creationID()
+        nouvelID = creationID(6)
 
         while nouvelID in Eval.query.filter_by(id=nouvelID):
-            nouvelID = creationID()
+            nouvelID = creationID(6)
 
         decoded_jwt = jwt.decode(data["token"], secret, algorithms=["HS256"])
         idProf = decoded_jwt["sub"]

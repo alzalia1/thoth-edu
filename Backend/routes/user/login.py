@@ -9,7 +9,7 @@ from appInit import User, bcrypt, secret
 
 def login(data):
     """test"""
-    user = User.query.filter_by(id=data["id"]).first()
+    user = User.query.filter_by(nom=data["id"]).first()
 
     hashedPassword = bcrypt.generate_password_hash(data["mdp"]).decode("utf-8")
 

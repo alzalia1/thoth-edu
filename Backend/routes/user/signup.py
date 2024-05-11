@@ -1,5 +1,6 @@
 # Import libraries
 from flask import jsonify
+from fonctions.creationID import creationID
 
 # Import app
 from appInit import db, User, bcrypt
@@ -7,8 +8,14 @@ from appInit import db, User, bcrypt
 
 def signup(data):
     # { "id" : "Bob" ; "mdp" : "mdp" ; "accents" : "é" }
+    idUser = creationID(6)
+
+    while idUser in User.query.filter_by(id=idUser):
+        idUser = creationID(6)
+
     newUser = User(
-        id=data["id"],
+        id=idUser,
+        nom=data["id"],
         mdp=bcrypt.generate_password_hash(data["mdp"]).decode("utf-8"),
         accents=str(data["accents"]),
     )
@@ -20,7 +27,7 @@ def signup(data):
         db.session.commit()
         return jsonify({"status": "success"})  # Utilisateur créé
 
-    if user.id == data["id"]:
+    if user.nom == data["id"]:
         return jsonify(
             {"status": "fail", "reason": "utilisateur déjà existant"}
         )  # Identifiant déjà existant
