@@ -21,14 +21,14 @@ def getEval(data):
     with open(evalAssociee.cheminCSV, "r", encoding="utf-8") as fichierEval:
         lecteur_csv = csv.reader(fichierEval, delimiter=",")
         next(lecteur_csv)
-        ligneQuestions = next(lecteur_csv)
+        listeQuestions = next(lecteur_csv)
 
-    # Utilisation de la ligne sortie du csv
-    listeQuestions = ligneQuestions.split(",")
+    # On enlève les 3 premières colonnes qui sont inutiles
     listeQuestions = listeQuestions[3:]
 
     # Conversion éval prof en eval élève
     for i, quest in enumerate(dataAReturn["questions"]):
+        print(trouverID(quest, listeQuestions))
         quest["id"] = trouverID(quest, listeQuestions)
         if quest["type"] == "traduction":
             quest["reponse"] = {}

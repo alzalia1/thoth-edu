@@ -4,25 +4,24 @@ import csv
 import time
 
 # Import app
-from appInit import Acces
+from appInit import Acces, Eval
 
 
 def rep_eleves(data):
 
-    acces = Acces.query.filter_by(id=data["id_acces"])
+    acces = Acces.query.filter_by(id=data["id_access"]).first()
+    print(acces)
+    eval = Eval.query.filter_by(id=acces.modele).first()
 
     # Création de la ligne à ajouter en CSV
-    ligneEleve = [data["id_el"], data["id_acces"], time.time()]
+    ligneEleve = [data["id_el"], data["id_access"], time.time()]
 
-    for i, quest in enumerate(data["reponses"]):
-        for questions in data["questions"]:
-            if questions["id"] == i:
-                repOrdre = questions
-                del questions
-                break
-        ligneEleve = ligneEleve + [i, None, repOrdre["questions"], None]
+    listeOrdre = sorted(data["responses"], key=lambda x: x["id"])
 
-    with open(acces.cheminCSV, "a", newline="", encoding=("utf-8")) as fichierEval:
+    for i, quest in enumerate(listeOrdre):
+        ligneEleve = ligneEleve + [i, None, quest["reponse"], None]
+
+    with open(eval.cheminCSV, "a", newline="", encoding=("utf-8")) as fichierEval:
         ecrivain_csv = csv.writer(fichierEval)
         ecrivain_csv.writerow(ligneEleve)
 
