@@ -103,3 +103,8 @@ def repEleves():
 def getAcces():
     data = request.get_json()
     return r.dashboard.acces.get(data)
+
+@app.route("/dashboard/acces/delete", methods=["POST"])
+def deleteAcces():
+    data = request.get_json()
+    return r.dashboard.acces.delete(data)
