@@ -5,7 +5,7 @@ Fichier de définition de l'app, de la db et d'autres classes utiles.
 # Import libraries
 from flask import Flask
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy  # Pour faire les base de données
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
 import os

@@ -2,6 +2,7 @@
 from flask import jsonify
 import json
 import csv
+import random
 
 # Import app
 from appInit import Acces, Eval
@@ -28,7 +29,6 @@ def getEval(data):
 
     # Conversion éval prof en eval élève
     for i, quest in enumerate(dataAReturn["questions"]):
-        print(trouverID(quest, listeQuestions))
         quest["id"] = trouverID(quest, listeQuestions)
         if quest["type"] == "traduction":
             quest["reponse"] = {}
@@ -36,6 +36,11 @@ def getEval(data):
             del quest["reponse"]["verbes"]
         quest["points"] = quest["params"]["points"]
         del quest["params"]
+
+    if acces.random == 1:
+        listeData = list(dataAReturn.items())
+        random.shuffle(listeData)
+        dataAReturn = dict(listeData)
 
     aReturn = {
         "name": acces.nom,

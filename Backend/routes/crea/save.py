@@ -34,7 +34,7 @@ def save(data):
         listeQuestionsMAJ = [
             data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
         ]
-        enteteMAJ = ["idEleve", "idAcces", "dateRep"]
+        enteteMAJ = ["idEleve", "idAcces", "dateRep", "noteTot", "totPoints"]
         for i, quest in enumerate(listeQuestionsMAJ):
             enteteMAJ = enteteMAJ + [
                 "id_Q" + str(i),

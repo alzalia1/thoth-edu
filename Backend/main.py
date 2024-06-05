@@ -97,3 +97,9 @@ def evalGetEval():
 def repEleves():
     data = request.get_json()
     return r.eval.rep_eleves(data)
+
+
+@app.route("/dashboard/acces/get", methods=["POST"])
+def getAcces():
+    data = request.get_json()
+    return r.dashboard.acces.get(data)
