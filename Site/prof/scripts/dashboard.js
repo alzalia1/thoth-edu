@@ -1,12 +1,9 @@
 import { construct } from "./modules/dashConstruct.js";
-import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
+import { Palert, Plogout } from "../../shared/scripts/modules/utils.js";
 
-// System to check and refresh user's token !
-
+// ANCHOR - System to check and refresh user's token !
 let userCheckInProgress = false;
 let userCheckTimeoutId = null;
-// let isWindowFocused = true;
-
 async function user_check() {
     if (userCheckInProgress) {
         return;
@@ -46,37 +43,18 @@ async function user_check() {
             }, 1800000);
         });
 }
-
-/* Si la sortie de l'onglet soit désactiver le rafraichissement
-document.addEventListener("visibilitychange", async () => {
-    if (document.visibilityState === "visible") {
-        await user_check();
-    }
-});
-
-window.addEventListener("focus", async () => {
-    isWindowFocused = true;
-    await user_check();
-});
-
-window.addEventListener("blur", async () => {
-    isWindowFocused = false;
-    clearTimeout(userCheckTimeoutId);
-});
-*/
-
 await user_check();
 
+// SECTION - Page content
 async function page() {
-    // Vers crea_eval
+    // ANCHOR - Vers crea_eval
     const newEval = document.getElementById("newEval");
     newEval.addEventListener("click", () => {
         window.location.href = `https://professeur.thoth-edu.fr/crea_eval`;
     });
 
-    // Getting user infos
+    // ANCHOR - Getting user infos
     let userI = {};
-
     await fetch("https://api.thoth-edu.fr/dashboard/infos_user", {
         method: "POST",
         headers: {
@@ -102,12 +80,19 @@ async function page() {
         };
     */
     console.log(userI);
-    // Setting the page
+
+    // ANCHOR - Setting the page
     localStorage.setItem("username", userI.username);
     const username = document.getElementById("username");
     username.textContent = localStorage.getItem("username");
 
     const evalsDiv = document.getElementById("evals");
     construct(evalsDiv, userI.evals, { url: "controle", param: "e" });
+
+    const deconnect = document.getElementById("logout");
+    deconnect.addEventListener("click", () => {
+        Plogout();
+    });
 }
 await page();
+// ùSECTION

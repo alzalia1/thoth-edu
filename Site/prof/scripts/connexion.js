@@ -1,6 +1,7 @@
-import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
+import { Palert } from "../../shared/scripts/modules/utils.js";
 
-document.getElementById("confirm").addEventListener("click", function (event) {
+const confirmButton = document.getElementById("confirm");
+confirmButton.addEventListener("click", function (event) {
     event.preventDefault();
 
     const formData = {
@@ -10,6 +11,12 @@ document.getElementById("confirm").addEventListener("click", function (event) {
 
     // Envoi des données au backend
     sendDataToBackend(formData);
+});
+
+window.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        confirmButton.click();
+    }
 });
 
 function sendDataToBackend(formData) {
@@ -35,5 +42,5 @@ function sendDataToBackend(formData) {
                 window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
             }
         })
-        .catch((error) => console.error("Erreur lors de l'envoi des données :", error));
+        .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
 }

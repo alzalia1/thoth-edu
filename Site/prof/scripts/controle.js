@@ -1,5 +1,5 @@
 import { construct } from "./modules/dashConstruct.js";
-import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
+import { Pconfirm, Palert, Pinput, Plogout } from "../../shared/scripts/modules/utils.js";
 
 // System to check and refresh user's token !
 let userCheckInProgress = false;
@@ -213,6 +213,11 @@ async function page() {
     editEval.addEventListener("click", () => {
         window.location.href = `https://professeur.thoth-edu.fr/crea_eval?eval=${evalParam}`;
     });
-}
 
+    // Load page content
+    const deconnect = document.getElementById("logout");
+    deconnect.addEventListener("click", () => {
+        Plogout();
+    });
+}
 page();

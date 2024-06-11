@@ -1,8 +1,8 @@
-/**
- * To alert the user about smth
+/** ANCHOR - To alert the user about smth
  * @param {string} text - Text to display
+ * @param {Function} okHandler - Function to handle the ok button (nothing by default)
  */
-export function Palert(text) {
+export function Palert(text, okHandler = () => {}) {
     const body = document.body;
 
     const Gdiv = document.createElement("div");
@@ -21,6 +21,7 @@ export function Palert(text) {
     ok.classList.add("ok-button");
     ok.addEventListener("click", () => {
         body.removeChild(Gdiv);
+        okHandler();
     });
 
     Sdiv.append(p, ok);
@@ -28,8 +29,7 @@ export function Palert(text) {
     body.append(Gdiv);
 }
 
-/**
- * To confirm smth with the user
+/** ANCHOR - To confirm smth with the user
  * @param {string} text - Text to display
  * @param {Function} okHandler - Function to handle the ok reaction
  * @param {Function} noHandler - function to handle the no reaction (nothing by default)
@@ -75,8 +75,7 @@ export function Pconfirm(text, okHandler, noHandler = () => {}) {
     body.append(Gdiv);
 }
 
-/**
- * To ask something to the user
+/** ANCHOR - To ask something to the user
  * @param {string} text - The text to dispay
  * @param {Function} okHandler - To handle the final result (input.value as parameter)
  * @param {string} type - Type of input (default to text)
@@ -110,4 +109,34 @@ export function Pinput(text, okHandler, type = "text") {
     Sdiv.append(p, input, ok);
     Gdiv.append(Sdiv);
     body.append(Gdiv);
+}
+
+/**ANCHOR - To logout the user
+ *
+ */
+export function Plogout() {
+    Pconfirm("Vous allez vous déconnecter. Confirmez-vous ?", () => {
+        fetch("https://api.thoth-edu.fr/user/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: localStorage.getItem("jwt-token") }),
+        })
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                if (data.status) {
+                    setTimeout((window.location = `https://professeur.thoth-edu.fr/`), 5000);
+                    Palert(
+                        "Vous avez bien été déconnecté ! Vous allez maintenant être redirigé vers la page de connexion.",
+                        () => {
+                            window.location = `https://professeur.thoth-edu.fr/`;
+                        }
+                    );
+                }
+            })
+            .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
+    });
 }

@@ -1,10 +1,9 @@
 import { construct } from "./modules/dashConstruct.js";
 import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
 
-// System to check and refresh user's token !
+// ANCHOR - System to check and refresh user's token !
 let userCheckInProgress = false;
 let userCheckTimeoutId = null;
-
 async function user_check() {
     if (userCheckInProgress) {
         return;
@@ -46,8 +45,9 @@ async function user_check() {
 }
 await user_check();
 
+// SECTION - Load page content
 async function page() {
-    // Getting eval infos
+    // ANCHOR - Getting eval infos
     let accesI = {};
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -86,9 +86,16 @@ async function page() {
     };
     */
 
-    // Setting the page
+    // ANCHOR - Setting the page
     const username = document.getElementById("username");
     username.textContent = localStorage.getItem("username");
+
+    const randomAC = document.getElementById("ACrand");
+    if (accesI.access.random) {
+        randomAC.textContent = "Questions aléatoires : Oui";
+    } else {
+        randomAC.textContent = "Questions aléatoires : Non";
+    }
 
     const ACname = document.getElementById("ACname");
     ACname.textContent = accesI.access.name;
@@ -100,8 +107,8 @@ async function page() {
     moyenne.textContent = "Moyenne : " + accesI.note.toString();
 
     const time = document.getElementById("ACtime");
-    let startTime = new Date(accesI.access.time.start);
-    let endTime = new Date(accesI.access.time.end);
+    let startTime = new Date(parseInt(accesI.access.time.start));
+    let endTime = new Date(parseInt(accesI.access.time.end));
     let durationMs = endTime - startTime;
     console.log(startTime, endTime);
 
@@ -131,7 +138,7 @@ async function page() {
     const repDiv = document.getElementById("repList");
     construct(repDiv, accesI.reps, { url: "copie", param: "c" });
 
-    // Deleting eval
+    // ANCHOR - Deleting eval
     const deleteAcces = document.getElementById("delete");
     deleteAcces.addEventListener("click", () => {
         Pconfirm(
@@ -168,7 +175,7 @@ async function page() {
         );
     });
 
-    // Editing an access
+    // ANCHOR - Editing an access
 
     const name = document.getElementById("NAname");
     name.value = accesI.access.name;
@@ -263,7 +270,13 @@ async function page() {
         }
     });
 
-    // Generating a QR-Code
+    // ANCHOR - Generating a QR-Code + Displaying ID
+    const access_id_h = document.getElementById("access-id");
+    access_id_h.textContent = "ID de cet accès : " + accesParam;
+    access_id_h.addEventListener("click", () => {
+        navigator.clipboard.writeText(accesParam);
+    });
+
     let isGenerated = false;
     function generateQRCode(url) {
         const qrcode = new QRCode("QRSmall", {
@@ -300,3 +313,4 @@ async function page() {
     });
 }
 await page();
+// ùSECTION
