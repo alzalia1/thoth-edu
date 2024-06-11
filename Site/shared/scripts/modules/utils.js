@@ -29,6 +29,37 @@ export function Palert(text, okHandler = () => {}) {
     body.append(Gdiv);
 }
 
+// TODO : Make this send an email to error@thoth-edu.fr
+/** ANCHOR - To show a bad error !
+ * @param {string} text - Text to display
+ * @param {Function} okHandler - Function to handle the ok button (nothing by default)
+ */
+export function Perror(text) {
+    const body = document.body;
+
+    const Gdiv = document.createElement("div");
+    Gdiv.classList.add("popup");
+    Gdiv.style.display = "block";
+    const Sdiv = document.createElement("div");
+    Sdiv.classList.add("interieur-popup");
+
+    // Text
+    const p = document.createElement("p");
+    p.textContent = text;
+
+    // Ok button
+    const ok = document.createElement("button");
+    ok.textContent = "Ok";
+    ok.classList.add("ok-button");
+    ok.addEventListener("click", () => {
+        body.removeChild(Gdiv);
+    });
+
+    Sdiv.append(p, ok);
+    Gdiv.append(Sdiv);
+    body.append(Gdiv);
+}
+
 /** ANCHOR - To confirm smth with the user
  * @param {string} text - Text to display
  * @param {Function} okHandler - Function to handle the ok reaction
@@ -139,4 +170,52 @@ export function Plogout() {
             })
             .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
     });
+}
+
+export let userCheckInProgress = false;
+export let userCheckTimeoutId = null;
+/** ANCHOR - To check and refresh the user's token
+ */
+export async function Puser_check() {
+    // So it doesn't go mad with a hundred test a second
+    if (userCheckInProgress) {
+        return;
+    }
+    userCheckInProgress = true;
+
+    // Actually o check the user's token and refresh it if ok
+    await fetch("https://api.thoth-edu.fr/user/check", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status == "fail") {
+                throw Error("not-connected");
+            } else {
+                localStorage.setItem("jwt-token", data.new);
+            }
+        })
+        .catch((error) => {
+            if (error == "not-connected") {
+                Palert(
+                    "Oups ! Il semblerait que vous ne soyez pas (ou plus !) connecté.e. Vous allez être transféré.e vers la page de connexion ! :) "
+                );
+                window.location.href = `https://professeur.thoth-edu.fr/`;
+            } else {
+                Perror(error);
+            }
+        })
+        .finally(() => {
+            userCheckInProgress = false;
+            if (userCheckTimeoutId !== null) {
+                clearTimeout(userCheckTimeoutId);
+            }
+            userCheckTimeoutId = setTimeout(() => {
+                Puser_check();
+            }, 1800000);
+        });
 }

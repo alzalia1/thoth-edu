@@ -2,6 +2,8 @@
  * ! WARNING : THIS CODE IS A DANGER TO YOUR SANITY. PROCEDE WITH CAUTION.
  */
 
+// TODO : Make the code cleaner...
+
 // SECTION - Initialize global variables
 
 export let questions = [];

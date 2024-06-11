@@ -1,49 +1,8 @@
 import { construct } from "./modules/dashConstruct.js";
-import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
+import { Pconfirm, Palert, Pinput, Puser_check } from "../../shared/scripts/modules/utils.js";
 
 // ANCHOR - System to check and refresh user's token !
-let userCheckInProgress = false;
-let userCheckTimeoutId = null;
-async function user_check() {
-    if (userCheckInProgress) {
-        return;
-    }
-
-    userCheckInProgress = true;
-
-    await fetch("https://api.thoth-edu.fr/user/check", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
-        },
-        body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.status == "fail") {
-                throw Error();
-            } else {
-                localStorage.setItem("jwt-token", data.new);
-            }
-        })
-        .catch((error) => {
-            window.stop();
-            Palert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
-            console.log(error);
-            window.location.href = `https://professeur.thoth-edu.fr/`;
-        })
-        .finally(() => {
-            userCheckInProgress = false;
-            if (userCheckTimeoutId !== null) {
-                clearTimeout(userCheckTimeoutId);
-            }
-            userCheckTimeoutId = setTimeout(() => {
-                user_check();
-            }, 1800000);
-        });
-}
-await user_check();
+await Puser_check();
 
 // SECTION - Load page content
 async function page() {

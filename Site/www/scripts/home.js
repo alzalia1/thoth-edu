@@ -1,16 +1,10 @@
-import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
-
-// Connection
-
+// ANCHOR - Connection button
 const connectButton = document.getElementById("connect");
-
-connectButton.addEventListener("click", openConnectWindow);
-
-function openConnectWindow() {
+connectButton.addEventListener("click", () => {
     window.location.href = `https://professeur.thoth-edu.fr/`;
-}
+});
 
-// Entering eval
+// ANCHOR - Accessing eval
 
 const validateButton = document.getElementById("validate");
 const idInputField = document.getElementById("idInputField");
