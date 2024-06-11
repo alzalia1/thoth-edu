@@ -13,49 +13,25 @@ from appInit import db, Eval, secret
 
 def save(data):
     """Sauvegarde ou met à jour le contenu d'une évaluation"""
+    evalJSON: dict = data["eval"]
+    eval = None
+
     # Si ce n'est pas la première sauvegarde on modifie juste le fichier existant
     if data["id"] != "none":
 
-        evalMAJ = Eval.query.filter_by(id=data["id"]).first()
+        evaluation: Eval = Eval.query.filter_by(id=data["id"]).first()
 
-        if not evalMAJ:  # id erroné
+        if not evaluation:  # id erroné
             return jsonify(
                 {"status": "fail", "reason": "Identifiant d'évaluation non valide"}
             )
 
-        evalMAJ.nom = data["eval"]["name"]
-
-        db.session.commit()
-
-        # On ouvre le fichier csv pour modifier les données, à l'aide de l'emplacement du fichier, dans les attributs de 'evals'
-        lienCSV = evalMAJ.cheminCSV
-        lienJSON = evalMAJ.cheminJSON
-
-        listeQuestionsMAJ = [
-            data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
-        ]
-        enteteMAJ = ["idEleve", "idAcces", "dateRep", "noteTot", "totPoints"]
-        for i, quest in enumerate(listeQuestionsMAJ):
-            enteteMAJ = enteteMAJ + [
-                "id_Q" + str(i),
-                "question_Q" + str(i),
-                "rep_Q" + str(i),
-                "note_Q" + str(i),
-            ]
-        contenuMAJ = [None, None, None]
-        for i, quest in enumerate(data["eval"]["questions"]):
-            contenuMAJ = contenuMAJ + [i, quest, None, None]
-
-        with open(lienCSV, "w", encoding="utf-8") as fichierEval:
-            writer = csv.writer(fichierEval)
-            writer.writerow(enteteMAJ)
-            writer.writerow(contenuMAJ)
-
-        with open(lienJSON, "w") as fichierEval:
-            json.dump(data["eval"], fichierEval)
+        evaluation.nom = data["eval"]["name"]
+        lienCSV: str = evaluation.cheminCSV
+        lienJSON: str = evaluation.cheminJSON
 
     else:
-        # Pour une nouvelle évaluation, nous avons besoin d'initialiser tous les attributs
+        # Pour une nouvelle évaluation, nous avons besoin d'ialiser tous les attributs
         # id ; nom ; cheminJSON ; cheminCSV ; idProf
         nouvelID = creationID(6)
 
@@ -65,51 +41,53 @@ def save(data):
         decoded_jwt = jwt.decode(data["token"], secret, algorithms=["HS256"])
         idProf = decoded_jwt["sub"]
 
-        nouveauCheminJSON = (
-            f"/home/debian/thoth-edu/database/evals/{idProf}/{nouvelID}.json"
-        )
-        nouveauCheminCSV = (
-            f"/home/debian/thoth-edu/database/evals/{idProf}/{nouvelID}.csv"
-        )
+        lienJSON = f"/home/debian/thoth-edu/database/evals/{idProf}/{nouvelID}.json"
+        lienCSV = f"/home/debian/thoth-edu/database/evals/{idProf}/{nouvelID}.csv"
 
         if not os.path.exists(f"/home/debian/thoth-edu/database/evals/{idProf}"):
-            nouveauCheminCSVINIT = os.path.join(
+            creaLienCSV = os.path.join(
                 f"/home/debian/thoth-edu/database/evals/", idProf
             )
-            os.makedirs(nouveauCheminCSVINIT, exist_ok=True)
+            os.makedirs(creaLienCSV, exist_ok=True)
 
-        listeQuestionsInit = [
-            data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
-        ]
-        enteteInit = ["idEleve", "idAcces", "dateRep"]
-        for i, quest in enumerate(listeQuestionsInit):
-            enteteInit = enteteInit + [
-                "id_Q" + str(i),
-                "question_Q" + str(i),
-                "rep_Q" + str(i),
-                "note_Q" + str(i),
-            ]
-        contenuInit = [None, None, None]
-        for i, quest in enumerate(data["eval"]["questions"]):
-            contenuInit = contenuInit + [i, quest, None, None]
-
-        with open(nouveauCheminCSV, "w", encoding="utf-8") as fichierEval:
-            writer = csv.writer(fichierEval)
-            writer.writerow(enteteInit)
-            writer.writerow(contenuInit)
-
-        with open(nouveauCheminJSON, "w") as fichierEval:
-            json.dump(data["eval"], fichierEval)
-
-        evalInit = Eval(
+        eval = Eval(
             id=nouvelID,
             nom=data["eval"]["name"],
-            cheminJSON=nouveauCheminJSON,
-            cheminCSV=nouveauCheminCSV,
+            cheminJSON=lienJSON,
+            cheminCSV=lienCSV,
             idProf=idProf,
         )
 
-        db.session.add(evalInit)
-        db.session.commit()
+    # On ouvre le fichier csv pour modifier les données, à l'aide de l'emplacement du fichier, dans les attributs de 'evals'
+
+    listeQuestions = [
+        data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
+    ]
+    entete = ["idEleve", "idAcces", "dateRep", "noteTot", "totPoints"]
+    for i, quest in enumerate(listeQuestions):
+        entete = entete + [
+            "id_Q" + str(i),
+            "question_Q" + str(i),
+            "rep_Q" + str(i),
+            "note_Q" + str(i),
+            "note_max_Q" + str(i),
+        ]
+    contenu = [None, None, None, None, None]
+    for i, quest in enumerate(evalJSON["questions"]):
+        contenu = contenu + [i, quest, None, None, quest["params"]["points"]]
+        quest["id"] = i
+
+    with open(lienCSV, "w", encoding="utf-8") as fichierEval:
+        writer = csv.writer(fichierEval)
+        writer.writerow(entete)
+        writer.writerow(contenu)
+
+    with open(lienJSON, "w") as fichierEval:
+        json.dump(evalJSON, fichierEval)
+
+    if eval:
+        db.session.add(eval)
+
+    db.session.commit()
 
     return jsonify({"status": "success"})

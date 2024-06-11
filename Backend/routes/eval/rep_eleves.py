@@ -7,7 +7,6 @@ import json
 # Import app
 from appInit import Acces, Eval
 from fonctions.correctionEl import correctionEl
-from fonctions.trouverID import trouverID
 
 
 def rep_eleves(data):
@@ -17,6 +16,8 @@ def rep_eleves(data):
 
     # Création de la ligne à ajouter en CSV
     ligneEleve = [data["id_el"], data["id_access"], time.time()]
+
+    print(data["responses"])
 
     listeOrdre = sorted(data["responses"], key=lambda x: x["id"])
 
