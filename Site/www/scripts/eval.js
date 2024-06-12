@@ -1,8 +1,5 @@
 import { construct, answers } from "./modules/addEleve.js";
-import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
-
-// TODO : Chronomètre du temps restant
-// TODO : Affiche le nom utilisé
+import { Pconfirm, Palert, Pinput, Perror } from "../../shared/scripts/modules/utils.js";
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
@@ -26,7 +23,7 @@ async function check_id() {
                     window.location.href = `https://thoth-edu.fr/`;
                 }
             })
-            .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
+            .catch((error) => Perror("Error on eval/check_access : " + error));
     }
 }
 
@@ -42,7 +39,7 @@ async function get_eval_content() {
     })
         .then((response) => response.json())
         .then((data) => (evalContent = data))
-        .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
+        .catch((error) => Perror("Error on eval/get_eval : " + error));
 }
 
 // SECTION - Load page content
@@ -52,6 +49,9 @@ async function page() {
         "Veuillez indiquer votre nom avant de commencer ce contrôle. \n\nAttention ! Si vous quittez cette page ou ce navigateur web, le site considèrera que vous trichez !",
         (e) => {
             nomEleve = e;
+            // ANCHOR - Putting name
+            const name = document.getElementById("name");
+            name.textContent = "Nom de l'élève : " + nomEleve;
         }
     );
 
@@ -97,6 +97,31 @@ async function page() {
     // ANCHOR - Putting the title
     const title = document.getElementById("titre");
     title.textContent = evalContent.eval.name + " - " + evalContent.name;
+
+    // ANCHOR - Chronomètre
+    const chrono = document.getElementById("chrono");
+    let tempsEcoule = 0;
+
+    function mettreAJourCompteARebours() {
+        const TEMPS_RESTANT = Math.floor(duration / 1000);
+        // Calculer le nombre de minutes et de secondes restantes
+        const minutesRestantes = Math.floor((TEMPS_RESTANT - tempsEcoule) / 60);
+        const secondesRestantes = (TEMPS_RESTANT - tempsEcoule) % 60;
+
+        // Mettre à jour l'affichage du compte à rebours
+        chrono.innerHTML = `${minutesRestantes}m ${secondesRestantes}s`;
+
+        // Incrémenter le temps écoulé
+        tempsEcoule++;
+
+        // Arrêter le compte à rebours si le temps est écoulé
+        if (tempsEcoule >= TEMPS_RESTANT) {
+            clearInterval(intervalCompteARebours);
+        }
+    }
+
+    // Définir l'intervalle pour la mise à jour du compte à rebours
+    const intervalCompteARebours = setInterval(mettreAJourCompteARebours, 1000);
 
     // ANCHOR - Saving and sending results
     const save = document.getElementById("save");
@@ -153,9 +178,10 @@ async function sendRepsEleve(aTriche) {
                 }, 5000);
             }
         })
-        .catch((error) => Palert("Erreur lors de l'envoi des données : " + error));
+        .catch((error) => Perror("Error on eval/reps_eleves : " + error));
 }
 
+let duration;
 async function init() {
     await check_id();
     await get_eval_content();
@@ -164,7 +190,7 @@ async function init() {
     // ANCHOR - Set time limit
     const currentTime = new Date().getTime();
     const endTime = new Date(parseInt(evalContent.time.end)).getTime();
-    let duration = endTime - currentTime;
+    duration = endTime - currentTime;
     console.log(duration, evalContent.time.end, endTime);
 
     const MAX_DELAY = 2147483547;

@@ -3,6 +3,7 @@
  */
 
 // TODO : Make the code cleaner...
+// FIXME : C'EST LA MERDE UN PEU
 
 // SECTION - Initialize global variables
 
@@ -692,6 +693,7 @@ function consigne(divA, question, type) {
         question.eval.consigne = consigneInput.value;
         question.elements.preview.textContent = consigneInput.value;
         updateLocalStorage();
+        tableauCreate(question);
     });
 
     divA.append(consigneLabel, consigneInput);
@@ -830,6 +832,9 @@ function reponse(divA, question, type, create) {
                         tableauCreate(question);
                         updateLocalStorage();
                     });
+                    let j = question.elements.temps.indexOf(input);
+                    if (!question.eval.reponse.verbes[i]) question.eval.reponse.verbes[i] = [];
+                    question.eval.reponse.verbes[i][j] = subInput.value;
 
                     let row = question.elements.pronoms[i].parentElement.parentElement;
                     td.appendChild(subInput);
@@ -969,6 +974,9 @@ function reponse(divA, question, type, create) {
                         tableauCreate(question);
                         updateLocalStorage();
                     });
+                    let i = question.elements.pronoms.indexOf(thInputAdded);
+                    if (!question.eval.reponse.verbes[i]) question.eval.reponse.verbes[i] = [];
+                    question.eval.reponse.verbes[i][j] = input.value;
 
                     td.appendChild(input);
                     tr.appendChild(td);

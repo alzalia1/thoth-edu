@@ -1,50 +1,8 @@
 import { addQuestion, questions, loadFromID, loadFromPending } from "./modules/addQuestions.js";
-import { Pconfirm, Palert } from "../../shared/scripts/modules/utils.js";
+import { Pconfirm, Palert, Puser_check, Perror } from "../../shared/scripts/modules/utils.js";
 
 // ANCHOR - System to check and refresh user's token !
-let userCheckInProgress = false;
-let userCheckTimeoutId = null;
-
-async function user_check() {
-    if (userCheckInProgress) {
-        return;
-    }
-
-    userCheckInProgress = true;
-
-    await fetch("https://api.thoth-edu.fr/user/check", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
-        },
-        body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.status == "fail") {
-                throw Error();
-            } else {
-                localStorage.setItem("jwt-token", data.new);
-            }
-        })
-        .catch((error) => {
-            window.stop();
-            Palert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
-            console.log(error);
-            window.location.href = `https://professeur.thoth-edu.fr/`;
-        })
-        .finally(() => {
-            userCheckInProgress = false;
-            if (userCheckTimeoutId !== null) {
-                clearTimeout(userCheckTimeoutId);
-            }
-            userCheckTimeoutId = setTimeout(() => {
-                user_check();
-            }, 1800000);
-        });
-}
-await user_check();
+await Puser_check();
 
 async function page() {
     // ANCHOR - Setting the page
@@ -71,7 +29,7 @@ async function page() {
                 evalName.value = data.eval.name;
                 loadFromID(data.eval.questions);
             })
-            .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
+            .catch((error) => Perror("Error on crea/get : " + error));
     } else if (
         localStorage.getItem("evalPending") &&
         localStorage.getItem("evalPending") != "none"
@@ -161,7 +119,7 @@ async function page() {
                                 console.log("pas ok" + data.reason);
                             }
                         })
-                        .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
+                        .catch((error) => Perror("Error on crea/save : " + error));
                 }
             }
         );

@@ -5,6 +5,7 @@ import {
     Pinput,
     Plogout,
     Puser_check,
+    Perror,
 } from "../../shared/scripts/modules/utils.js";
 
 // ANCHOR - System to check and refresh user's token
@@ -28,7 +29,7 @@ async function page() {
     })
         .then((response) => response.json())
         .then((data) => (evalI = data))
-        .catch((error) => Palert("Erreur lors de l'envoi des données : " + error));
+        .catch((error) => Perror("Error on dashboard/eval/get : " + error));
 
     /*
     evalI = {
@@ -132,7 +133,7 @@ async function page() {
                         Palert("Oh non ! Quelque chose a mal fonctionné : ", data.reason);
                     }
                 })
-                .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
+                .catch((error) => Perror("Error on dashboard/eval/create_access : " + error));
         }
     });
 
@@ -163,7 +164,7 @@ async function page() {
                                     }
                                 })
                                 .catch((error) =>
-                                    Palert("Erreur lors de l'envoi des données :", error)
+                                    Perror("Error on dashboard/eval/delete  : " + error)
                                 );
                         } else {
                             Palert("Vous avez mal recopié l'id. Veuillez recommencer");

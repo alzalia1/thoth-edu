@@ -1,4 +1,4 @@
-import { Palert } from "../../shared/scripts/modules/utils.js";
+import { Palert, Perror } from "../../shared/scripts/modules/utils.js";
 
 // ANCHOR - Confirmation de l'envoi des infos d'authentification
 const confirmButton = document.getElementById("confirm");
@@ -26,7 +26,7 @@ confirmButton.addEventListener("click", function (event) {
                 Palert("Oh non ! Une erreur est survenue : " + data.reason);
             }
         })
-        .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
+        .catch((error) => Perror("Error on user/signup : " + error));
 });
 
 // ANCHOR - Ajoute la touche "Entrée" comme validateur

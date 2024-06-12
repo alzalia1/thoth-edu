@@ -1,5 +1,5 @@
 import { construct } from "./modules/dashConstruct.js";
-import { Palert, Plogout, Puser_check } from "../../shared/scripts/modules/utils.js";
+import { Palert, Perror, Plogout, Puser_check } from "../../shared/scripts/modules/utils.js";
 
 // ANCHOR - System to check and refresh user's token
 await Puser_check();
@@ -26,7 +26,7 @@ async function page() {
         .then((data) => {
             userI = data;
         })
-        .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
+        .catch((error) => Perror("Error on dashboard/infos_user : " + error));
 
     /*
         userI = {

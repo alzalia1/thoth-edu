@@ -1,5 +1,11 @@
 import { construct } from "./modules/dashConstruct.js";
-import { Pconfirm, Palert, Pinput, Puser_check } from "../../shared/scripts/modules/utils.js";
+import {
+    Pconfirm,
+    Palert,
+    Pinput,
+    Puser_check,
+    Perror,
+} from "../../shared/scripts/modules/utils.js";
 
 // ANCHOR - System to check and refresh user's token !
 await Puser_check();
@@ -22,7 +28,7 @@ async function page() {
     })
         .then((response) => response.json())
         .then((data) => (accesI = data))
-        .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
+        .catch((error) => Perror("Error on dashboard/acces/get : " + error));
 
     /*
     accesI = {
@@ -123,7 +129,7 @@ async function page() {
                                     }
                                 })
                                 .catch((error) =>
-                                    Palert("Erreur lors de l'envoi des données :", error)
+                                    Perror("Error on dashboard/acces/delete : " + error)
                                 );
                         } else {
                             Palert("Vous avez mal recopié l'id. Veuillez recommencer");
@@ -225,7 +231,7 @@ async function page() {
                         Palert("Oh non ! Quelque chose a mal fonctionné : ", data.reason);
                     }
                 })
-                .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
+                .catch((error) => Perror("Error on dashboard/acces/save  : " + error));
         }
     });
 

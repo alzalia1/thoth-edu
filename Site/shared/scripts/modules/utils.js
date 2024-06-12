@@ -29,7 +29,6 @@ export function Palert(text, okHandler = () => {}) {
     body.append(Gdiv);
 }
 
-// TODO : Make this send an email to error@thoth-edu.fr
 /** ANCHOR - To show a bad error !
  * @param {string} text - Text to display
  * @param {Function} okHandler - Function to handle the ok button (nothing by default)
@@ -43,9 +42,46 @@ export function Perror(text) {
     const Sdiv = document.createElement("div");
     Sdiv.classList.add("interieur-popup");
 
+    // Title
+    const title = document.createElement("h2");
+    title.textContent = "Oh non ! Le site semble avoir un dysfonctionnement :/";
+
+    // Explain
+    const explain = document.createElement("p");
+    explain.textContent =
+        "Si vous avez le temps, vous avez deux façons de rapporter cette erreur :";
+
+    const ul = document.createElement("ul");
+
+    const githubLi = document.createElement("li");
+    const githubA = document.createElement("a");
+    githubA.target = "_blank";
+    githubA.textContent = "Via l'onglet 'Issues' de notre GitHub";
+    githubA.href = "https://github.com/alzalia1/thoth-edu/issues";
+    githubLi.appendChild(githubA);
+
+    const mailLi = document.createElement("li");
+    const mailA = document.createElement("a");
+    mailA.textContent = "Par mail à notre support technique";
+    mailA.href = `mailto:error@thoth-edu.fr?subject=Erreur sur la page &body=Message d'erreur: %0D%0A%0D%0A${text}%0D%0A%0D%0ADescription de votre situation :%0D%0A`;
+
+    mailLi.appendChild(mailA);
+
+    ul.append(githubLi, mailLi);
+
+    const explain2 = document.createElement("p");
+    explain2.textContent =
+        "Merci alors de joindre le message d'erreur ci-dessous, et une description de ce que vous avez fait pour vous retrouver face à cette erreur.";
+
     // Text
-    const p = document.createElement("p");
-    p.textContent = text;
+    const p = document.createElement("textarea");
+    p.value = text;
+    p.cols = 45;
+    const copy = document.createElement("button");
+    copy.textContent = "Copier";
+    copy.addEventListener("click", () => {
+        navigator.clipboard.writeText(text);
+    });
 
     // Ok button
     const ok = document.createElement("button");
@@ -55,7 +91,7 @@ export function Perror(text) {
         body.removeChild(Gdiv);
     });
 
-    Sdiv.append(p, ok);
+    Sdiv.append(title, explain, ul, explain2, p, copy, ok);
     Gdiv.append(Sdiv);
     body.append(Gdiv);
 }
@@ -168,7 +204,7 @@ export function Plogout() {
                     );
                 }
             })
-            .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
+            .catch((error) => Perror("Error on user/logout : " + error));
     });
 }
 
@@ -206,7 +242,7 @@ export async function Puser_check() {
                 );
                 window.location.href = `https://professeur.thoth-edu.fr/`;
             } else {
-                Perror(error);
+                Perror("Error on user/check : " + error);
             }
         })
         .finally(() => {
