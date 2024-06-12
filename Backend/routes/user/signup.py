@@ -17,7 +17,6 @@ def signup(data):
         id=idUser,
         nom=data["id"],
         mdp=bcrypt.generate_password_hash(data["mdp"]).decode("utf-8"),
-        accents=str(data["accents"]),
     )
 
     user = User.query.filter_by(id=data["id"]).first()
