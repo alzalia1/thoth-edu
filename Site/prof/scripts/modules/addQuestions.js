@@ -37,21 +37,21 @@ export function addQuestion(type, question = null) {
                         title: "",
                         preview: "",
                         popup: "",
-                        pluriel: false,
+                        plural: false,
                         genre: false,
-                        determinant: false,
+                        determiners: false,
                     },
                     eval: {
                         type: "traduction",
-                        consigne: "",
-                        reponse: "",
+                        instruction: "",
+                        answer: "",
                         params: {
                             points: 0,
-                            determinant: [],
-                            pluriel: [],
+                            determiners: [],
+                            plural: [],
                             genre: [],
-                            sousConsigne: false,
-                            accents: false,
+                            sousInstruction: false,
+                            accent: false,
                         },
                     },
                 };
@@ -65,21 +65,21 @@ export function addQuestion(type, question = null) {
                         preview: "",
                         divPreview: "",
                         popup: "",
-                        temps: [],
-                        pronoms: [],
+                        tenses: [],
+                        pronouns: [],
                     },
                     eval: {
                         type: "conjugaison",
-                        consigne: "",
-                        reponse: {
-                            temps: [],
-                            pronoms: [],
-                            verbes: [[]],
+                        instruction: "",
+                        answer: {
+                            tenses: [],
+                            pronouns: [],
+                            verbs: [[]],
                         },
                         params: {
                             points: 0,
-                            sousConsigne: false,
-                            accents: false,
+                            sousInstruction: false,
+                            accent: false,
                         },
                     },
                 };
@@ -93,9 +93,9 @@ export function addQuestion(type, question = null) {
                     title: "",
                     preview: "",
                     popup: "",
-                    pluriel: false,
+                    plural: false,
                     genre: false,
-                    determinant: false,
+                    determiners: false,
                 };
                 break;
 
@@ -106,8 +106,8 @@ export function addQuestion(type, question = null) {
                     preview: "",
                     divPreview: "",
                     popup: "",
-                    temps: [],
-                    pronoms: [],
+                    tenses: [],
+                    pronouns: [],
                 };
                 break;
         }
@@ -127,12 +127,12 @@ export function addQuestion(type, question = null) {
     function divA() {
         const divA = document.createElement("div");
 
-        // Consigne input
-        consigne(divA, question, type);
+        // Instruction input
+        instruction(divA, question, type);
 
         divA.append(document.createElement("br"));
 
-        reponse(divA, question, type, create);
+        answer(divA, question, type, create);
 
         divA.append(document.createElement("br"));
 
@@ -144,13 +144,13 @@ export function addQuestion(type, question = null) {
 
     // ANCHOR - Preview div
     function divPreview() {
-        let consigne = "";
+        let instruction = "";
         if (type == "traduction") {
-            consigne = question.eval.consigne;
+            instruction = question.eval.instruction;
         } else {
-            consigne =
+            instruction =
                 "Conjuguez le verbe '" +
-                question.eval.consigne +
+                question.eval.instruction +
                 "' aux temps et personnes suivantes :";
         }
         const divPreview = document.createElement("div");
@@ -158,33 +158,33 @@ export function addQuestion(type, question = null) {
         const titrePreview = document.createElement("h4");
         titrePreview.textContent = "Aperçu de l'élève";
 
-        const consigneLabel = document.createElement("label");
-        consigneLabel.textContent = consigne;
+        const instructionLabel = document.createElement("label");
+        instructionLabel.textContent = instruction;
 
         // Differs depending on type
 
         switch (type) {
             case "traduction":
-                const reponseInput = document.createElement("input");
-                reponseInput.type = "text";
-                reponseInput.placeholder = "Écrivez votre réponse ici";
+                const answerInput = document.createElement("input");
+                answerInput.type = "text";
+                answerInput.placeholder = "Écrivez votre réponse ici";
 
                 divPreview.append(
                     titrePreview,
-                    consigneLabel,
+                    instructionLabel,
                     document.createElement("br"),
-                    reponseInput
+                    answerInput
                 );
                 questionElement.appendChild(divPreview);
-                question.elements.preview = consigneLabel;
+                question.elements.preview = instructionLabel;
                 break;
 
             case "conjugaison":
-                const reponseInput2 = document.createElement("table");
+                const answerInput2 = document.createElement("table");
 
-                divPreview.append(titrePreview, consigneLabel, reponseInput2);
+                divPreview.append(titrePreview, instructionLabel, answerInput2);
                 questionElement.appendChild(divPreview);
-                question.elements.preview = consigneLabel;
+                question.elements.preview = instructionLabel;
                 question.elements.divPreview = divPreview;
                 tableauCreate(question);
                 break;
@@ -226,59 +226,57 @@ export function addQuestion(type, question = null) {
 
         divPopup.append(document.createElement("br"));
 
-        function accents() {
-            const accentsLabel = document.createElement("label");
-            accentsLabel.textContent = "Accents : ";
+        function accent() {
+            const accentLabel = document.createElement("label");
+            accentLabel.textContent = "Accent : ";
 
-            const accentsInput = document.createElement("input");
-            accentsInput.type = "checkbox";
-            accentsInput.checked =
-                questions.length != 0 ? questions[questions.length - 1].eval.params.accents : false;
-            accentsInput.addEventListener("input", () => {
-                question.eval.params.accents = accentsInput.checked;
+            const accentInput = document.createElement("input");
+            accentInput.type = "checkbox";
+            accentInput.checked =
+                questions.length != 0 ? questions[questions.length - 1].eval.params.accent : false;
+            accentInput.addEventListener("input", () => {
+                question.eval.params.accent = accentInput.checked;
                 updateLocalStorage();
             });
 
             if (create) {
-                question.eval.params.accents = accentsInput.checked;
+                question.eval.params.accent = accentInput.checked;
             } else {
-                accentsInput.checked = question.eval.params.accents;
+                accentInput.checked = question.eval.params.accent;
             }
 
-            divPopup.append(accentsLabel, accentsInput);
+            divPopup.append(accentLabel, accentInput);
         }
-        accents();
+        accent();
 
         divPopup.append(document.createElement("br"));
 
         if (type == "traduction") {
             // Options specific to traduction
-            function pluriel() {
-                const plurielLabel = document.createElement("label");
-                plurielLabel.textContent = "Pluriel : ";
+            function plural() {
+                const pluralLabel = document.createElement("label");
+                pluralLabel.textContent = "Plural : ";
 
-                const plurielInput = document.createElement("input");
-                plurielInput.type = "checkbox";
-                plurielInput.checked =
-                    questions.length != 0
-                        ? questions[questions.length - 1].elements.pluriel
-                        : false;
+                const pluralInput = document.createElement("input");
+                pluralInput.type = "checkbox";
+                pluralInput.checked =
+                    questions.length != 0 ? questions[questions.length - 1].elements.plural : false;
 
                 if (!create) {
-                    plurielInput.checked = question.eval.params.pluriel.length != 0;
+                    pluralInput.checked = question.eval.params.plural.length != 0;
                 }
 
                 // Everything about the tag system
                 const motsDiv = document.createElement("div");
 
-                const plurielMotsInput = document.createElement("input");
-                plurielMotsInput.type = "text";
-                plurielMotsInput.placeholder = "Mots autorisés";
-                plurielMotsInput.hidden = !plurielInput.checked;
-                plurielMotsInput.addEventListener("keyup", function (e) {
+                const pluralMotsInput = document.createElement("input");
+                pluralMotsInput.type = "text";
+                pluralMotsInput.placeholder = "Mots autorisés";
+                pluralMotsInput.hidden = !pluralInput.checked;
+                pluralMotsInput.addEventListener("keyup", function (e) {
                     if (e.key === " " || e.key === "Enter") {
                         const tag = this.value.trim();
-                        question.eval.params.pluriel.push(tag);
+                        question.eval.params.plural.push(tag);
                         const tagElement = document.createElement("span");
                         tagElement.classList.add("tag");
                         tagElement.textContent = tag;
@@ -288,8 +286,8 @@ export function addQuestion(type, question = null) {
                         deleteButton.classList.add("tagDelete");
                         deleteButton.addEventListener("click", function () {
                             tagElement.remove();
-                            question.eval.params.pluriel.splice(
-                                question.eval.params.pluriel.findIndex((p) => p === tag),
+                            question.eval.params.plural.splice(
+                                question.eval.params.plural.findIndex((p) => p === tag),
                                 1
                             );
                             updateLocalStorage();
@@ -307,7 +305,7 @@ export function addQuestion(type, question = null) {
                     const tempRefNode = document.createElement("div");
                     motsDiv.appendChild(tempRefNode);
 
-                    question.eval.params.pluriel.forEach((mot) => {
+                    question.eval.params.plural.forEach((mot) => {
                         const tagElement = document.createElement("span");
                         tagElement.classList.add("tag");
                         tagElement.textContent = mot;
@@ -317,8 +315,8 @@ export function addQuestion(type, question = null) {
                         deleteButton.classList.add("tagDelete");
                         deleteButton.addEventListener("click", function () {
                             tagElement.remove();
-                            question.eval.params.pluriel.splice(
-                                question.eval.params.pluriel.findIndex((p) => p === mot),
+                            question.eval.params.plural.splice(
+                                question.eval.params.plural.findIndex((p) => p === mot),
                                 1
                             );
                             updateLocalStorage();
@@ -327,22 +325,22 @@ export function addQuestion(type, question = null) {
                         tagElement.appendChild(deleteButton);
                         motsDiv.insertBefore(tagElement, tempRefNode);
                     });
-                    motsDiv.insertBefore(plurielMotsInput, tempRefNode);
+                    motsDiv.insertBefore(pluralMotsInput, tempRefNode);
                     tempRefNode.remove();
                 }
 
-                // Back to plurielInput
+                // Back to pluralInput
 
-                plurielInput.addEventListener("input", () => {
-                    plurielMotsInput.hidden = !plurielMotsInput.hidden;
-                    question.elements.pluriel = plurielInput.checked;
+                pluralInput.addEventListener("input", () => {
+                    pluralMotsInput.hidden = !pluralMotsInput.hidden;
+                    question.elements.plural = pluralInput.checked;
                     updateLocalStorage();
                 });
 
-                motsDiv.append(plurielMotsInput);
-                divPopup.append(plurielLabel, plurielInput, motsDiv);
+                motsDiv.append(pluralMotsInput);
+                divPopup.append(pluralLabel, pluralInput, motsDiv);
             }
-            pluriel();
+            plural();
 
             function genre() {
                 const genreLabel = document.createElement("label");
@@ -431,7 +429,7 @@ export function addQuestion(type, question = null) {
             }
             genre();
 
-            function determinant() {
+            function determiners() {
                 const detLabel = document.createElement("label");
                 detLabel.textContent = "Déterminant : ";
 
@@ -439,11 +437,11 @@ export function addQuestion(type, question = null) {
                 detInput.type = "checkbox";
                 detInput.checked =
                     questions.length != 0
-                        ? questions[questions.length - 1].elements.determinant
+                        ? questions[questions.length - 1].elements.determiners
                         : false;
 
                 if (!create) {
-                    detInput.checked = question.eval.params.determinant.length != 0;
+                    detInput.checked = question.eval.params.determiners.length != 0;
                 }
 
                 // Everything about the tag system
@@ -456,7 +454,7 @@ export function addQuestion(type, question = null) {
                 detMotsInput.addEventListener("keyup", function (e) {
                     if (e.key === " " || e.key === "Enter") {
                         const tag = this.value.trim();
-                        question.eval.params.determinant.push(tag);
+                        question.eval.params.determiners.push(tag);
                         const tagElement = document.createElement("span");
                         tagElement.classList.add("tag");
                         tagElement.textContent = tag;
@@ -466,8 +464,8 @@ export function addQuestion(type, question = null) {
                         deleteButton.classList.add("tagDelete");
                         deleteButton.addEventListener("click", function () {
                             tagElement.remove();
-                            question.eval.params.determinant.splice(
-                                question.eval.params.determinant.findIndex((p) => p === tag),
+                            question.eval.params.determiners.splice(
+                                question.eval.params.determiners.findIndex((p) => p === tag),
                                 1
                             );
                             updateLocalStorage();
@@ -485,7 +483,7 @@ export function addQuestion(type, question = null) {
                     const tempRefNode = document.createElement("div");
                     motsDiv.appendChild(tempRefNode);
 
-                    question.eval.params.determinant.forEach((mot) => {
+                    question.eval.params.determiners.forEach((mot) => {
                         const tagElement = document.createElement("span");
                         tagElement.classList.add("tag");
                         tagElement.textContent = mot;
@@ -495,8 +493,8 @@ export function addQuestion(type, question = null) {
                         deleteButton.classList.add("tagDelete");
                         deleteButton.addEventListener("click", function () {
                             tagElement.remove();
-                            question.eval.params.determinant.splice(
-                                question.eval.params.determinant.findIndex((p) => p === mot),
+                            question.eval.params.determiners.splice(
+                                question.eval.params.determiners.findIndex((p) => p === mot),
                                 1
                             );
                             updateLocalStorage();
@@ -511,14 +509,14 @@ export function addQuestion(type, question = null) {
 
                 detInput.addEventListener("input", () => {
                     detMotsInput.hidden = !detMotsInput.hidden;
-                    question.elements.determinant = detInput.checked;
+                    question.elements.determiners = detInput.checked;
                     updateLocalStorage();
                 });
 
                 motsDiv.append(detMotsInput);
                 divPopup.append(detLabel, detInput, motsDiv);
             }
-            determinant();
+            determiners();
         }
 
         bigDivPopup.appendChild(divPopup);
@@ -603,13 +601,13 @@ function tableauCreate(question) {
     const titrePreview = document.createElement("h4");
     titrePreview.textContent = "Aperçu de l'élève";
 
-    const consigneLabel = document.createElement("label");
-    consigneLabel.textContent =
-        "Conjuguez le verbe '" + question.eval.consigne + "' aux temps et personnes suivantes :";
+    const instructionLabel = document.createElement("label");
+    instructionLabel.textContent =
+        "Conjuguez le verbe '" + question.eval.instruction + "' aux temps et personnes suivantes :";
 
-    const reponseInput = document.createElement("table");
+    const answerInput = document.createElement("table");
 
-    divPreview.append(titrePreview, consigneLabel, reponseInput);
+    divPreview.append(titrePreview, instructionLabel, answerInput);
 
     const table = document.createElement("table");
 
@@ -620,9 +618,9 @@ function tableauCreate(question) {
         const empty = document.createElement("th");
         theadRow.appendChild(empty);
 
-        for (let i = 0; i < question.eval.reponse.temps.length; i++) {
+        for (let i = 0; i < question.eval.answer.tenses.length; i++) {
             const th = document.createElement("th");
-            th.textContent = question.eval.reponse.temps[i];
+            th.textContent = question.eval.answer.tenses[i];
             theadRow.appendChild(th);
         }
 
@@ -634,14 +632,14 @@ function tableauCreate(question) {
     function body() {
         const tbody = document.createElement("tbody");
 
-        for (let i = 0; i < question.eval.reponse.pronoms.length; i++) {
+        for (let i = 0; i < question.eval.answer.pronouns.length; i++) {
             const tr = document.createElement("tr");
 
             const th = document.createElement("th");
-            th.textContent = question.eval.reponse.pronoms[i];
+            th.textContent = question.eval.answer.pronouns[i];
             tr.appendChild(th);
 
-            for (let j = 0; j < question.eval.reponse.temps.length; j++) {
+            for (let j = 0; j < question.eval.answer.tenses.length; j++) {
                 const td = document.createElement("td");
                 const input = document.createElement("input");
                 input.type = "text";
@@ -669,7 +667,7 @@ function tableauCreate(question) {
  * @param {object} question - Question actuellement modifiée
  * @param {string} type - Type de la question
  */
-function consigne(divA, question, type) {
+function instruction(divA, question, type) {
     let placeholder = "";
     switch (
         type // Def placeholder according to type
@@ -683,20 +681,20 @@ function consigne(divA, question, type) {
             break;
     }
 
-    const consigneLabel = (document.createElement("label").textContent = "Consigne : ");
+    const instructionLabel = (document.createElement("label").textContent = "Consigne : ");
 
-    const consigneInput = document.createElement("input");
-    consigneInput.type = "text";
-    consigneInput.placeholder = placeholder;
-    consigneInput.value = question.eval.consigne;
-    consigneInput.addEventListener("input", () => {
-        question.eval.consigne = consigneInput.value;
-        question.elements.preview.textContent = consigneInput.value;
+    const instructionInput = document.createElement("input");
+    instructionInput.type = "text";
+    instructionInput.placeholder = placeholder;
+    instructionInput.value = question.eval.instruction;
+    instructionInput.addEventListener("input", () => {
+        question.eval.instruction = instructionInput.value;
+        question.elements.preview.textContent = instructionInput.value;
         updateLocalStorage();
         tableauCreate(question);
     });
 
-    divA.append(consigneLabel, consigneInput);
+    divA.append(instructionLabel, instructionInput);
 }
 
 /** ANCHOR - Ajoute la partie "réponse" de la question
@@ -705,20 +703,20 @@ function consigne(divA, question, type) {
  * @param {string} type - type de la question
  * @param {boolean} create - creation (true) ou update (false)
  */
-function reponse(divA, question, type, create) {
+function answer(divA, question, type, create) {
     if (type == "traduction") {
-        const reponseLabel = (document.createElement("label").textContent = "Réponse : ");
+        const answerLabel = (document.createElement("label").textContent = "Réponse : ");
 
-        const reponseInput = document.createElement("input");
-        reponseInput.type = "text";
-        reponseInput.placeholder = "Réponse attendue";
-        reponseInput.value = question.eval.reponse;
-        reponseInput.addEventListener("input", () => {
-            question.eval.reponse = reponseInput.value;
+        const answerInput = document.createElement("input");
+        answerInput.type = "text";
+        answerInput.placeholder = "Réponse attendue";
+        answerInput.value = question.eval.answer;
+        answerInput.addEventListener("input", () => {
+            question.eval.answer = answerInput.value;
             updateLocalStorage();
         });
 
-        divA.append(reponseLabel, reponseInput);
+        divA.append(answerLabel, answerInput);
     } else {
         // Create base table
         const table = document.createElement("table");
@@ -736,9 +734,9 @@ function reponse(divA, question, type, create) {
             const firstInput = document.createElement("input");
             firstInput.type = "text";
             firstInput.placeholder = "Temps";
-            question.elements.temps.push(firstInput);
+            question.elements.tenses.push(firstInput);
             firstInput.addEventListener("input", () => {
-                question.eval.reponse.temps[0] = firstInput.value;
+                question.eval.answer.tenses[0] = firstInput.value;
                 tableauCreate(question);
                 updateLocalStorage();
             });
@@ -747,16 +745,16 @@ function reponse(divA, question, type, create) {
 
             // If it is an update rather than a create, will create every line/column
             if (!create) {
-                firstInput.value = question.eval.reponse.temps[0];
+                firstInput.value = question.eval.answer.tenses[0];
                 function header() {
-                    for (let i = 1; i < question.eval.reponse.temps.length; i++) {
+                    for (let i = 1; i < question.eval.answer.tenses.length; i++) {
                         const thh = document.createElement("th");
                         const th = document.createElement("input");
                         th.type = "text";
                         th.placeholder = "Temps";
-                        th.value = question.eval.reponse.temps[i];
+                        th.value = question.eval.answer.tenses[i];
                         th.addEventListener("input", () => {
-                            question.eval.reponse.temps[i] = th.value;
+                            question.eval.answer.tenses[i] = th.value;
                             tableauCreate(question);
                             updateLocalStorage();
                         });
@@ -766,7 +764,7 @@ function reponse(divA, question, type, create) {
                 }
                 header();
             } else {
-                question.eval.reponse.temps[0] = firstInput.value;
+                question.eval.answer.tenses[0] = firstInput.value;
             }
 
             //* Buttons
@@ -778,12 +776,12 @@ function reponse(divA, question, type, create) {
             deleteButton.addEventListener("click", () => {
                 // Remove element
                 theadRow.removeChild(theadRow.lastChild.previousSibling.previousSibling);
-                question.elements.temps.pop();
-                question.eval.reponse.temps.pop();
+                question.elements.tenses.pop();
+                question.eval.answer.tenses.pop();
 
                 // Remove lines end
-                for (let i = 0; i < question.elements.pronoms.length; i++) {
-                    let row = question.elements.pronoms[i].parentElement.parentElement;
+                for (let i = 0; i < question.elements.pronouns.length; i++) {
+                    let row = question.elements.pronouns[i].parentElement.parentElement;
                     let elements = row.getElementsByTagName("td");
                     let lastElement = elements[elements.length - 1];
                     lastElement.remove();
@@ -802,41 +800,41 @@ function reponse(divA, question, type, create) {
             const addButton = document.createElement("button");
             addButton.textContent = "+";
             addButton.addEventListener("click", () => {
-                // Temps
+                // Tenses
                 const th = document.createElement("th");
                 const input = document.createElement("input");
                 input.type = "text";
                 input.placeholder = "Temps";
                 input.addEventListener("input", () => {
-                    let index = question.elements.temps.indexOf(input);
-                    question.eval.reponse.temps[index] = input.value;
-                    question.elements.temps[index] = input;
+                    let index = question.elements.tenses.indexOf(input);
+                    question.eval.answer.tenses[index] = input.value;
+                    question.elements.tenses[index] = input;
                     tableauCreate(question);
                     updateLocalStorage();
                 });
                 th.appendChild(input);
                 theadRow.insertBefore(th, addButton);
-                question.elements.temps.push(input);
-                question.eval.reponse.temps.push(input.value);
+                question.elements.tenses.push(input);
+                question.eval.answer.tenses.push(input.value);
 
-                // Verbes
-                for (let i = 0; i < question.elements.pronoms.length; i++) {
+                // Verbs
+                for (let i = 0; i < question.elements.pronouns.length; i++) {
                     const td = document.createElement("td");
                     const subInput = document.createElement("input");
                     subInput.type = "text";
                     subInput.placeholder = "Verbe conjugué";
                     subInput.addEventListener("input", () => {
-                        let j = question.elements.temps.indexOf(input);
-                        if (!question.eval.reponse.verbes[i]) question.eval.reponse.verbes[i] = [];
-                        question.eval.reponse.verbes[i][j] = subInput.value;
+                        let j = question.elements.tenses.indexOf(input);
+                        if (!question.eval.answer.verbs[i]) question.eval.answer.verbs[i] = [];
+                        question.eval.answer.verbs[i][j] = subInput.value;
                         tableauCreate(question);
                         updateLocalStorage();
                     });
-                    let j = question.elements.temps.indexOf(input);
-                    if (!question.eval.reponse.verbes[i]) question.eval.reponse.verbes[i] = [];
-                    question.eval.reponse.verbes[i][j] = subInput.value;
+                    let j = question.elements.tenses.indexOf(input);
+                    if (!question.eval.answer.verbs[i]) question.eval.answer.verbs[i] = [];
+                    question.eval.answer.verbs[i][j] = subInput.value;
 
-                    let row = question.elements.pronoms[i].parentElement.parentElement;
+                    let row = question.elements.pronouns[i].parentElement.parentElement;
                     td.appendChild(subInput);
                     row.appendChild(td);
                 }
@@ -864,30 +862,30 @@ function reponse(divA, question, type, create) {
             if (!create) {
                 // Difference between creation/updating
                 function body() {
-                    for (let i = 0; i < question.eval.reponse.pronoms.length; i++) {
+                    for (let i = 0; i < question.eval.answer.pronouns.length; i++) {
                         const tr = document.createElement("tr");
 
                         const thh = document.createElement("th");
                         const th = document.createElement("input");
                         th.placeholder = "Personne";
                         th.type = "text";
-                        th.value = question.eval.reponse.pronoms[i];
+                        th.value = question.eval.answer.pronouns[i];
                         th.addEventListener("input", () => {
-                            question.eval.reponse.pronoms[0] = th.value;
+                            question.eval.answer.pronouns[0] = th.value;
                             tableauCreate(question);
                             updateLocalStorage();
                         });
                         thh.append(th);
                         tr.appendChild(thh);
 
-                        for (let j = 0; j < question.eval.reponse.temps.length; j++) {
+                        for (let j = 0; j < question.eval.answer.tenses.length; j++) {
                             const td = document.createElement("td");
                             const input = document.createElement("input");
                             input.type = "text";
                             input.placeholder = "Verbe conjugué";
-                            input.value = question.eval.reponse.verbes[i][j];
+                            input.value = question.eval.answer.verbs[i][j];
                             input.addEventListener("input", () => {
-                                question.eval.reponse.verbes[i][j] = input.value;
+                                question.eval.answer.verbs[i][j] = input.value;
                                 tableauCreate(question);
                                 updateLocalStorage();
                             });
@@ -908,13 +906,13 @@ function reponse(divA, question, type, create) {
                 thInput.type = "text";
                 thInput.placeholder = "Personne";
                 thInput.addEventListener("input", () => {
-                    question.eval.reponse.pronoms[0] = thInput.value;
+                    question.eval.answer.pronouns[0] = thInput.value;
                     tableauCreate(question);
                     updateLocalStorage();
                 });
                 th.appendChild(thInput);
                 tRow.appendChild(th);
-                question.elements.pronoms.push(thInput);
+                question.elements.pronouns.push(thInput);
 
                 // First verb
                 const td = document.createElement("td");
@@ -922,7 +920,7 @@ function reponse(divA, question, type, create) {
                 input.type = "text";
                 input.placeholder = "Verbe conjugué";
                 input.addEventListener("input", () => {
-                    question.eval.reponse.verbes[0][0] = input.value;
+                    question.eval.answer.verbs[0][0] = input.value;
                     tableauCreate(question);
                     updateLocalStorage();
                 });
@@ -930,8 +928,8 @@ function reponse(divA, question, type, create) {
                 td.appendChild(input);
                 tRow.appendChild(td);
 
-                question.eval.reponse.verbes[0][0] = input.value;
-                question.eval.reponse.pronoms[0] = thInput.value;
+                question.eval.answer.verbs[0][0] = input.value;
+                question.eval.answer.pronouns[0] = thInput.value;
                 tbody.appendChild(tRow);
             }
 
@@ -950,33 +948,33 @@ function reponse(divA, question, type, create) {
                 thInputAdded.type = "text";
                 thInputAdded.placeholder = "Personne";
                 thInputAdded.addEventListener("input", () => {
-                    let index = question.elements.pronoms.indexOf(thInputAdded);
-                    question.eval.reponse.pronoms[index] = thInputAdded.value;
-                    question.elements.pronoms[index] = thInputAdded;
+                    let index = question.elements.pronouns.indexOf(thInputAdded);
+                    question.eval.answer.pronouns[index] = thInputAdded.value;
+                    question.elements.pronouns[index] = thInputAdded;
                     tableauCreate(question);
                     updateLocalStorage();
                 });
-                question.eval.reponse.pronoms.push(thInputAdded.value);
-                question.elements.pronoms.push(thInputAdded);
+                question.eval.answer.pronouns.push(thInputAdded.value);
+                question.elements.pronouns.push(thInputAdded);
                 th.appendChild(thInputAdded);
                 tr.appendChild(th);
 
                 // Verb
-                for (let j = 0; j < question.elements.temps.length; j++) {
+                for (let j = 0; j < question.elements.tenses.length; j++) {
                     const td = document.createElement("td");
                     const input = document.createElement("input");
                     input.type = "text";
                     input.placeholder = "Verbe conjugué";
                     input.addEventListener("input", () => {
-                        let i = question.elements.pronoms.indexOf(thInputAdded);
-                        if (!question.eval.reponse.verbes[i]) question.eval.reponse.verbes[i] = [];
-                        question.eval.reponse.verbes[i][j] = input.value;
+                        let i = question.elements.pronouns.indexOf(thInputAdded);
+                        if (!question.eval.answer.verbs[i]) question.eval.answer.verbs[i] = [];
+                        question.eval.answer.verbs[i][j] = input.value;
                         tableauCreate(question);
                         updateLocalStorage();
                     });
-                    let i = question.elements.pronoms.indexOf(thInputAdded);
-                    if (!question.eval.reponse.verbes[i]) question.eval.reponse.verbes[i] = [];
-                    question.eval.reponse.verbes[i][j] = input.value;
+                    let i = question.elements.pronouns.indexOf(thInputAdded);
+                    if (!question.eval.answer.verbs[i]) question.eval.answer.verbs[i] = [];
+                    question.eval.answer.verbs[i][j] = input.value;
 
                     td.appendChild(input);
                     tr.appendChild(td);
@@ -1000,8 +998,8 @@ function reponse(divA, question, type, create) {
             deleteButton.disabled = true;
             deleteButton.addEventListener("click", () => {
                 tbody.removeChild(tbody.lastChild.previousSibling); // Don't delete the buttons ! :)
-                question.eval.reponse.pronoms.pop();
-                question.elements.pronoms.pop();
+                question.eval.answer.pronouns.pop();
+                question.elements.pronouns.pop();
                 if (tbody.lastChild.previousSibling === tRow) {
                     deleteButton.disabled = true;
                 } else {

@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
     <head>
         <meta charset="UTF-8" />
         <link href="/shared/style/main.css" rel="stylesheet" />
-        <link href="../style/acces.css" rel="stylesheet" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-        <script type="module" src="../scripts/acces.js" async></script>
+        <link href="../style/eval.css" rel="stylesheet" />
+        <script type="module" src="../scripts/eval.js" async></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Accès</title>
+        <title>Contrôle</title>
     </head>
     <body>
         <header>
@@ -30,7 +29,7 @@
                         title="dashboard"
                     />
                 </a>
-                <a>
+                <a id="logout">
                     <img
                         src="/shared/ressources/icone_deconnexion.jpg"
                         alt="déconnexion"
@@ -41,18 +40,17 @@
         </header>
 
         <div id="infos">
-            <h1 id="ACname"></h1>
-            <p id="ACreps"></p>
-            <p id="ACmoy"></p>
+            <h1 id="EVname"></h1>
 
-            <p id="ACtime">Début : - Fin :</p>
-            <p id="ACrand">Questions aléatoires : Oui</p>
+            <p id="EVaccess"></p>
+            <p id="EVans"></p>
+            <p id="EVmoy"></p>
         </div>
 
         <div id="options">
-            <button id="editAccess">Modifier l'accès</button>
-            <div id="editAccessBig" class="popup">
-                <div id="editAccessSmall" class="interieur-popup">
+            <button id="create_access">Créer un nouvel accès</button>
+            <div id="newAccessBig" class="popup">
+                <div id="newAccessSmall" class="interieur-popup">
                     <label>Nom de l'accès</label>
                     <br />
                     <input type="text" id="NAname" placeholder="Entrez un nom" />
@@ -78,19 +76,10 @@
                     <button id="saveNewAccess">Sauvegarder</button>
                 </div>
             </div>
-
-            <button id="qr-code">Partager l'accès</button>
-            <div id="QRBig" class="popup">
-                <div id="QRSmall" class="interieur-popup">
-                    <h2>Partager cet accès</h2>
-                    <h1 id="access-id">Id de l'accès :</h1>
-
-                    <h2>Scannez-moi !</h2>
-                </div>
-            </div>
-            <button id="delete">Supprimer l'accès</button>
+            <button id="edit">Modifier l'évaluation</button>
+            <button id="delete">Supprimer l'évaluation</button>
         </div>
 
-        <div id="repList"></div>
+        <div id="access"></div>
     </body>
 </html>

@@ -23,7 +23,6 @@ async function page() {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
         },
         body: JSON.stringify({ id: evalParam }),
     })
@@ -34,12 +33,12 @@ async function page() {
     /*
     evalI = {
         name: "Contrôle grammaire - 2024/2025",
-        note: 12,
-        nb_reps: 78,
-        acces: [
-            { name: "TG1", id: "45Uia8", note: 14 },
-            { name: "TG2", id: "4520a8", status: 0, note: 16 },
-            { name: "TG3", id: "uAUia8", status: 2, note: 13 },
+        mark: 12,
+        nb_ans: 78,
+        access: [
+            { name: "TG1", id: "45Uia8", mark: 14 },
+            { name: "TG2", id: "4520a8", status: 0, mark: 16 },
+            { name: "TG3", id: "uAUia8", status: 2, mark: 13 },
         ],
     };
     */
@@ -51,20 +50,19 @@ async function page() {
     const EVname = document.getElementById("EVname");
     EVname.textContent = evalI.name;
 
-    const nb_acces = document.getElementById("EVacces");
-    nb_acces.textContent = "Nombre d'accès à cette évaluation : " + evalI.acces.length.toString();
+    const nb_access = document.getElementById("EVaccess");
+    nb_access.textContent = "Nombre d'accès à cette évaluation : " + evalI.access.length.toString();
 
-    const nb_reps = document.getElementById("EVreps");
-    nb_reps.textContent =
-        "Nombre total de réponses à cette évaluation : " + evalI.nb_reps.toString();
+    const nb_ans = document.getElementById("EVans");
+    nb_ans.textContent = "Nombre total de réponses à cette évaluation : " + evalI.nb_ans.toString();
 
     const moyenne = document.getElementById("EVmoy");
-    moyenne.textContent = "Moyenne : " + evalI.note.toString();
+    moyenne.textContent = "Moyenne : " + evalI.mark.toString();
 
-    const accesDiv = document.getElementById("acces");
-    construct(accesDiv, evalI.acces, { url: "acces", param: "a" });
+    const accessDiv = document.getElementById("access");
+    construct(accessDiv, evalI.access, { url: "access", param: "a" });
 
-    // ANCHOR - Build the "creating access" div
+    // ANCHOR - Build the "creating accesss" div
     const createAccess = document.getElementById("create_access");
     const newAccessDivBig = document.getElementById("newAccessBig");
     createAccess.addEventListener("click", () => {

@@ -3,10 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <link href="/shared/style/main.css" rel="stylesheet" />
-        <link href="style/connexion.css" rel="stylesheet" />
-        <script type="module" src="scripts/connexion.js" async></script>
+        <link href="style/signup.css" rel="stylesheet" />
+        <script type="module" src="scripts/signup.js" async></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Connexion</title>
+        <title>Inscription</title>
     </head>
     <body>
         <header>
@@ -16,19 +16,20 @@
             </button>
         </header>
         <div>
-            <p2>Pas encore inscrit ?</p2>
-            <button onclick="window.location.href='inscription';">Inscription</button>
+            <p2>Déjà un compte ? </p2>
+            <button onclick="window.location.href='connexion';">Connexion</button>
         </div>
-        <div id="signup">
-            <p>Connexion</p>
+
+        <div>
+            <p>Inscription</p>
             <div>
                 <p2>identifiant :</p2>
                 <br />
-                <input placeholder="entrer votre identifiant" id="id" />
+                <input placeholder="entrer un identifiant" id="id" />
                 <br />
                 <p2>mot de passe :</p2>
                 <br />
-                <input placeholder="entrer votre mot de passe" type="password" id="passwd" />
+                <input type="password" placeholder="entrer un mot de passe" id="passwd" />
                 <br />
                 <button id="confirm">valider</button>
             </div>

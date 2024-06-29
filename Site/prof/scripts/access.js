@@ -13,25 +13,25 @@ await Puser_check();
 // SECTION - Load page content
 async function page() {
     // ANCHOR - Getting eval infos
-    let accesI = {};
+    let accessI = {};
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const accesParam = urlParams.get("a");
+    const accessParam = urlParams.get("a");
 
-    await fetch("https://api.thoth-edu.fr/dashboard/acces/get", {
+    await fetch("https://api.thoth-edu.fr/dashboard/access/get", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
         },
-        body: JSON.stringify({ id: accesParam }),
+        body: JSON.stringify({ id: accessParam }),
     })
         .then((response) => response.json())
         .then((data) => (accesI = data))
-        .catch((error) => Perror("Error on dashboard/acces/get : " + error));
+        .catch((error) => Perror("Error on dashboard/access/get : " + error));
 
     /*
-    accesI = {
+    accessI = {
         access: {
             name: "TG2",
             id_eval: "ahbVai1",
@@ -42,11 +42,11 @@ async function page() {
                 end: -23890147541000,
             },
         },
-        note: 13,
-        reps: [
-            { name: "Jeremy A.", id: "45Uia8", note: 18 },
-            { name: "Clarina H.", id: "4520a8", note: 20 },
-            { name: "Jean-Jacques R.", id: "uAUia8", note: 15.2 },
+        mark: 13,
+        ans: [
+            { name: "Jeremy A.", id: "45Uia8", mark: 18 },
+            { name: "Clarina H.", id: "4520a8", mark: 20 },
+            { name: "Jean-Jacques R.", id: "uAUia8", mark: 15.2 },
         ],
     };
     */
@@ -56,24 +56,24 @@ async function page() {
     username.textContent = localStorage.getItem("username");
 
     const randomAC = document.getElementById("ACrand");
-    if (accesI.access.random) {
+    if (accessI.access.random) {
         randomAC.textContent = "Questions aléatoires : Oui";
     } else {
         randomAC.textContent = "Questions aléatoires : Non";
     }
 
     const ACname = document.getElementById("ACname");
-    ACname.textContent = accesI.access.name;
+    ACname.textContent = accessI.access.name;
 
-    const nb_reps = document.getElementById("ACreps");
-    nb_reps.textContent = "Nombre total de réponses à cet accès : " + accesI.reps.length.toString();
+    const nb_ans = document.getElementById("ACans");
+    nb_ans.textContent = "Nombre total de réponses à cet accès : " + accessI.ans.length.toString();
 
     const moyenne = document.getElementById("ACmoy");
-    moyenne.textContent = "Moyenne : " + accesI.note.toString();
+    moyenne.textContent = "Moyenne : " + accessI.mark.toString();
 
     const time = document.getElementById("ACtime");
-    let startTime = new Date(parseInt(accesI.access.time.start));
-    let endTime = new Date(parseInt(accesI.access.time.end));
+    let startTime = new Date(parseInt(accessI.access.time.start));
+    let endTime = new Date(parseInt(accessI.access.time.end));
     let durationMs = endTime - startTime;
     console.log(startTime, endTime);
 
@@ -100,25 +100,25 @@ async function page() {
         durationStr +
         " )";
 
-    const repDiv = document.getElementById("repList");
-    construct(repDiv, accesI.reps, { url: "copie", param: "c" });
+    const ansDiv = document.getElementById("ansList");
+    construct(ansDiv, accessI.ans, { url: "copie", param: "c" });
 
     // ANCHOR - Deleting eval
-    const deleteAcces = document.getElementById("delete");
-    deleteAcces.addEventListener("click", () => {
+    const deleteAccess = document.getElementById("delete");
+    deleteAccess.addEventListener("click", () => {
         Pconfirm(
-            "Vous allez supprimer l'acces. Cette action est IRRÉVERSIBLE, et il sera totalement impossible de récupérer les données, quelles qu'elles soient, de l'accès et des copies.",
+            "Vous allez supprimer l'accès. Cette action est IRRÉVERSIBLE, et il sera totalement impossible de récupérer les données, quelles qu'elles soient, de l'accès et des copies.",
             () => {
                 Pinput(
-                    `Veuillez recopier l'id de cet accès pour confirmer : \n\n${accesParam}`,
+                    `Veuillez recopier l'id de cet accès pour confirmer : \n\n${accessParam}`,
                     (inputDelete) => {
-                        if (inputDelete == accesParam) {
-                            fetch("https://api.thoth-edu.fr/dashboard/acces/delete", {
+                        if (inputDelete == accessParam) {
+                            fetch("https://api.thoth-edu.fr/dashboard/access/delete", {
                                 method: "POST",
                                 headers: {
                                     "Content-Type": "application/json",
                                 },
-                                body: JSON.stringify({ id: accesParam }),
+                                body: JSON.stringify({ id: accessParam }),
                             })
                                 .then((response) => response.json())
                                 .then((data) => {
@@ -129,7 +129,7 @@ async function page() {
                                     }
                                 })
                                 .catch((error) =>
-                                    Perror("Error on dashboard/acces/delete : " + error)
+                                    Perror("Error on dashboard/access/delete : " + error)
                                 );
                         } else {
                             Palert("Vous avez mal recopié l'id. Veuillez recommencer");
@@ -143,9 +143,9 @@ async function page() {
     // ANCHOR - Editing an access
 
     const name = document.getElementById("NAname");
-    name.value = accesI.access.name;
+    name.value = accessI.access.name;
     const random = document.getElementById("NArandom");
-    random.checked = accesI.access.random;
+    random.checked = accessI.access.random;
     const start = document.getElementById("NAstart");
     start.value =
         startTime.getFullYear() +
@@ -207,15 +207,15 @@ async function page() {
 
         // If there is no error, then save
         if (!isError) {
-            fetch("https://api.thoth-edu.fr/dashboard/acces/save", {
+            fetch("https://api.thoth-edu.fr/dashboard/access/save", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     name: name.value,
-                    id_eval: accesParam,
-                    id_access: accesParam,
+                    id_eval: accessParam,
+                    id_access: accessParam,
                     random: random.checked,
                     time: {
                         start: Date.parse(start.value),
@@ -231,7 +231,7 @@ async function page() {
                         Palert("Oh non ! Quelque chose a mal fonctionné : ", data.reason);
                     }
                 })
-                .catch((error) => Perror("Error on dashboard/acces/save  : " + error));
+                .catch((error) => Perror("Error on dashboard/access/save  : " + error));
         }
     });
 
@@ -239,7 +239,7 @@ async function page() {
     const access_id_h = document.getElementById("access-id");
     access_id_h.textContent = "ID de cet accès : " + accesParam;
     access_id_h.addEventListener("click", () => {
-        navigator.clipboard.writeText(accesParam);
+        navigator.clipboard.writeText(accessParam);
     });
 
     let isGenerated = false;
@@ -266,7 +266,7 @@ async function page() {
             qrCodeBig.style.display = "block";
             if (!isGenerated) {
                 qrCodeSmall.style.width = "500px";
-                generateQRCode(`https://thoth-edu.fr/eval?e=${accesParam}`);
+                generateQRCode(`https://thoth-edu.fr/eval?e=${accessParam}`);
             }
         }
     });
