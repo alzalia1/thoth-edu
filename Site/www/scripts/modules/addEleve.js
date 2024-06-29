@@ -16,7 +16,7 @@ export function construct(questionsDiv, questions, newContent = null) {
             } else {
                 answer = {
                     id: question.id,
-                    reponse: "",
+                    answer: "",
                 };
             }
 
@@ -25,22 +25,22 @@ export function construct(questionsDiv, questions, newContent = null) {
             const titrePreview = document.createElement("h4");
             titrePreview.textContent = "Question n°" + (answers.length + 1).toString();
 
-            const consigneLabel = document.createElement("label");
-            consigneLabel.textContent = question.consigne;
+            const instructionLabel = document.createElement("label");
+            instructionLabel.textContent = question.instruction;
 
-            const reponseInput = document.createElement("input");
-            reponseInput.type = "text";
-            reponseInput.placeholder = "Écrivez votre réponse ici";
-            reponseInput.addEventListener("input", () => {
-                answer.reponse = reponseInput.value;
+            const answerInput = document.createElement("input");
+            answerInput.type = "text";
+            answerInput.placeholder = "Écrivez votre réponse ici";
+            answerInput.addEventListener("input", () => {
+                answer.answer = answerInput.value;
                 updateLocalStorage();
             });
 
             divPreview.append(
                 titrePreview,
-                consigneLabel,
+                instructionLabel,
                 document.createElement("br"),
-                reponseInput
+                answerInput
             );
             questionElement.appendChild(divPreview);
             answers.push(answer);
@@ -51,7 +51,7 @@ export function construct(questionsDiv, questions, newContent = null) {
             } else {
                 answer = {
                     id: question.id,
-                    reponse: [[]],
+                    answer: [[]],
                 };
             }
 
@@ -61,13 +61,15 @@ export function construct(questionsDiv, questions, newContent = null) {
             const titrePreview = document.createElement("h4");
             titrePreview.textContent = "Question n°" + (answers.length + 1).toString();
 
-            const consigneLabel = document.createElement("label");
-            consigneLabel.textContent =
-                "Conjuguez le verbe '" + question.consigne + "' aux temps et personnes suivantes :";
+            const instructionLabel = document.createElement("label");
+            instructionLabel.textContent =
+                "Conjuguez le verbe '" +
+                question.instruction +
+                "' aux tenses et personnes suivantes :";
 
-            const reponseInput = document.createElement("table");
+            const answerInput = document.createElement("table");
 
-            divPreview.append(titrePreview, consigneLabel, reponseInput);
+            divPreview.append(titrePreview, instructionLabel, answerInput);
 
             const table = document.createElement("table");
 
@@ -78,9 +80,9 @@ export function construct(questionsDiv, questions, newContent = null) {
                 const empty = document.createElement("th");
                 theadRow.appendChild(empty);
 
-                for (let i = 0; i < question.reponse.temps.length; i++) {
+                for (let i = 0; i < question.answer.tenses.length; i++) {
                     const th = document.createElement("th");
-                    th.textContent = question.reponse.temps[i];
+                    th.textContent = question.answer.tenses[i];
                     theadRow.appendChild(th);
                 }
 
@@ -92,26 +94,26 @@ export function construct(questionsDiv, questions, newContent = null) {
             function body() {
                 const tbody = document.createElement("tbody");
 
-                for (let i = 0; i < question.reponse.pronoms.length; i++) {
-                    if (!answer.reponse[i]) {
-                        answer.reponse.push([]);
+                for (let i = 0; i < question.answer.pronouns.length; i++) {
+                    if (!answer.answer[i]) {
+                        answer.answer.push([]);
                     }
                     const tr = document.createElement("tr");
 
                     const th = document.createElement("th");
-                    th.textContent = question.reponse.pronoms[i];
+                    th.textContent = question.answer.pronouns[i];
                     tr.appendChild(th);
 
-                    for (let j = 0; j < question.reponse.temps.length; j++) {
-                        if (!answer.reponse[i][j]) {
-                            answer.reponse[i].push([]);
+                    for (let j = 0; j < question.answer.tenses.length; j++) {
+                        if (!answer.answer[i][j]) {
+                            answer.answer[i].push([]);
                         }
                         const td = document.createElement("td");
                         const input = document.createElement("input");
                         input.type = "text";
                         input.placeholder = "Verbe conjugué";
                         input.addEventListener("input", () => {
-                            answer.reponse[i][j] = input.value;
+                            answer.answer[i][j] = input.value;
                             updateLocalStorage();
                         });
                         td.appendChild(input);

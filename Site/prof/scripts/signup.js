@@ -2,31 +2,31 @@ import { Palert, Perror } from "../../shared/scripts/modules/utils.js";
 
 // ANCHOR - Confirmation de l'envoi des infos d'authentification
 const confirmButton = document.getElementById("confirm");
-confirmButton.addEventListener("click", () => {
+confirmButton.addEventListener("click", function (event) {
+    event.preventDefault();
+
     const sendBackForm = {
         id: document.getElementById("id").value,
-        mdp: document.getElementById("passwd").value,
+        passwd: document.getElementById("passwd").value,
     };
 
-    fetch("https://api.thoth-edu.fr/user/login", {
+    fetch("https://api.thoth-edu.fr/user/signup", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(sendBackForm),
     })
-        .then((response) => {
-            return response.json();
-        })
+        .then((response) => response.json())
         .then((data) => {
-            if (data.status == "fail") {
-                Palert("Erreur : " + data.reason);
+            console.log(data);
+            if (data.status == "success") {
+                window.location.href = `https://professeur.thoth-edu.fr`;
             } else {
-                localStorage.setItem("jwt-token", data.access_token);
-                window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+                Palert("Oh non ! Une erreur est survenue : " + data.reason);
             }
         })
-        .catch((error) => Perror("Error on user/login : " + error));
+        .catch((error) => Perror("Error on user/signup : " + error));
 });
 
 // ANCHOR - Ajoute la touche "Entrée" comme validateur

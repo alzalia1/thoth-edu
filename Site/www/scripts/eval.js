@@ -63,12 +63,12 @@ async function page() {
     // FIXME : ÇA NE MARCHE PAS CETTE MERDE ANTI-TRICHE
     // document.addEventListener("visibilitychange", async () => {
     //     if (document.visibilityState === "hidden") {
-    //         await sendRepsEleve(true);
+    //         await sendAnsEleve(true);
     //     }
     // });
 
     // window.addEventListener("blur", async () => {
-    //     await sendRepsEleve(true);
+    //     await sendAnsEleve(true);
     // });
 
     // ANCHOR - Building the questions
@@ -129,7 +129,7 @@ async function page() {
         Pconfirm(
             "Vous ne pourrez plus modifier vos réponses une fois cette évaluation rendue. Veuillez confirmer que vous souhaitez rendre.",
             () => {
-                sendRepsEleve(false);
+                sendAnsEleve(false);
             }
         );
     });
@@ -137,15 +137,15 @@ async function page() {
 // ùSECTION
 
 // ANCHOR - Send answers
-async function sendRepsEleve(aTriche) {
+async function sendAnsEleve(aTriche) {
     let sendBackForm = {
         id_access: evalParam,
         id_el: nomEleve,
-        responses: answers,
+        answers: answers,
         aTriche: aTriche,
     };
 
-    fetch("https://api.thoth-edu.fr/eval/reps_eleves", {
+    fetch("https://api.thoth-edu.fr/eval/ans_students", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -178,7 +178,7 @@ async function sendRepsEleve(aTriche) {
                 }, 5000);
             }
         })
-        .catch((error) => Perror("Error on eval/reps_eleves : " + error));
+        .catch((error) => Perror("Error on eval/ans_students : " + error));
 }
 
 let duration;
@@ -204,7 +204,7 @@ async function init() {
         Palert(
             "Vous êtes à court de temps ! Votre évaluation sera envoyée comme elle est maintenant, veuillez indiquer votre nom ici.",
             async () => {
-                await sendRepsEleve(false);
+                await sendAnsEleve(false);
             }
         );
     }, duration);

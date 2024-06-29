@@ -20,7 +20,6 @@ async function page() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
             },
             body: JSON.stringify({ id: evalParam }),
         })
@@ -100,7 +99,6 @@ async function page() {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
                         },
                         body: JSON.stringify(formData),
                     })

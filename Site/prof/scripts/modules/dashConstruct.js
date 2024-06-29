@@ -1,6 +1,6 @@
 /** ANCHOR - Permet de construire une liste dans une div
  * @param {HTMLDivElement} pDiv - Div dans laquelle insérer la liste
- * @param {Array} list - liste de chaque élément (couple name/id + status/note)
+ * @param {Array} list - liste de chaque élément (couple name/id + status/mark)
  */
 export function construct(pDiv, list, pageTo) {
     const table = document.createElement("table");
@@ -8,7 +8,7 @@ export function construct(pDiv, list, pageTo) {
     let ref = {
         name: true,
         status: false,
-        note: false,
+        mark: false,
     };
     let order = {};
 
@@ -28,17 +28,17 @@ export function construct(pDiv, list, pageTo) {
     });
     theader.appendChild(hname);
 
-    // Check the presence of notes/status
+    // Check the presence of marks/status
     list.forEach((el) => {
         if ("status" in el) {
             ref.status = true;
         }
 
-        if ("note" in el) {
-            ref.note = true;
+        if ("mark" in el) {
+            ref.mark = true;
         }
 
-        if (ref.note && ref.status) {
+        if (ref.mark && ref.status) {
             return;
         }
     });
@@ -53,14 +53,14 @@ export function construct(pDiv, list, pageTo) {
         theader.appendChild(hstatus);
     }
 
-    if (ref.note) {
-        const hnote = document.createElement("th");
-        order.note = { status: 0, object: hnote, column: Object.keys(order).length + 1 };
-        hnote.textContent = pageTo.param == "c" ? "Note (/20)" : "Moyenne (/20)";
-        hnote.addEventListener("click", () => {
-            orderHandler(order, "note", tbody);
+    if (ref.mark) {
+        const hmark = document.createElement("th");
+        order.mark = { status: 0, object: hmark, column: Object.keys(order).length + 1 };
+        hmark.textContent = pageTo.param == "c" ? "Mark (/20)" : "Moyenne (/20)";
+        hmark.addEventListener("click", () => {
+            orderHandler(order, "mark", tbody);
         });
-        theader.appendChild(hnote);
+        theader.appendChild(hmark);
     }
 
     table.appendChild(theader);
@@ -104,13 +104,13 @@ export function construct(pDiv, list, pageTo) {
             div.append(status);
         }
 
-        // Note if one :
-        if (ref.note) {
-            const note = document.createElement("td");
-            if ("note" in el) {
-                note.textContent = el.note.toString();
+        // Mark if one :
+        if (ref.mark) {
+            const mark = document.createElement("td");
+            if ("mark" in el) {
+                mark.textContent = el.mark.toString();
             }
-            div.append(note);
+            div.append(mark);
         }
 
         tbody.appendChild(div);
