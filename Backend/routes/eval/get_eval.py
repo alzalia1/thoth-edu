@@ -31,9 +31,9 @@ def getEval(data):
     for i, quest in enumerate(dataAReturn["questions"]):
         quest["id"] = trouverID(quest, listeQuestions)
         if quest["type"] == "traduction":
-            quest["reponse"] = {}
+            quest["answer"] = {}
         else:
-            del quest["reponse"]["verbes"]
+            del quest["answer"]["verbs"]
         quest["points"] = quest["params"]["points"]
         del quest["params"]
 

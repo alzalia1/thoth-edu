@@ -7,7 +7,7 @@ from appInit import db, User, bcrypt
 
 
 def signup(data):
-    # { "id" : "Bob" ; "mdp" : "mdp" ; "accents" : "é" }
+    # { "id" : "Bob" ; "mdp" : "mdp" ; "accent" : "é" }
     idUser = creationID(6)
 
     while idUser in User.query.filter_by(id=idUser):
@@ -16,8 +16,7 @@ def signup(data):
     newUser = User(
         id=idUser,
         nom=data["id"],
-        mdp=bcrypt.generate_password_hash(data["mdp"]).decode("utf-8"),
-        accents=str(data["accents"]),
+        mdp=bcrypt.generate_password_hash(data["psswd"]).decode("utf-8"),
     )
 
     user = User.query.filter_by(id=data["id"]).first()

@@ -28,7 +28,7 @@ def get(data):
     listeNotes = [ listeRep[i]["note"] for i in range(len(listeRep)) ]
     
     data = {"access": jsonAReturn,
-            "note": sum(listeNotes)/len(listeNotes),
-            "reps": listeRep}
+            "mark": sum(listeNotes)/len(listeNotes),
+            "ans": listeRep}
     
     return jsonify(data)

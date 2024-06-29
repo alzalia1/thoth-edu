@@ -18,10 +18,10 @@ def rep_eleves(data):
     # Création de la ligne à ajouter en CSV
     ligneEleve = [data["id_el"], data["id_access"], time.time()]
 
-    listeOrdre = sorted(data["responses"], key=lambda x: x["id"])
+    listeOrdre = sorted(data["answer"], key=lambda x: x["id"])
 
     for i, quest in enumerate(listeOrdre):
-        ligneEleve = ligneEleve + [i, None, quest["reponse"], None]
+        ligneEleve = ligneEleve + [i, None, quest["answer"], None]
 
     # Recherche de la ligne en csv
     with open(evalAssociee.cheminCSV, "r", encoding="utf-8") as fichierEval:

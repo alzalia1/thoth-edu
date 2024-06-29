@@ -20,5 +20,5 @@ def get(data):
         for acces in listeAcces
     ]
 
-    data = {"name": eval.nom, "note": 0, "nb_reps": 0, "acces": dicoAcces}
+    data = {"name": eval.nom, "mark": 0, "nb_ans": 0, "access": dicoAcces}
     return jsonify(data)

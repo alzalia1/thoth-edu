@@ -32,7 +32,7 @@ def save(data):
         lienJSON = evalMAJ.cheminJSON
 
         listeQuestionsMAJ = [
-            data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
+            data["eval"]["questions"][i] for i in range(len(data["eval"]["ans"]))
         ]
         enteteMAJ = ["idEleve", "idAcces", "dateRep", "noteTot", "totPoints"]
         for i, quest in enumerate(listeQuestionsMAJ):
@@ -43,7 +43,7 @@ def save(data):
                 "note_Q" + str(i),
             ]
         contenuMAJ = [None, None, None]
-        for i, quest in enumerate(data["eval"]["questions"]):
+        for i, quest in enumerate(data["eval"]["answer"]):
             contenuMAJ = contenuMAJ + [i, quest, None, None]
 
         with open(lienCSV, "w", encoding="utf-8") as fichierEval:
@@ -79,7 +79,7 @@ def save(data):
             os.makedirs(nouveauCheminCSVINIT, exist_ok=True)
 
         listeQuestionsInit = [
-            data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
+            data["eval"]["answer"][i] for i in range(len(data["eval"]["answer"]))
         ]
         enteteInit = ["idEleve", "idAcces", "dateRep"]
         for i, quest in enumerate(listeQuestionsInit):
@@ -90,7 +90,7 @@ def save(data):
                 "note_Q" + str(i),
             ]
         contenuInit = [None, None, None]
-        for i, quest in enumerate(data["eval"]["questions"]):
+        for i, quest in enumerate(data["eval"]["answer"]):
             contenuInit = contenuInit + [i, quest, None, None]
 
         with open(nouveauCheminCSV, "w", encoding="utf-8") as fichierEval:

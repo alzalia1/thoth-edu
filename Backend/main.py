@@ -93,18 +93,18 @@ def evalGetEval():
     return r.eval.getEval(data)
 
 
-@app.route("/eval/reps_eleves", methods=["POST"])
-def repEleves():
+@app.route("/eval/ans_eleves", methods=["POST"])
+def ansEleves():
     data = request.get_json()
-    return r.eval.rep_eleves(data)
+    return r.eval.ans_students(data)
 
 
-@app.route("/dashboard/acces/get", methods=["POST"])
-def getAcces():
+@app.route("/dashboard/access/get", methods=["POST"])
+def getAccess():
     data = request.get_json()
-    return r.dashboard.acces.get(data)
+    return r.dashboard.access.get(data)
 
-@app.route("/dashboard/acces/delete", methods=["POST"])
-def deleteAcces():
+@app.route("/dashboard/access/delete", methods=["POST"])
+def deleteAccess():
     data = request.get_json()
-    return r.dashboard.acces.delete(data)
+    return r.dashboard.access.delete(data)

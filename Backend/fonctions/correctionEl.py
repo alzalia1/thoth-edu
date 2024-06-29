@@ -2,11 +2,11 @@ from unidecode import unidecode
 
 
 def touteCombi(question):
-    det = question["params"]["determinant"]
+    det = question["params"]["determiners"]
     mot = (
-        question["params"]["pluriel"]
+        question["params"]["plural"]
         + question["params"]["genre"]
-        + [question["reponse"]]
+        + [question["answer"]]
     )
     return [(elem1 + elem2).lower() for elem1 in det for elem2 in mot]
 
@@ -21,23 +21,23 @@ def correctionEl(quest, rep):
         if quest[i]["type"] == "conjugaison":
             tot = len(rep[i + 1]) * len(rep[i + 1][0])
             compt = 0
-            if quest[i]["params"]["accents"] == "true":
+            if quest[i]["params"]["accent"] == "true":
                 for j in range(len(rep[i + 1])):
                     for k in range(len(rep[i + 1][0])):
-                        if rep[i + 1][j][k] == quest[i]["reponse"]["verbes"]:
+                        if rep[i + 1][j][k] == quest[i]["answer"]["verbes"]:
                             compt += 1
             else:
                 for j in range(len(rep[i + 1])):
                     for k in range(len(rep[i + 1][0])):
                         if unidecode(rep[i + 1][j][k]) == unidecode(
-                            quest[i]["reponse"]["verbes"][j][k]
+                            quest[i]["answer"]["verbes"][j][k]
                         ):
                             compt += 1
             repAvecPoints[i + 2] = int(quest[i]["params"]["points"]) * round(
                 compt / tot, 1
             )
         else:
-            if quest[i]["params"]["accents"] == "true":
+            if quest[i]["params"]["accent"] == "true":
                 if rep[i + 1] in touteCombi(quest[i]):
                     repAvecPoints[i + 2] = int(quest[i]["params"]["points"])
                 else:
