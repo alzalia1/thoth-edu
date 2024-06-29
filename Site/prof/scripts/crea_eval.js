@@ -1,57 +1,15 @@
 import { addQuestion, questions, loadFromID, loadFromPending } from "./modules/addQuestions.js";
-import { Pconfirm, Palert } from "../../shared/scripts/modules/utils.js";
+import { Pconfirm, Palert, Puser_check, Perror } from "../../shared/scripts/modules/utils.js";
 
-// System to check and refresh user's token !
-let userCheckInProgress = false;
-let userCheckTimeoutId = null;
-
-async function user_check() {
-    if (userCheckInProgress) {
-        return;
-    }
-
-    userCheckInProgress = true;
-
-    await fetch("https://api.thoth-edu.fr/user/check", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
-        },
-        body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.status == "fail") {
-                throw Error();
-            } else {
-                localStorage.setItem("jwt-token", data.new);
-            }
-        })
-        .catch((error) => {
-            window.stop();
-            Palert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
-            console.log(error);
-            window.location.href = `https://professeur.thoth-edu.fr/`;
-        })
-        .finally(() => {
-            userCheckInProgress = false;
-            if (userCheckTimeoutId !== null) {
-                clearTimeout(userCheckTimeoutId);
-            }
-            userCheckTimeoutId = setTimeout(() => {
-                user_check();
-            }, 1800000);
-        });
-}
-await user_check();
+// ANCHOR - System to check and refresh user's token !
+await Puser_check();
 
 async function page() {
-    // Setting the page
+    // ANCHOR - Setting the page
     const username = document.getElementById("username");
     username.textContent = localStorage.getItem("username");
 
-    // load or not ?
+    // ANCHOR - load or not ?
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const evalParam = urlParams.get("eval");
@@ -71,7 +29,7 @@ async function page() {
                 evalName.value = data.eval.name;
                 loadFromID(data.eval.questions);
             })
-            .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
+            .catch((error) => Perror("Error on crea/get : " + error));
     } else if (
         localStorage.getItem("evalPending") &&
         localStorage.getItem("evalPending") != "none"
@@ -84,7 +42,7 @@ async function page() {
         );
     }
 
-    // Something, I guess
+    // ANCHOR - Adding a question
     const addType = document.getElementById("addType");
     const statQuestions = document.getElementById("nbQuestions");
 
@@ -107,7 +65,7 @@ async function page() {
         addType.hidden = false;
     });
 
-    // Saving
+    // ANCHOR - Saving
     const saveButton = document.getElementById("save");
     saveButton.addEventListener("click", () => {
         Pconfirm(
@@ -149,52 +107,25 @@ async function page() {
                         .then((response) => response.json())
                         .then((data) => {
                             if (data.status == "success") {
-                                Palert("Évaluation sauvegardée avec succès");
-                                localStorage.removeItem("evalPending");
-                                if (evalParam) {
-                                    window.location.href = `https://professeur.thoth-edu.fr/dashboard/controle?e=${evalParam}`;
-                                } else {
-                                    window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
-                                }
+                                Palert("Évaluation sauvegardée avec succès", () => {
+                                    localStorage.removeItem("evalPending");
+                                    if (evalParam) {
+                                        window.location.href = `https://professeur.thoth-edu.fr/dashboard/controle?e=${evalParam}`;
+                                    } else {
+                                        window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+                                    }
+                                });
                             } else {
                                 console.log("pas ok" + data.reason);
                             }
                         })
-                        .catch((error) => Palert("Erreur lors de l'envoi des données :" + error));
+                        .catch((error) => Perror("Error on crea/save : " + error));
                 }
             }
         );
     });
 
-    window.getQuestions = function () {
-        return questions;
-    };
-
-    window.getLocalStorageSize = function () {
-        let size = 0;
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            const value = localStorage.getItem(key);
-            size += key.length * 2 + value.length * 2;
-        }
-        return size;
-    };
-
-    window.simulateSave = function () {
-        let evalData = {
-            name: evalName.value,
-            questions: [],
-        };
-
-        questions.forEach((question) => {
-            evalData.questions.push(question.eval);
-        });
-
-        console.log(evalData);
-    };
-
-    // Also the logic for the "dashboard" button
-
+    // ANCHOR - Also the logic for the "dashboard" button
     const backToDashboard = document.getElementById("dashboard");
     backToDashboard.addEventListener("click", () => {
         Pconfirm(

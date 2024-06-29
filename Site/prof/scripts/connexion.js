@@ -1,31 +1,22 @@
-import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
+import { Palert, Perror } from "../../shared/scripts/modules/utils.js";
 
-document.getElementById("confirm").addEventListener("click", function (event) {
-    event.preventDefault();
-
-    const formData = {
+// ANCHOR - Confirmation de l'envoi des infos d'authentification
+const confirmButton = document.getElementById("confirm");
+confirmButton.addEventListener("click", () => {
+    const sendBackForm = {
         id: document.getElementById("id").value,
         mdp: document.getElementById("passwd").value,
     };
 
-    // Envoi des données au backend
-    sendDataToBackend(formData);
-});
-
-function sendDataToBackend(formData) {
     fetch("https://api.thoth-edu.fr/user/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(sendBackForm),
     })
         .then((response) => {
-            if (response.headers.get("content-type").includes("application/json")) {
-                return response.json();
-            } else {
-                throw new Error("Server response is not JSON");
-            }
+            return response.json();
         })
         .then((data) => {
             if (data.status == "fail") {
@@ -35,5 +26,12 @@ function sendDataToBackend(formData) {
                 window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
             }
         })
-        .catch((error) => console.error("Erreur lors de l'envoi des données :", error));
-}
+        .catch((error) => Perror("Error on user/login : " + error));
+});
+
+// ANCHOR - Ajoute la touche "Entrée" comme validateur
+window.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        confirmButton.click();
+    }
+});

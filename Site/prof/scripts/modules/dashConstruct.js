@@ -1,7 +1,4 @@
-import { Pconfirm, Palert, Pinput } from "../../../shared/scripts/modules/utils.js";
-
-/**
- * Permet de construire une liste dans une div
+/** ANCHOR - Permet de construire une liste dans une div
  * @param {HTMLDivElement} pDiv - Div dans laquelle insérer la liste
  * @param {Array} list - liste de chaque élément (couple name/id + status/note)
  */
@@ -124,8 +121,7 @@ export function construct(pDiv, list, pageTo) {
     pDiv.append(table);
 }
 
-/**
- * Trie le tableau selon un paramètre particulier
+/** ANCHOR - Trie le tableau selon un paramètre particulier
  * @param {number} column - Numéro de la colonne
  * @param {HTMLTableElement} body - le tbody du tableau à modifier
  * @param {boolean} ascending - true (default) = croissant, false = décroissant
@@ -148,8 +144,7 @@ function orderBy(column, body, ascending = true) {
     rows.forEach((row) => body.append(row));
 }
 
-/**
- * Permet de trouver l'ancienne colonne de tri, et en enlever l'indicateur
+/** ANCHOR - Permet de trouver l'ancienne colonne de tri, et en enlever l'indicateur
  * @param {object} obj - Objet avec les données sur l'ordre
  */
 function findAncientOrder(obj) {
@@ -161,6 +156,11 @@ function findAncientOrder(obj) {
     }
 }
 
+/** ANCHOR - Permet d'afficher les symboles "⮟" ou "⮝" à côté du nom de colonne triée
+ * @param {object} order - Dictionnaire contenant chaque type de colonne
+ * @param {string} key - La colonne dont on veut changer l'indicateur d'ordre
+ * @param {*} tbody - Le corps du tableau
+ */
 function orderHandler(order, key, tbody) {
     if (order[key].status == 0) {
         findAncientOrder(order);

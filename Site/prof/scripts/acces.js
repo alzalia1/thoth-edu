@@ -1,53 +1,18 @@
 import { construct } from "./modules/dashConstruct.js";
-import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
+import {
+    Pconfirm,
+    Palert,
+    Pinput,
+    Puser_check,
+    Perror,
+} from "../../shared/scripts/modules/utils.js";
 
-// System to check and refresh user's token !
-let userCheckInProgress = false;
-let userCheckTimeoutId = null;
+// ANCHOR - System to check and refresh user's token !
+await Puser_check();
 
-async function user_check() {
-    if (userCheckInProgress) {
-        return;
-    }
-
-    userCheckInProgress = true;
-
-    await fetch("https://api.thoth-edu.fr/user/check", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
-        },
-        body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.status == "fail") {
-                throw Error();
-            } else {
-                localStorage.setItem("jwt-token", data.new);
-            }
-        })
-        .catch((error) => {
-            window.stop();
-            Palert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
-            console.log(error);
-            window.location.href = `https://professeur.thoth-edu.fr/`;
-        })
-        .finally(() => {
-            userCheckInProgress = false;
-            if (userCheckTimeoutId !== null) {
-                clearTimeout(userCheckTimeoutId);
-            }
-            userCheckTimeoutId = setTimeout(() => {
-                user_check();
-            }, 1800000);
-        });
-}
-await user_check();
-
+// SECTION - Load page content
 async function page() {
-    // Getting eval infos
+    // ANCHOR - Getting eval infos
     let accesI = {};
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -63,7 +28,7 @@ async function page() {
     })
         .then((response) => response.json())
         .then((data) => (accesI = data))
-        .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
+        .catch((error) => Perror("Error on dashboard/acces/get : " + error));
 
     /*
     accesI = {
@@ -86,9 +51,16 @@ async function page() {
     };
     */
 
-    // Setting the page
+    // ANCHOR - Setting the page
     const username = document.getElementById("username");
     username.textContent = localStorage.getItem("username");
+
+    const randomAC = document.getElementById("ACrand");
+    if (accesI.access.random) {
+        randomAC.textContent = "Questions aléatoires : Oui";
+    } else {
+        randomAC.textContent = "Questions aléatoires : Non";
+    }
 
     const ACname = document.getElementById("ACname");
     ACname.textContent = accesI.access.name;
@@ -100,8 +72,8 @@ async function page() {
     moyenne.textContent = "Moyenne : " + accesI.note.toString();
 
     const time = document.getElementById("ACtime");
-    let startTime = new Date(accesI.access.time.start);
-    let endTime = new Date(accesI.access.time.end);
+    let startTime = new Date(parseInt(accesI.access.time.start));
+    let endTime = new Date(parseInt(accesI.access.time.end));
     let durationMs = endTime - startTime;
     console.log(startTime, endTime);
 
@@ -131,7 +103,7 @@ async function page() {
     const repDiv = document.getElementById("repList");
     construct(repDiv, accesI.reps, { url: "copie", param: "c" });
 
-    // Deleting eval
+    // ANCHOR - Deleting eval
     const deleteAcces = document.getElementById("delete");
     deleteAcces.addEventListener("click", () => {
         Pconfirm(
@@ -157,7 +129,7 @@ async function page() {
                                     }
                                 })
                                 .catch((error) =>
-                                    Palert("Erreur lors de l'envoi des données :", error)
+                                    Perror("Error on dashboard/acces/delete : " + error)
                                 );
                         } else {
                             Palert("Vous avez mal recopié l'id. Veuillez recommencer");
@@ -168,7 +140,7 @@ async function page() {
         );
     });
 
-    // Editing an access
+    // ANCHOR - Editing an access
 
     const name = document.getElementById("NAname");
     name.value = accesI.access.name;
@@ -259,11 +231,17 @@ async function page() {
                         Palert("Oh non ! Quelque chose a mal fonctionné : ", data.reason);
                     }
                 })
-                .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
+                .catch((error) => Perror("Error on dashboard/acces/save  : " + error));
         }
     });
 
-    // Generating a QR-Code
+    // ANCHOR - Generating a QR-Code + Displaying ID
+    const access_id_h = document.getElementById("access-id");
+    access_id_h.textContent = "ID de cet accès : " + accesParam;
+    access_id_h.addEventListener("click", () => {
+        navigator.clipboard.writeText(accesParam);
+    });
+
     let isGenerated = false;
     function generateQRCode(url) {
         const qrcode = new QRCode("QRSmall", {
@@ -300,3 +278,4 @@ async function page() {
     });
 }
 await page();
+// ùSECTION

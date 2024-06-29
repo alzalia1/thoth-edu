@@ -1,53 +1,19 @@
 import { construct } from "./modules/dashConstruct.js";
-import { Pconfirm, Palert, Pinput } from "../../shared/scripts/modules/utils.js";
+import {
+    Pconfirm,
+    Palert,
+    Pinput,
+    Plogout,
+    Puser_check,
+    Perror,
+} from "../../shared/scripts/modules/utils.js";
 
-// System to check and refresh user's token !
-let userCheckInProgress = false;
-let userCheckTimeoutId = null;
+// ANCHOR - System to check and refresh user's token
+await Puser_check();
 
-async function user_check() {
-    if (userCheckInProgress) {
-        return;
-    }
-
-    userCheckInProgress = true;
-
-    await fetch("https://api.thoth-edu.fr/user/check", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
-        },
-        body: JSON.stringify({ token: localStorage.getItem("jwt-token") }),
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.status == "fail") {
-                throw Error();
-            } else {
-                localStorage.setItem("jwt-token", data.new);
-            }
-        })
-        .catch((error) => {
-            window.stop();
-            Palert("Votre demande n'est pas autorisée ! Veuillez vous connecter avant.");
-            console.log(error);
-            window.location.href = `https://professeur.thoth-edu.fr/`;
-        })
-        .finally(() => {
-            userCheckInProgress = false;
-            if (userCheckTimeoutId !== null) {
-                clearTimeout(userCheckTimeoutId);
-            }
-            userCheckTimeoutId = setTimeout(() => {
-                user_check();
-            }, 1800000);
-        });
-}
-await user_check();
-
+// SECTION - Loads page content
 async function page() {
-    // Getting eval info
+    // ANCHOR - Getting eval content
     let evalI = {};
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -63,7 +29,7 @@ async function page() {
     })
         .then((response) => response.json())
         .then((data) => (evalI = data))
-        .catch((error) => Palert("Erreur lors de l'envoi des données : " + error));
+        .catch((error) => Perror("Error on dashboard/eval/get : " + error));
 
     /*
     evalI = {
@@ -77,7 +43,8 @@ async function page() {
         ],
     };
     */
-    // Setting the page
+
+    // ANCHOR - Setting the page stats
     const username = document.getElementById("username");
     username.textContent = localStorage.getItem("username");
 
@@ -97,7 +64,7 @@ async function page() {
     const accesDiv = document.getElementById("acces");
     construct(accesDiv, evalI.acces, { url: "acces", param: "a" });
 
-    // Creating access
+    // ANCHOR - Build the "creating access" div
     const createAccess = document.getElementById("create_access");
     const newAccessDivBig = document.getElementById("newAccessBig");
     createAccess.addEventListener("click", () => {
@@ -166,11 +133,11 @@ async function page() {
                         Palert("Oh non ! Quelque chose a mal fonctionné : ", data.reason);
                     }
                 })
-                .catch((error) => Palert("Erreur lors de l'envoi des données :", error));
+                .catch((error) => Perror("Error on dashboard/eval/create_access : " + error));
         }
     });
 
-    // Deleting eval
+    // ANCHOR - Deleting eval button
     const deleteEval = document.getElementById("delete");
     deleteEval.addEventListener("click", () => {
         Pconfirm(
@@ -197,7 +164,7 @@ async function page() {
                                     }
                                 })
                                 .catch((error) =>
-                                    Palert("Erreur lors de l'envoi des données :", error)
+                                    Perror("Error on dashboard/eval/delete  : " + error)
                                 );
                         } else {
                             Palert("Vous avez mal recopié l'id. Veuillez recommencer");
@@ -208,11 +175,17 @@ async function page() {
         );
     });
 
-    // Editing eval
+    // ANCHOR - Editing eval button
     const editEval = document.getElementById("edit");
     editEval.addEventListener("click", () => {
         window.location.href = `https://professeur.thoth-edu.fr/crea_eval?eval=${evalParam}`;
     });
-}
 
-page();
+    // ANCHOR - Logout button
+    const deconnect = document.getElementById("logout");
+    deconnect.addEventListener("click", () => {
+        Plogout();
+    });
+}
+await page();
+// ùSECTION

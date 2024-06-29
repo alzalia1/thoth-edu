@@ -6,7 +6,6 @@ import random
 
 # Import app
 from appInit import Acces, Eval
-from fonctions.trouverID import trouverID
 
 
 def getEval(data):
@@ -18,18 +17,8 @@ def getEval(data):
         contenu = fichierEval.read()
         dataAReturn = json.loads(contenu)
 
-    # Ouverture du fichier CSV en mode lecture pour trouver les id des questions
-    with open(evalAssociee.cheminCSV, "r", encoding="utf-8") as fichierEval:
-        lecteur_csv = csv.reader(fichierEval, delimiter=",")
-        next(lecteur_csv)
-        listeQuestions = next(lecteur_csv)
-
-    # On enlève les 3 premières colonnes qui sont inutiles
-    listeQuestions = listeQuestions[3:]
-
     # Conversion éval prof en eval élève
     for i, quest in enumerate(dataAReturn["questions"]):
-        quest["id"] = trouverID(quest, listeQuestions)
         if quest["type"] == "traduction":
             quest["answer"] = {}
         else:

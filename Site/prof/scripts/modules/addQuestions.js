@@ -1,10 +1,11 @@
-import { Pconfirm, Palert, Pinput } from "../../../shared/scripts/modules/utils.js";
-
 /**
  * ! WARNING : THIS CODE IS A DANGER TO YOUR SANITY. PROCEDE WITH CAUTION.
  */
 
-// == Initialize global variables ==
+// TODO : Make the code cleaner...
+// FIXME : C'EST LA MERDE UN PEU
+
+// SECTION - Initialize global variables
 
 export let questions = [];
 
@@ -12,9 +13,10 @@ const statPoints = document.getElementById("nbPoints");
 const statQuestions = document.getElementById("nbQuestions");
 const questionsDiv = document.getElementById("questionsList");
 const evalName = document.getElementById("nom_eval");
+// ùSECTION
 
-// == Main question adding logic ==
-
+// SECTION - Main question adding logic
+// SECTION - Add question
 /**
  * Créée la question
  * @param {string} type - Type de question (traduction/conjugaison)
@@ -25,8 +27,8 @@ export function addQuestion(type, question = null) {
     questionElement.className = "question";
     const create = question == null;
 
+    // ANCHOR - New fresh question object
     if (question == null) {
-        // New fresh question object
         switch (type) {
             case "traduction":
                 question = {
@@ -111,7 +113,7 @@ export function addQuestion(type, question = null) {
         }
     }
 
-    // Common header system
+    // ANCHOR - Common header system
     function entete() {
         const questionNumber = document.createElement("h3");
         questionNumber.textContent = "Question n°" + (questions.length + 1);
@@ -121,6 +123,7 @@ export function addQuestion(type, question = null) {
     }
     entete();
 
+    // ANCHOR - Q Creating div
     function divA() {
         const divA = document.createElement("div");
 
@@ -139,6 +142,7 @@ export function addQuestion(type, question = null) {
     }
     divA();
 
+    // ANCHOR - Preview div
     function divPreview() {
         let consigne = "";
         if (type == "traduction") {
@@ -188,6 +192,7 @@ export function addQuestion(type, question = null) {
     }
     divPreview();
 
+    // ANCHOR - Parametres div
     function divPopup() {
         const bigDivPopup = document.createElement("div");
         bigDivPopup.classList.add("popup");
@@ -206,8 +211,7 @@ export function addQuestion(type, question = null) {
                 questions.length != 0 ? questions[questions.length - 1].eval.params.points : 1;
             pointInput.addEventListener("input", () => {
                 question.eval.params.points = pointInput.value;
-                statPointsLaunch();
-                updateLocalStorage();
+                renameAllQuestions();
             });
 
             if (create) {
@@ -272,7 +276,7 @@ export function addQuestion(type, question = null) {
                 plurielMotsInput.placeholder = "Mots autorisés";
                 plurielMotsInput.hidden = !plurielInput.checked;
                 plurielMotsInput.addEventListener("keyup", function (e) {
-                    if (e.key === " ") {
+                    if (e.key === " " || e.key === "Enter") {
                         const tag = this.value.trim();
                         question.eval.params.pluriel.push(tag);
                         const tagElement = document.createElement("span");
@@ -361,7 +365,7 @@ export function addQuestion(type, question = null) {
                 genreMotsInput.placeholder = "Mots autorisés";
                 genreMotsInput.hidden = !genreInput.checked;
                 genreMotsInput.addEventListener("keyup", function (e) {
-                    if (e.key === " ") {
+                    if (e.key === " " || e.key === "Enter") {
                         const tag = this.value.trim();
                         question.eval.params.genre.push(tag);
                         const tagElement = document.createElement("span");
@@ -450,7 +454,7 @@ export function addQuestion(type, question = null) {
                 detMotsInput.placeholder = "Déterminants autorisés";
                 detMotsInput.hidden = !detInput.checked;
                 detMotsInput.addEventListener("keyup", function (e) {
-                    if (e.key === " ") {
+                    if (e.key === " " || e.key === "Enter") {
                         const tag = this.value.trim();
                         question.eval.params.determinant.push(tag);
                         const tagElement = document.createElement("span");
@@ -525,39 +529,48 @@ export function addQuestion(type, question = null) {
 
     questionsDiv.appendChild(questionElement);
     questions.push(question);
+
+    // ANCHOR - Launch global functions
     renameAllQuestions();
     statPointsLaunch();
     updateLocalStorage();
 }
+// ùSECTION
 
+// SECTION - Load from ID
 export function loadFromID(questionList) {
     questionList.forEach((question) => {
         addQuestion(question.type, { eval: question });
     });
 }
+// ùSECTION
 
+// SECTION - Load from pending
 export function loadFromPending(questionList) {
     evalName.value = questionList.name;
     questionList.eval.forEach((question) => {
         addQuestion(question.eval.type, question);
     });
 }
+// ùSECTION
+// ùSECTION
 
-// == Sub-tools commands ==
+// SECTION - Sub-tools commands
 
-/**
+/** ANCHOR - Rename all questions
  * Renomme toutes les questions lors d'une suppression
  */
 function renameAllQuestions() {
     for (let i = 0; i < questions.length; i++) {
-        questions[i].elements.title.textContent = "Question n°" + (i + 1);
+        questions[i].elements.title.textContent =
+            "Question n°" + (i + 1) + "  (/" + questions[i].eval.params.points.toString() + ")";
     }
     statQuestions.textContent = "Nombre de questions : " + questions.length.toString();
 
     statPointsLaunch();
 }
 
-/**
+/** ANCHOR - Update points stats
  * Mets à jour le compteur global de points
  */
 function statPointsLaunch() {
@@ -569,7 +582,7 @@ function statPointsLaunch() {
     updateLocalStorage();
 }
 
-/**
+/** ANCHOR - Update local storage
  * Updates the local storage with the current questions list
  */
 function updateLocalStorage() {
@@ -579,8 +592,9 @@ function updateLocalStorage() {
     };
     localStorage.setItem("evalPending", JSON.stringify(evalPending));
 }
+// ùSECTION
 
-// == Type specific adding logic ==
+// SECTION - Type specific adding logic
 
 function tableauCreate(question) {
     const divPreview = question.elements.divPreview;
@@ -646,12 +660,11 @@ function tableauCreate(question) {
     divPreview.appendChild(table);
 }
 
-// == Common but parametric adding logic ==
+// ùSECTION
 
-// For divA
+// SECTION - Common but parametric adding logic
 
-/**
- * Ajoute l'input de la question
+/** ANCHOR - Ajoute l'input de la question
  * @param {HTMLDivElement} divA - div où se situe la question
  * @param {object} question - Question actuellement modifiée
  * @param {string} type - Type de la question
@@ -680,13 +693,13 @@ function consigne(divA, question, type) {
         question.eval.consigne = consigneInput.value;
         question.elements.preview.textContent = consigneInput.value;
         updateLocalStorage();
+        tableauCreate(question);
     });
 
     divA.append(consigneLabel, consigneInput);
 }
 
-/**
- * Ajoute la partie "réponse" de la question
+/** ANCHOR - Ajoute la partie "réponse" de la question
  * @param {HTMLDivElement} divA - div où insérer la partie réponse
  * @param {object} question - objet question
  * @param {string} type - type de la question
@@ -819,6 +832,9 @@ function reponse(divA, question, type, create) {
                         tableauCreate(question);
                         updateLocalStorage();
                     });
+                    let j = question.elements.temps.indexOf(input);
+                    if (!question.eval.reponse.verbes[i]) question.eval.reponse.verbes[i] = [];
+                    question.eval.reponse.verbes[i][j] = subInput.value;
 
                     let row = question.elements.pronoms[i].parentElement.parentElement;
                     td.appendChild(subInput);
@@ -958,6 +974,9 @@ function reponse(divA, question, type, create) {
                         tableauCreate(question);
                         updateLocalStorage();
                     });
+                    let i = question.elements.pronoms.indexOf(thInputAdded);
+                    if (!question.eval.reponse.verbes[i]) question.eval.reponse.verbes[i] = [];
+                    question.eval.reponse.verbes[i][j] = input.value;
 
                     td.appendChild(input);
                     tr.appendChild(td);
@@ -1002,8 +1021,7 @@ function reponse(divA, question, type, create) {
     }
 }
 
-/**
- * Ajoute les deux boutons de paramètre
+/** ANCHOR - Ajoute les deux boutons de paramètre
  * @param {HTMLDivElement} divA - div où insérer l'élément
  * @param {HTMLDivElement} questionElement - div de la question entière
  * @param {object} question - objet question

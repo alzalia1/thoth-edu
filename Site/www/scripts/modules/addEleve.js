@@ -1,5 +1,3 @@
-import { Pconfirm, Palert, Pinput } from "../../../shared/scripts/modules/utils.js";
-
 export let answers = [];
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
