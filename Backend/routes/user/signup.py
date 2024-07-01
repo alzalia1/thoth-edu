@@ -19,19 +19,14 @@ def signup(data):
         mdp=bcrypt.generate_password_hash(data["psswd"]).decode("utf-8"),
     )
 
-    user = User.query.filter_by(id=data["id"]).first()
+    user = User.query.filter_by(nom=data["id"]).first()
 
     if user == None:
         db.session.add(newUser)
         db.session.commit()
         return jsonify({"status": "success"})  # Utilisateur créé
 
-    if user.nom == data["id"]:
+    else:
         return jsonify(
             {"status": "fail", "reason": "utilisateur déjà existant"}
         )  # Identifiant déjà existant
-
-    db.session.add(newUser)
-    db.session.commit()
-
-    return jsonify({"status": "success"})  # Utilisateur créé
