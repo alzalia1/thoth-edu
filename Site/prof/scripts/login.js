@@ -5,7 +5,7 @@ const confirmButton = document.getElementById("confirm");
 confirmButton.addEventListener("click", () => {
     const sendBackForm = {
         id: document.getElementById("id").value,
-        passwd: document.getElementById("passwd").value,
+        psswd: document.getElementById("psswd").value,
     };
 
     fetch("https://api.thoth-edu.fr/user/login", {

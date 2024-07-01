@@ -7,7 +7,7 @@ confirmButton.addEventListener("click", function (event) {
 
     const sendBackForm = {
         id: document.getElementById("id").value,
-        passwd: document.getElementById("passwd").value,
+        psswd: document.getElementById("psswd").value,
     };
 
     fetch("https://api.thoth-edu.fr/user/signup", {
@@ -21,7 +21,7 @@ confirmButton.addEventListener("click", function (event) {
         .then((data) => {
             console.log(data);
             if (data.status == "success") {
-                window.location.href = `https://professeur.thoth-edu.fr`;
+                window.location.href = `https://professeur.thoth-edu.fr/login`;
             } else {
                 Palert("Oh non ! Une erreur est survenue : " + data.reason);
             }
