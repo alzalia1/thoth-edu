@@ -27,7 +27,7 @@ async function page() {
         body: JSON.stringify({ id: accessParam }),
     })
         .then((response) => response.json())
-        .then((data) => (accesI = data))
+        .then((data) => (accessI = data))
         .catch((error) => Perror("Error on dashboard/access/get : " + error));
 
     /*
@@ -101,7 +101,7 @@ async function page() {
         " )";
 
     const ansDiv = document.getElementById("ansList");
-    construct(ansDiv, accessI.ans, { url: "copie", param: "c" });
+    construct(ansDiv, accessI.ans, { url: "answer", param: "c" });
 
     // ANCHOR - Deleting eval
     const deleteAccess = document.getElementById("delete");
