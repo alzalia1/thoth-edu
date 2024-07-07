@@ -5,11 +5,11 @@
 export function Palert(text, okHandler = () => {}) {
     const body = document.body;
 
-    const Gdiv = document.createElement("div");
-    Gdiv.classList.add("popup");
-    Gdiv.style.display = "block";
-    const Sdiv = document.createElement("div");
-    Sdiv.classList.add("interieur-popup");
+    const outsideDiv = document.createElement("div");
+    outsideDiv.classList.add("popup");
+    outsideDiv.style.display = "block";
+    const insideDiv = document.createElement("div");
+    insideDiv.classList.add("interieur-popup");
 
     // Text
     const p = document.createElement("p");
@@ -20,20 +20,19 @@ export function Palert(text, okHandler = () => {}) {
     ok.textContent = "Ok";
     ok.classList.add("ok-button");
     ok.addEventListener("click", () => {
-        body.removeChild(Gdiv);
+        body.removeChild(outsideDiv);
         okHandler();
     });
 
-    Sdiv.append(p, ok);
-    Gdiv.append(Sdiv);
-    body.append(Gdiv);
+    insideDiv.append(p, ok);
+    outsideDiv.append(insideDiv);
+    body.append(outsideDiv);
 }
 
 /** ANCHOR - To show a bad error !
- * @param {string} text - Text to display
- * @param {Function} okHandler - Function to handle the ok button (nothing by default)
+ * @param {string} error - Error that occured
  */
-export function Perror(text) {
+export function Perror(error) {
     const body = document.body;
 
     const Gdiv = document.createElement("div");
@@ -63,7 +62,7 @@ export function Perror(text) {
     const mailLi = document.createElement("li");
     const mailA = document.createElement("a");
     mailA.textContent = "Par mail à notre support technique";
-    mailA.href = `mailto:error@thoth-edu.fr?subject=Erreur sur la page &body=Message d'erreur: %0D%0A%0D%0A${text}%0D%0A%0D%0ADescription de votre situation :%0D%0A`;
+    mailA.href = `mailto:error@thoth-edu.fr?subject=Erreur sur la page &body=Message d'erreur: %0D%0A%0D%0A${error}%0D%0A%0D%0ADescription de votre situation :%0D%0A`;
 
     mailLi.appendChild(mailA);
 
@@ -75,7 +74,7 @@ export function Perror(text) {
 
     // Text
     const p = document.createElement("textarea");
-    p.value = text;
+    p.value = error;
     p.cols = 45;
     const copy = document.createElement("button");
     copy.textContent = "Copier";
@@ -195,7 +194,7 @@ export function Plogout() {
             })
             .then((data) => {
                 if (data.status) {
-                    setTimeout((window.location = `https://professeur.thoth-edu.fr/`), 5000);
+                    setTimeout((window.location = `https://professeur.thoth-edu.fr/login`), 5000);
                     Palert(
                         "Vous avez bien été déconnecté ! Vous allez maintenant être redirigé vers la page de connexion.",
                         () => {
@@ -236,11 +235,16 @@ export async function Puser_check() {
             }
         })
         .catch((error) => {
-            if (error == "not-connected") {
+            if (error.message == "not-connected") {
                 Palert(
-                    "Oups ! Il semblerait que vous ne soyez pas (ou plus !) connecté.e. Vous allez être transféré.e vers la page de connexion ! :) "
+                    "Oups ! Il semblerait que vous ne soyez pas, ou plus, connecté.e. Vous allez être transféré.e vers la page de connexion.",
+                    () => {
+                        window.location.href = `https://professeur.thoth-edu.fr/login`;
+                    }
                 );
-                window.location.href = `https://professeur.thoth-edu.fr/`;
+                setTimeout(() => {
+                    window.location.href = `https://professeur.thoth-edu.fr/login`;
+                }, 5000);
             } else {
                 Perror("Error on user/check : " + error);
             }

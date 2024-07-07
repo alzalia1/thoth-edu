@@ -1,3 +1,5 @@
+import { Perror } from "../../shared/scripts/modules/utils.js";
+
 // ANCHOR - Connection button
 const connectButton = document.getElementById("connect");
 connectButton.addEventListener("click", () => {
@@ -5,13 +7,13 @@ connectButton.addEventListener("click", () => {
 });
 
 // ANCHOR - Accessing eval
-
 const validateButton = document.getElementById("validate");
 const idInputField = document.getElementById("idInputField");
 const errorConnecting = document.getElementById("errorConnecting");
 
 validateButton.addEventListener("click", () => {
     let id = idInputField.value;
+
     if (!id) {
         errorConnecting.textContent = "Veuillez entrer un id";
     }
@@ -31,5 +33,5 @@ validateButton.addEventListener("click", () => {
                 errorConnecting.textContent = "Veuillez entrer un id valide";
             }
         })
-        .catch((error) => console.error("Erreur lors de l'envoi des données :", error));
+        .catch((error) => Perror(error));
 });

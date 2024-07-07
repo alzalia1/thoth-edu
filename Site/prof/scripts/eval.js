@@ -176,7 +176,7 @@ async function page() {
     // ANCHOR - Editing eval button
     const editEval = document.getElementById("edit");
     editEval.addEventListener("click", () => {
-        window.location.href = `https://professeur.thoth-edu.fr/crea_eval?eval=${evalParam}`;
+        window.location.href = `https://professeur.thoth-edu.fr/crea_eval?e=${evalParam}`;
     });
 
     // ANCHOR - Logout button
