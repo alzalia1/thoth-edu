@@ -1,1057 +1,693 @@
-/**
- * ! WARNING : THIS CODE IS A DANGER TO YOUR SANITY. PROCEDE WITH CAUTION.
- */
+import { Palert, Perror } from "../../../shared/scripts/modules/utils.js";
 
-// TODO : Make the code cleaner...
-// FIXME : C'EST LA MERDE UN PEU
+// TODO - Preview
+// TODO - Saving
+// TODO - Stats and renaming at deletion
+// TODO - Loading/reloading
 
-// SECTION - Initialize global variables
+// ANCHOR - Global variables
+let questions = [];
+const questionsMainDiv = document.getElementById("questionsList");
+const evalNameInput = document.getElementById("evalName");
+evalNameInput.addEventListener("input", () => {
+    updateManager("paramsEdit");
+});
 
-export let questions = [];
-
-const statPoints = document.getElementById("nbPoints");
-const statQuestions = document.getElementById("nbQuestions");
-const questionsDiv = document.getElementById("questionsList");
-const evalName = document.getElementById("nom_eval");
-// ùSECTION
-
-// SECTION - Main question adding logic
-// SECTION - Add question
-/**
- * Créée la question
- * @param {string} type - Type de question (traduction/conjugaison)
- * @param {object} question - Contenu de la question, rien si c'est une nouvelle
- */
-export function addQuestion(type, question = null) {
-    const questionElement = document.createElement("div");
-    questionElement.className = "question";
-    const create = question == null;
-
-    // ANCHOR - New fresh question object
-    if (question == null) {
-        switch (type) {
-            case "traduction":
-                question = {
-                    elements: {
-                        div: questionElement,
-                        title: "",
-                        preview: "",
-                        popup: "",
-                        plural: false,
-                        genre: false,
-                        determiners: false,
-                    },
-                    eval: {
-                        type: "traduction",
-                        instruction: "",
-                        answer: "",
-                        params: {
-                            points: 0,
-                            determiners: [],
-                            plural: [],
-                            genre: [],
-                            sousInstruction: false,
-                            accent: false,
-                        },
-                    },
-                };
-                break;
-
-            case "conjugaison":
-                question = {
-                    elements: {
-                        div: questionElement,
-                        title: "",
-                        preview: "",
-                        divPreview: "",
-                        popup: "",
-                        tenses: [],
-                        pronouns: [],
-                    },
-                    eval: {
-                        type: "conjugaison",
-                        instruction: "",
-                        answer: {
-                            tenses: [],
-                            pronouns: [],
-                            verbs: [[]],
-                        },
-                        params: {
-                            points: 0,
-                            sousInstruction: false,
-                            accent: false,
-                        },
-                    },
-                };
-                break;
-        }
-    } else {
-        switch (type) {
-            case "traduction":
-                question.elements = {
-                    div: questionElement,
-                    title: "",
-                    preview: "",
-                    popup: "",
-                    plural: false,
-                    genre: false,
-                    determiners: false,
-                };
-                break;
-
-            case "conjugaison":
-                question.elements = {
-                    div: questionElement,
-                    title: "",
-                    preview: "",
-                    divPreview: "",
-                    popup: "",
+// SECTION - Adding a question
+export function addQuestion(type, q = null) {
+    // ANCHOR - Creating the question var
+    switch (type) {
+        case "traduction":
+            q = {
+                type: "traduction",
+                instruction: "",
+                answer: "",
+                params: {
+                    points: 1.0,
+                    accent: false,
+                    plural: [],
+                    genre: [],
+                    determiner: [],
+                },
+            };
+            break;
+        case "conjugaison":
+            q = {
+                type: "conjugaison",
+                instruction: "",
+                answer: {
                     tenses: [],
                     pronouns: [],
-                };
-                break;
-        }
+                    verbs: [[]],
+                },
+                params: {
+                    points: 1.0,
+                    accent: false,
+                },
+            };
+            break;
     }
 
-    // ANCHOR - Common header system
-    function entete() {
-        const questionNumber = document.createElement("h3");
-        questionNumber.textContent = "Question n°" + (questions.length + 1);
+    // ANCHOR - Index of the question
+    const index = questions.length + 1;
 
-        questionElement.appendChild(questionNumber);
-        question.elements.title = questionNumber;
-    }
-    entete();
+    // ANCHOR - Creating the base div
+    const mainDiv = document.createElement("div");
+    mainDiv.id = index.toString(); // NOTE - Change this id at deletion !
 
-    // ANCHOR - Q Creating div
-    function divA() {
-        const divA = document.createElement("div");
+    // ANCHOR - Creating the three section divs
+    const questDiv = document.createElement("div");
+    const paramsDiv = document.createElement("div");
 
-        // Instruction input
-        instruction(divA, question, type);
+    // SECTION - Creating the question div
+    function questionDiv() {
+        // ANCHOR - Base division
+        questDiv.classList.add("quest");
 
-        divA.append(document.createElement("br"));
+        // ANCHOR - Title
+        const questMainTitle = document.createElement("h2");
+        questMainTitle.innerHTML = `Question n°<span class="questNb">${index.toString()}</span> (/<span class="questPts">${q.params.points.toString()}</span>)`;
 
-        answer(divA, question, type, create);
-
-        divA.append(document.createElement("br"));
-
-        params(divA, questionElement, question);
-
-        questionElement.appendChild(divA);
-    }
-    divA();
-
-    // ANCHOR - Preview div
-    function divPreview() {
-        let instruction = "";
-        if (type == "traduction") {
-            instruction = question.eval.instruction;
-        } else {
-            instruction =
-                "Conjuguez le verbe '" +
-                question.eval.instruction +
-                "' aux temps et personnes suivantes :";
-        }
-        const divPreview = document.createElement("div");
-
-        const titrePreview = document.createElement("h4");
-        titrePreview.textContent = "Aperçu de l'élève";
-
-        const instructionLabel = document.createElement("label");
-        instructionLabel.textContent = instruction;
-
-        // Differs depending on type
-
+        // ANCHOR - Instruction
+        const questInstructionDiv = document.createElement("div");
+        const questInstructionLabel = document.createElement("label");
         switch (type) {
             case "traduction":
-                const answerInput = document.createElement("input");
-                answerInput.type = "text";
-                answerInput.placeholder = "Écrivez votre réponse ici";
+                questInstructionLabel.textContent = "Consigne : ";
 
-                divPreview.append(
-                    titrePreview,
-                    instructionLabel,
-                    document.createElement("br"),
-                    answerInput
-                );
-                questionElement.appendChild(divPreview);
-                question.elements.preview = instructionLabel;
+                const questInstructionInputTrad = document.createElement("textarea");
+                questInstructionInputTrad.placeholder = "Écrivez ici la consigne de la question";
+                questInstructionInputTrad.classList.add("questIns");
+                questInstructionInputTrad.addEventListener("input", () => {
+                    q.instruction = questInstructionInputTrad.value;
+                    updateManager("questInput", mainDiv, q);
+                });
+                questInstructionDiv.append(questInstructionLabel, questInstructionInputTrad);
                 break;
-
             case "conjugaison":
-                const answerInput2 = document.createElement("table");
+                questInstructionLabel.textContent = "Verbe à conjuguer : ";
 
-                divPreview.append(titrePreview, instructionLabel, answerInput2);
-                questionElement.appendChild(divPreview);
-                question.elements.preview = instructionLabel;
-                question.elements.divPreview = divPreview;
-                tableauCreate(question);
+                const questInstructionInputConjug = document.createElement("input");
+                questInstructionInputConjug.placeholder = "Écrivez ici le verbe à conjuguer";
+                questInstructionInputConjug.type = "text";
+                questInstructionInputConjug.classList.add("questIns");
+                questInstructionInputConjug.addEventListener("input", () => {
+                    q.instruction = questInstructionInputConjug.value;
+                    updateManager("questInput", mainDiv, q);
+                });
+                questInstructionDiv.append(questInstructionLabel, questInstructionInputConjug);
                 break;
         }
-    }
-    divPreview();
 
-    // ANCHOR - Parametres div
-    function divPopup() {
-        const bigDivPopup = document.createElement("div");
-        bigDivPopup.classList.add("popup");
-        const divPopup = document.createElement("div");
-        divPopup.classList.add("interieur-popup");
-        bigDivPopup.style.display = "none";
+        // SECTION - Answer
+        const questAnswerDiv = document.createElement("div");
+        switch (type) {
+            case "traduction": // ANCHOR - Traduction
+                const questAnswerInputTrad = document.createElement("input");
+                questAnswerInputTrad.placeholder = "Entrez la réponse ici";
+                questAnswerInputTrad.classList.add("questAns");
+                questAnswerInputTrad.addEventListener("input", () => {
+                    q.answer = questAnswerInputTrad.value;
+                    updateManager("questInput", mainDiv, q);
+                });
 
-        function point() {
-            const pointLabel = document.createElement("label");
-            pointLabel.textContent = "Points : ";
+                questAnswerDiv.append(questAnswerInputTrad);
+                break;
+            case "conjugaison": // ANCHOR - C main table
+                const questAnswerTableConjug = document.createElement("table");
+                questAnswerTableConjug.classList.add("questAns");
 
-            const pointInput = document.createElement("input");
-            pointInput.type = "number";
-            pointInput.min = 0;
-            pointInput.value =
-                questions.length != 0 ? questions[questions.length - 1].eval.params.points : 1;
-            pointInput.addEventListener("input", () => {
-                question.eval.params.points = pointInput.value;
-                renameAllQuestions();
-            });
+                // ANCHOR - C first row
+                const questAnswerFirstRowConjug = questAnswerTableConjug.insertRow();
 
-            if (create) {
-                question.eval.params.points = pointInput.value;
-            } else {
-                pointInput.value = question.eval.params.points;
-            }
+                questAnswerFirstRowConjug.insertCell(); // Empty corner cell
 
-            divPopup.append(pointLabel, pointInput);
-        }
-        point();
+                const questFirstTenseCellConjug = questAnswerFirstRowConjug.insertCell();
+                const questFirstTenseInputConjug = document.createElement("input");
+                questFirstTenseInputConjug.placeholder = "Temps";
+                q.answer.tenses.push("");
+                questFirstTenseInputConjug.addEventListener("input", () => {
+                    q.answer.tenses[0] = questFirstTenseInputConjug.value;
+                    updateManager("questInput", mainDiv, q);
+                });
+                questFirstTenseCellConjug.appendChild(questFirstTenseInputConjug);
 
-        divPopup.append(document.createElement("br"));
+                // ANCHOR - C line buttons
+                const questLineButtonCellConjug = questAnswerFirstRowConjug.insertCell();
+                const questLineButtonSpanConjug = document.createElement("span");
+                questLineButtonSpanConjug.classList.add("linBut");
 
-        function accent() {
-            const accentLabel = document.createElement("label");
-            accentLabel.textContent = "Accent : ";
+                const questLineDeleteButtonConjug = document.createElement("button");
+                questLineDeleteButtonConjug.textContent = "-";
+                questLineDeleteButtonConjug.disabled = true;
+                questLineDeleteButtonConjug.addEventListener("click", () => {
+                    for (let i = 0; i < questAnswerTableConjug.rows.length - 1; i++) {
+                        const row = questAnswerTableConjug.rows[i];
 
-            const accentInput = document.createElement("input");
-            accentInput.type = "checkbox";
-            accentInput.checked =
-                questions.length != 0 ? questions[questions.length - 1].eval.params.accent : false;
-            accentInput.addEventListener("input", () => {
-                question.eval.params.accent = accentInput.checked;
-                updateLocalStorage();
-            });
+                        // if (row.cells.length <= 2) {
+                        //     // Exit in case it is the last column
+                        //     return;
+                        // }
 
-            if (create) {
-                question.eval.params.accent = accentInput.checked;
-            } else {
-                accentInput.checked = question.eval.params.accent;
-            }
+                        if (i == 0) {
+                            row.deleteCell(row.cells.length - 2);
 
-            divPopup.append(accentLabel, accentInput);
-        }
-        accent();
+                            if (row.cells.length <= 3) {
+                                // Disabled if it was the before last column
+                                questLineDeleteButtonConjug.disabled = true;
+                            }
 
-        divPopup.append(document.createElement("br"));
-
-        if (type == "traduction") {
-            // Options specific to traduction
-            function plural() {
-                const pluralLabel = document.createElement("label");
-                pluralLabel.textContent = "Plural : ";
-
-                const pluralInput = document.createElement("input");
-                pluralInput.type = "checkbox";
-                pluralInput.checked =
-                    questions.length != 0 ? questions[questions.length - 1].elements.plural : false;
-
-                if (!create) {
-                    pluralInput.checked = question.eval.params.plural.length != 0;
-                }
-
-                // Everything about the tag system
-                const motsDiv = document.createElement("div");
-
-                const pluralMotsInput = document.createElement("input");
-                pluralMotsInput.type = "text";
-                pluralMotsInput.placeholder = "Mots autorisés";
-                pluralMotsInput.hidden = !pluralInput.checked;
-                pluralMotsInput.addEventListener("keyup", function (e) {
-                    if (e.key === " " || e.key === "Enter") {
-                        const tag = this.value.trim();
-                        question.eval.params.plural.push(tag);
-                        const tagElement = document.createElement("span");
-                        tagElement.classList.add("tag");
-                        tagElement.textContent = tag;
-
-                        const deleteButton = document.createElement("button");
-                        deleteButton.textContent = "x";
-                        deleteButton.classList.add("tagDelete");
-                        deleteButton.addEventListener("click", function () {
-                            tagElement.remove();
-                            question.eval.params.plural.splice(
-                                question.eval.params.plural.findIndex((p) => p === tag),
-                                1
-                            );
-                            updateLocalStorage();
-                        });
-
-                        tagElement.appendChild(deleteButton);
-                        motsDiv.insertBefore(tagElement, this);
-
-                        this.value = "";
-                        updateLocalStorage();
+                            q.answer.tenses.pop();
+                        } else {
+                            row.deleteCell(row.cells.length - 1);
+                            q.answer.verbs[i - 1].pop();
+                        }
                     }
+                    updateManager("questInput", mainDiv, q);
                 });
 
-                if (!create) {
-                    const tempRefNode = document.createElement("div");
-                    motsDiv.appendChild(tempRefNode);
+                const questLineAddButtonConjug = document.createElement("button");
+                questLineAddButtonConjug.textContent = "+";
+                questLineAddButtonConjug.addEventListener("click", () => {
+                    for (let i = 0; i < questAnswerTableConjug.rows.length - 1; i++) {
+                        const row = questAnswerTableConjug.rows[i];
 
-                    question.eval.params.plural.forEach((mot) => {
-                        const tagElement = document.createElement("span");
-                        tagElement.classList.add("tag");
-                        tagElement.textContent = mot;
+                        if (i == 0) {
+                            const newCell = row.insertCell(row.cells.length - 1);
+                            const newCellInput = document.createElement("input");
 
-                        const deleteButton = document.createElement("button");
-                        deleteButton.textContent = "x";
-                        deleteButton.classList.add("tagDelete");
-                        deleteButton.addEventListener("click", function () {
-                            tagElement.remove();
-                            question.eval.params.plural.splice(
-                                question.eval.params.plural.findIndex((p) => p === mot),
-                                1
-                            );
-                            updateLocalStorage();
-                        });
+                            q.answer.tenses.push("");
+                            let elementIndex = q.answer.tenses.length - 1;
 
-                        tagElement.appendChild(deleteButton);
-                        motsDiv.insertBefore(tagElement, tempRefNode);
-                    });
-                    motsDiv.insertBefore(pluralMotsInput, tempRefNode);
-                    tempRefNode.remove();
-                }
+                            newCellInput.placeholder = "Temps";
+                            newCellInput.addEventListener("input", () => {
+                                q.answer.tenses[elementIndex] = newCellInput.value;
+                                updateManager("questInput", mainDiv, q);
+                            });
 
-                // Back to pluralInput
+                            if (row.cells.length >= 4) {
+                                questLineDeleteButtonConjug.disabled = false;
+                            }
 
-                pluralInput.addEventListener("input", () => {
-                    pluralMotsInput.hidden = !pluralMotsInput.hidden;
-                    question.elements.plural = pluralInput.checked;
-                    updateLocalStorage();
-                });
+                            newCell.append(newCellInput);
+                        } else {
+                            const newCell = row.insertCell();
+                            const newCellInput = document.createElement("input");
 
-                motsDiv.append(pluralMotsInput);
-                divPopup.append(pluralLabel, pluralInput, motsDiv);
-            }
-            plural();
+                            q.answer.verbs[i - 1].push("");
+                            let elementIndex = q.answer.verbs[i - 1].length - 1;
 
-            function genre() {
-                const genreLabel = document.createElement("label");
-                genreLabel.textContent = "Genre : ";
+                            newCellInput.placeholder = "Verbe conjugué";
+                            newCellInput.addEventListener("input", () => {
+                                q.answer.verbs[i - 1][elementIndex] = newCellInput.value;
+                                updateManager("questInput", mainDiv, q);
+                            });
 
-                const genreInput = document.createElement("input");
-                genreInput.type = "checkbox";
-                genreInput.checked =
-                    questions.length != 0 ? questions[questions.length - 1].elements.genre : false;
-
-                if (!create) {
-                    genreInput.checked = question.eval.params.genre.length != 0;
-                }
-
-                // Everything about the tag system
-                const motsDiv = document.createElement("div");
-
-                const genreMotsInput = document.createElement("input");
-                genreMotsInput.type = "text";
-                genreMotsInput.placeholder = "Mots autorisés";
-                genreMotsInput.hidden = !genreInput.checked;
-                genreMotsInput.addEventListener("keyup", function (e) {
-                    if (e.key === " " || e.key === "Enter") {
-                        const tag = this.value.trim();
-                        question.eval.params.genre.push(tag);
-                        const tagElement = document.createElement("span");
-                        tagElement.classList.add("tag");
-                        tagElement.textContent = tag;
-
-                        const deleteButton = document.createElement("button");
-                        deleteButton.textContent = "x";
-                        deleteButton.classList.add("tagDelete");
-                        deleteButton.addEventListener("click", function () {
-                            tagElement.remove();
-                            question.eval.params.genre.splice(
-                                question.eval.params.genre.findIndex((p) => p === tag),
-                                1
-                            );
-                            updateLocalStorage();
-                        });
-
-                        tagElement.appendChild(deleteButton);
-                        motsDiv.insertBefore(tagElement, this);
-
-                        this.value = "";
-                        updateLocalStorage();
+                            newCell.append(newCellInput);
+                        }
                     }
+                    updateManager("questInput", mainDiv, q);
                 });
 
-                if (!create) {
-                    const tempRefNode = document.createElement("div");
-                    motsDiv.appendChild(tempRefNode);
+                questLineButtonSpanConjug.append(
+                    questLineAddButtonConjug,
+                    questLineDeleteButtonConjug
+                );
+                questLineButtonCellConjug.append(questLineButtonSpanConjug);
 
-                    question.eval.params.genre.forEach((mot) => {
-                        const tagElement = document.createElement("span");
-                        tagElement.classList.add("tag");
-                        tagElement.textContent = mot;
+                // ANCHOR - Second row
 
-                        const deleteButton = document.createElement("button");
-                        deleteButton.textContent = "x";
-                        deleteButton.classList.add("tagDelete");
-                        deleteButton.addEventListener("click", function () {
-                            tagElement.remove();
-                            question.eval.params.genre.splice(
-                                question.eval.params.genre.findIndex((p) => p === mot),
-                                1
-                            );
-                            updateLocalStorage();
-                        });
+                const questAnswerSecondRowConjug = questAnswerTableConjug.insertRow();
 
-                        tagElement.appendChild(deleteButton);
-                        motsDiv.insertBefore(tagElement, tempRefNode);
-                    });
-                    motsDiv.insertBefore(genreMotsInput, tempRefNode);
-                    tempRefNode.remove();
-                }
-
-                genreInput.addEventListener("input", () => {
-                    genreMotsInput.hidden = !genreMotsInput.hidden;
-                    question.elements.genre = genreInput.checked;
-                    updateLocalStorage();
+                const questFirstPronounCellConjug = questAnswerSecondRowConjug.insertCell();
+                q.answer.pronouns.push("");
+                const questFirstPronounInputConjug = document.createElement("input");
+                questFirstPronounInputConjug.placeholder = "Pronom";
+                questFirstPronounInputConjug.addEventListener("input", () => {
+                    q.answer.pronouns[0] = questFirstPronounInputConjug.value;
+                    updateManager("questInput", mainDiv, q);
                 });
+                questFirstPronounCellConjug.appendChild(questFirstPronounInputConjug);
 
-                motsDiv.append(genreMotsInput);
-                divPopup.append(genreLabel, genreInput, motsDiv);
-            }
-            genre();
+                const questFirstVerbCellConjug = questAnswerSecondRowConjug.insertCell();
+                q.answer.verbs[0].push("");
+                const questFirstVerbInputConjug = document.createElement("input");
+                questFirstVerbInputConjug.placeholder = "Verbe conjugué";
+                questFirstVerbInputConjug.addEventListener("input", () => {
+                    q.answer.verbs[0][0] = questFirstVerbInputConjug.value;
+                    updateManager("questInput", mainDiv, q);
+                });
+                questFirstVerbCellConjug.appendChild(questFirstVerbInputConjug);
 
-            function determiners() {
-                const detLabel = document.createElement("label");
-                detLabel.textContent = "Déterminant : ";
+                // ANCHOR - Third row (buttons)
 
-                const detInput = document.createElement("input");
-                detInput.type = "checkbox";
-                detInput.checked =
-                    questions.length != 0
-                        ? questions[questions.length - 1].elements.determiners
-                        : false;
+                const questAnswerThirdRowConjug = questAnswerTableConjug.insertRow();
 
-                if (!create) {
-                    detInput.checked = question.eval.params.determiners.length != 0;
-                }
+                const questColumnButtonCellConjug = questAnswerThirdRowConjug.insertCell();
+                const questColumnButtonSpanConjug = document.createElement("span");
+                questColumnButtonSpanConjug.classList.add("colBut");
 
-                // Everything about the tag system
-                const motsDiv = document.createElement("div");
-
-                const detMotsInput = document.createElement("input");
-                detMotsInput.type = "text";
-                detMotsInput.placeholder = "Déterminants autorisés";
-                detMotsInput.hidden = !detInput.checked;
-                detMotsInput.addEventListener("keyup", function (e) {
-                    if (e.key === " " || e.key === "Enter") {
-                        const tag = this.value.trim();
-                        question.eval.params.determiners.push(tag);
-                        const tagElement = document.createElement("span");
-                        tagElement.classList.add("tag");
-                        tagElement.textContent = tag;
-
-                        const deleteButton = document.createElement("button");
-                        deleteButton.textContent = "x";
-                        deleteButton.classList.add("tagDelete");
-                        deleteButton.addEventListener("click", function () {
-                            tagElement.remove();
-                            question.eval.params.determiners.splice(
-                                question.eval.params.determiners.findIndex((p) => p === tag),
-                                1
-                            );
-                            updateLocalStorage();
-                        });
-
-                        tagElement.appendChild(deleteButton);
-                        motsDiv.insertBefore(tagElement, this);
-
-                        this.value = "";
-                        updateLocalStorage();
+                const questColumnDeleteButtonConjug = document.createElement("button");
+                questColumnDeleteButtonConjug.textContent = "-";
+                questColumnDeleteButtonConjug.disabled = true;
+                questColumnDeleteButtonConjug.addEventListener("click", () => {
+                    if (questAnswerTableConjug.rows.length <= 3) {
+                        // Exit in cas that was the before last row
+                        return;
                     }
+
+                    questAnswerTableConjug.deleteRow(questAnswerTableConjug.rows.length - 2);
+
+                    if (questAnswerTableConjug.rows.length <= 3) {
+                        questColumnDeleteButtonConjug.disabled = true;
+                    }
+
+                    q.answer.pronouns.pop();
+                    q.answer.verbs.pop();
+
+                    updateManager("questInput", mainDiv, q);
                 });
 
-                if (!create) {
-                    const tempRefNode = document.createElement("div");
-                    motsDiv.appendChild(tempRefNode);
+                const questColumnAddButtonConjug = document.createElement("button");
+                questColumnAddButtonConjug.textContent = "+";
+                questColumnAddButtonConjug.addEventListener("click", () => {
+                    const newRow = questAnswerTableConjug.insertRow(
+                        questAnswerTableConjug.rows.length - 1
+                    );
+                    q.answer.verbs.push([]);
 
-                    question.eval.params.determiners.forEach((mot) => {
-                        const tagElement = document.createElement("span");
-                        tagElement.classList.add("tag");
-                        tagElement.textContent = mot;
+                    for (let i = 0; i < q.answer.tenses.length + 1; i++) {
+                        const newCell = newRow.insertCell();
 
-                        const deleteButton = document.createElement("button");
-                        deleteButton.textContent = "x";
-                        deleteButton.classList.add("tagDelete");
-                        deleteButton.addEventListener("click", function () {
-                            tagElement.remove();
-                            question.eval.params.determiners.splice(
-                                question.eval.params.determiners.findIndex((p) => p === mot),
-                                1
-                            );
-                            updateLocalStorage();
-                        });
+                        if (i == 0) {
+                            const newInput = document.createElement("input");
 
-                        tagElement.appendChild(deleteButton);
-                        motsDiv.insertBefore(tagElement, tempRefNode);
-                    });
-                    motsDiv.insertBefore(detMotsInput, tempRefNode);
-                    tempRefNode.remove();
-                }
+                            newInput.placeholder = "Pronom";
+                            q.answer.pronouns.push("");
+                            newInput.addEventListener("input", () => {
+                                q.answer.pronouns[newRow.rowIndex - 1] = newInput.value;
+                                updateManager("questInput", mainDiv, q);
+                            });
 
-                detInput.addEventListener("input", () => {
-                    detMotsInput.hidden = !detMotsInput.hidden;
-                    question.elements.determiners = detInput.checked;
-                    updateLocalStorage();
+                            newCell.append(newInput);
+
+                            if (newRow.rowIndex >= 2) {
+                                questColumnDeleteButtonConjug.disabled = false;
+                            }
+                        } else {
+                            const newInput = document.createElement("input");
+
+                            newInput.placeholder = "Verbe conjugué";
+                            q.answer.verbs[newRow.rowIndex - 1].push("");
+                            newInput.addEventListener("input", () => {
+                                q.answer.verbs[newRow.rowIndex - 1][newCell.cellIndex - 1] =
+                                    newInput.value;
+                                updateManager("questInput", mainDiv, q);
+                            });
+
+                            newCell.append(newInput);
+                        }
+                    }
+                    updateManager("questInput", mainDiv, q);
                 });
 
-                motsDiv.append(detMotsInput);
-                divPopup.append(detLabel, detInput, motsDiv);
-            }
-            determiners();
-        }
+                questColumnButtonSpanConjug.append(
+                    questColumnAddButtonConjug,
+                    questColumnDeleteButtonConjug
+                );
+                questColumnButtonCellConjug.append(questColumnButtonSpanConjug);
 
-        bigDivPopup.appendChild(divPopup);
-        questionElement.appendChild(bigDivPopup);
-        question.elements.popup = bigDivPopup;
-    }
-    divPopup();
+                questAnswerDiv.append(questAnswerTableConjug);
+                break;
 
-    questionsDiv.appendChild(questionElement);
-    questions.push(question);
+            // NOTE - Il faut mtn faire la première cellule, puis la troisième ligne avec les boutons
+        } // ùSECTION
 
-    // ANCHOR - Launch global functions
-    renameAllQuestions();
-    statPointsLaunch();
-    updateLocalStorage();
-}
-// ùSECTION
+        // ANCHOR - Lower buttons
 
-// SECTION - Load from ID
-export function loadFromID(questionList) {
-    questionList.forEach((question) => {
-        addQuestion(question.type, { eval: question });
-    });
-}
-// ùSECTION
+        const questLowerButtonsDiv = document.createElement("div");
 
-// SECTION - Load from pending
-export function loadFromPending(questionList) {
-    evalName.value = questionList.name;
-    questionList.eval.forEach((question) => {
-        addQuestion(question.eval.type, question);
-    });
-}
-// ùSECTION
-// ùSECTION
-
-// SECTION - Sub-tools commands
-
-/** ANCHOR - Rename all questions
- * Renomme toutes les questions lors d'une suppression
- */
-function renameAllQuestions() {
-    for (let i = 0; i < questions.length; i++) {
-        questions[i].elements.title.textContent =
-            "Question n°" + (i + 1) + "  (/" + questions[i].eval.params.points.toString() + ")";
-    }
-    statQuestions.textContent = "Nombre de questions : " + questions.length.toString();
-
-    statPointsLaunch();
-}
-
-/** ANCHOR - Update points stats
- * Mets à jour le compteur global de points
- */
-function statPointsLaunch() {
-    let nbPoints = 0;
-    for (let i = 0; i < questions.length; i++) {
-        nbPoints = nbPoints + parseInt(questions[i].eval.params.points);
-    }
-    statPoints.textContent = "Total des points : " + nbPoints;
-    updateLocalStorage();
-}
-
-/** ANCHOR - Update local storage
- * Updates the local storage with the current questions list
- */
-function updateLocalStorage() {
-    let evalPending = {
-        name: evalName.value,
-        eval: questions,
-    };
-    localStorage.setItem("evalPending", JSON.stringify(evalPending));
-}
-// ùSECTION
-
-// SECTION - Type specific adding logic
-
-function tableauCreate(question) {
-    const divPreview = question.elements.divPreview;
-    divPreview.innerHTML = "";
-
-    const titrePreview = document.createElement("h4");
-    titrePreview.textContent = "Aperçu de l'élève";
-
-    const instructionLabel = document.createElement("label");
-    instructionLabel.textContent =
-        "Conjuguez le verbe '" + question.eval.instruction + "' aux temps et personnes suivantes :";
-
-    const answerInput = document.createElement("table");
-
-    divPreview.append(titrePreview, instructionLabel, answerInput);
-
-    const table = document.createElement("table");
-
-    function header() {
-        const thead = document.createElement("thead");
-        const theadRow = document.createElement("tr");
-
-        const empty = document.createElement("th");
-        theadRow.appendChild(empty);
-
-        for (let i = 0; i < question.eval.answer.tenses.length; i++) {
-            const th = document.createElement("th");
-            th.textContent = question.eval.answer.tenses[i];
-            theadRow.appendChild(th);
-        }
-
-        thead.appendChild(theadRow);
-        table.appendChild(thead);
-    }
-    header();
-
-    function body() {
-        const tbody = document.createElement("tbody");
-
-        for (let i = 0; i < question.eval.answer.pronouns.length; i++) {
-            const tr = document.createElement("tr");
-
-            const th = document.createElement("th");
-            th.textContent = question.eval.answer.pronouns[i];
-            tr.appendChild(th);
-
-            for (let j = 0; j < question.eval.answer.tenses.length; j++) {
-                const td = document.createElement("td");
-                const input = document.createElement("input");
-                input.type = "text";
-                input.placeholder = "Verbe conjugué";
-                td.appendChild(input);
-                tr.appendChild(td);
-            }
-
-            tbody.appendChild(tr);
-        }
-
-        table.appendChild(tbody);
-    }
-    body();
-
-    divPreview.appendChild(table);
-}
-
-// ùSECTION
-
-// SECTION - Common but parametric adding logic
-
-/** ANCHOR - Ajoute l'input de la question
- * @param {HTMLDivElement} divA - div où se situe la question
- * @param {object} question - Question actuellement modifiée
- * @param {string} type - Type de la question
- */
-function instruction(divA, question, type) {
-    let placeholder = "";
-    switch (
-        type // Def placeholder according to type
-    ) {
-        case "traduction":
-            placeholder = "Consigne de la question";
-            break;
-
-        case "conjugaison":
-            placeholder = "Verbe à conjuguer";
-            break;
-    }
-
-    const instructionLabel = (document.createElement("label").textContent = "Consigne : ");
-
-    const instructionInput = document.createElement("input");
-    instructionInput.type = "text";
-    instructionInput.placeholder = placeholder;
-    instructionInput.value = question.eval.instruction;
-    instructionInput.addEventListener("input", () => {
-        question.eval.instruction = instructionInput.value;
-        question.elements.preview.textContent = instructionInput.value;
-        updateLocalStorage();
-        tableauCreate(question);
-    });
-
-    divA.append(instructionLabel, instructionInput);
-}
-
-/** ANCHOR - Ajoute la partie "réponse" de la question
- * @param {HTMLDivElement} divA - div où insérer la partie réponse
- * @param {object} question - objet question
- * @param {string} type - type de la question
- * @param {boolean} create - creation (true) ou update (false)
- */
-function answer(divA, question, type, create) {
-    if (type == "traduction") {
-        const answerLabel = (document.createElement("label").textContent = "Réponse : ");
-
-        const answerInput = document.createElement("input");
-        answerInput.type = "text";
-        answerInput.placeholder = "Réponse attendue";
-        answerInput.value = question.eval.answer;
-        answerInput.addEventListener("input", () => {
-            question.eval.answer = answerInput.value;
-            updateLocalStorage();
+        const questParamsButton = document.createElement("button");
+        questParamsButton.textContent = "⚙ Paramètres";
+        questParamsButton.addEventListener("click", () => {
+            const paramsDiv = mainDiv.querySelector(".params");
+            paramsDiv.style.display = "block";
         });
 
-        divA.append(answerLabel, answerInput);
-    } else {
-        // Create base table
-        const table = document.createElement("table");
-
-        function header() {
-            const thead = document.createElement("thead");
-            const theadRow = document.createElement("tr");
-
-            // Empty cell
-            const empty = document.createElement("th");
-            theadRow.appendChild(empty);
-
-            // First cell
-            const first = document.createElement("th");
-            const firstInput = document.createElement("input");
-            firstInput.type = "text";
-            firstInput.placeholder = "Temps";
-            question.elements.tenses.push(firstInput);
-            firstInput.addEventListener("input", () => {
-                question.eval.answer.tenses[0] = firstInput.value;
-                tableauCreate(question);
-                updateLocalStorage();
-            });
-            first.appendChild(firstInput);
-            theadRow.appendChild(first);
-
-            // If it is an update rather than a create, will create every line/column
-            if (!create) {
-                firstInput.value = question.eval.answer.tenses[0];
-                function header() {
-                    for (let i = 1; i < question.eval.answer.tenses.length; i++) {
-                        const thh = document.createElement("th");
-                        const th = document.createElement("input");
-                        th.type = "text";
-                        th.placeholder = "Temps";
-                        th.value = question.eval.answer.tenses[i];
-                        th.addEventListener("input", () => {
-                            question.eval.answer.tenses[i] = th.value;
-                            tableauCreate(question);
-                            updateLocalStorage();
-                        });
-                        thh.appendChild(th);
-                        theadRow.appendChild(thh);
-                    }
-                }
-                header();
+        const questDeleteButton = document.createElement("button");
+        questDeleteButton.textContent = "🗑 Supprimer";
+        questDeleteButton.addEventListener("click", () => {
+            const delIndex = questions.indexOf(q);
+            if (delIndex !== -1) {
+                questions.splice(delIndex, 1);
             } else {
-                question.eval.answer.tenses[0] = firstInput.value;
+                Perror("Question non trouvée");
             }
+            mainDiv.remove();
+            updateManager("deletion");
+        });
 
-            //* Buttons
+        questLowerButtonsDiv.append(questParamsButton, questDeleteButton);
 
-            // Delete
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "-";
-            deleteButton.disabled = true;
-            deleteButton.addEventListener("click", () => {
-                // Remove element
-                theadRow.removeChild(theadRow.lastChild.previousSibling.previousSibling);
-                question.elements.tenses.pop();
-                question.eval.answer.tenses.pop();
+        questDiv.append(questMainTitle, questInstructionDiv, questAnswerDiv, questLowerButtonsDiv);
+    }
+    questionDiv(); // ùSECTION
 
-                // Remove lines end
-                for (let i = 0; i < question.elements.pronouns.length; i++) {
-                    let row = question.elements.pronouns[i].parentElement.parentElement;
-                    let elements = row.getElementsByTagName("td");
-                    let lastElement = elements[elements.length - 1];
-                    lastElement.remove();
-                }
+    // SECTION - Creating the parameters div
+    function parametersDiv() {
+        // ANCHOR - Main divs
+        paramsDiv.classList.add("params", "popup");
 
-                if (theadRow.lastChild.previousSibling.previousSibling.previousSibling === empty) {
-                    deleteButton.disabled = true;
-                } else {
-                    deleteButton.disabled = false;
-                }
-                tableauCreate(question);
-                updateLocalStorage();
-            });
+        const paramsInsideDiv = document.createElement("div");
+        paramsInsideDiv.classList.add("interieur-popup");
 
-            // Add
-            const addButton = document.createElement("button");
-            addButton.textContent = "+";
-            addButton.addEventListener("click", () => {
-                // Tenses
-                const th = document.createElement("th");
-                const input = document.createElement("input");
-                input.type = "text";
-                input.placeholder = "Temps";
-                input.addEventListener("input", () => {
-                    let index = question.elements.tenses.indexOf(input);
-                    question.eval.answer.tenses[index] = input.value;
-                    question.elements.tenses[index] = input;
-                    tableauCreate(question);
-                    updateLocalStorage();
-                });
-                th.appendChild(input);
-                theadRow.insertBefore(th, addButton);
-                question.elements.tenses.push(input);
-                question.eval.answer.tenses.push(input.value);
-
-                // Verbs
-                for (let i = 0; i < question.elements.pronouns.length; i++) {
-                    const td = document.createElement("td");
-                    const subInput = document.createElement("input");
-                    subInput.type = "text";
-                    subInput.placeholder = "Verbe conjugué";
-                    subInput.addEventListener("input", () => {
-                        let j = question.elements.tenses.indexOf(input);
-                        if (!question.eval.answer.verbs[i]) question.eval.answer.verbs[i] = [];
-                        question.eval.answer.verbs[i][j] = subInput.value;
-                        tableauCreate(question);
-                        updateLocalStorage();
-                    });
-                    let j = question.elements.tenses.indexOf(input);
-                    if (!question.eval.answer.verbs[i]) question.eval.answer.verbs[i] = [];
-                    question.eval.answer.verbs[i][j] = subInput.value;
-
-                    let row = question.elements.pronouns[i].parentElement.parentElement;
-                    td.appendChild(subInput);
-                    row.appendChild(td);
-                }
-
-                if (theadRow.lastChild.previousSibling.previousSibling.previousSibling === empty) {
-                    deleteButton.disabled = true;
-                } else {
-                    deleteButton.disabled = false;
-                }
-                tableauCreate(question);
-                updateLocalStorage();
-            });
-
-            theadRow.appendChild(addButton);
-            theadRow.appendChild(deleteButton);
-            thead.appendChild(theadRow);
-            table.appendChild(thead);
-        }
-        header();
-
-        function body() {
-            const tbody = document.createElement("tbody");
-            const tRow = document.createElement("tr");
-
-            if (!create) {
-                // Difference between creation/updating
-                function body() {
-                    for (let i = 0; i < question.eval.answer.pronouns.length; i++) {
-                        const tr = document.createElement("tr");
-
-                        const thh = document.createElement("th");
-                        const th = document.createElement("input");
-                        th.placeholder = "Personne";
-                        th.type = "text";
-                        th.value = question.eval.answer.pronouns[i];
-                        th.addEventListener("input", () => {
-                            question.eval.answer.pronouns[0] = th.value;
-                            tableauCreate(question);
-                            updateLocalStorage();
-                        });
-                        thh.append(th);
-                        tr.appendChild(thh);
-
-                        for (let j = 0; j < question.eval.answer.tenses.length; j++) {
-                            const td = document.createElement("td");
-                            const input = document.createElement("input");
-                            input.type = "text";
-                            input.placeholder = "Verbe conjugué";
-                            input.value = question.eval.answer.verbs[i][j];
-                            input.addEventListener("input", () => {
-                                question.eval.answer.verbs[i][j] = input.value;
-                                tableauCreate(question);
-                                updateLocalStorage();
-                            });
-                            td.appendChild(input);
-                            tr.appendChild(td);
-                        }
-
-                        tbody.appendChild(tr);
-                    }
-
-                    table.appendChild(tbody);
-                }
-                body();
+        // ANCHOR - Points
+        const paramsPointsDiv = document.createElement("div");
+        const paramsPointsLabel = document.createElement("label");
+        paramsPointsLabel.textContent = "Points : ";
+        const paramsPointsErrorLabel = document.createElement("label");
+        paramsPointsErrorLabel.textContent = "Attention, cette question ne sera pas notée !";
+        paramsPointsErrorLabel.hidden = true;
+        const paramsPointsInput = document.createElement("input");
+        paramsPointsInput.type = "number";
+        paramsPointsInput.value = q.params.points;
+        paramsPointsInput.min = 0;
+        paramsPointsInput.addEventListener("input", () => {
+            if (paramsPointsInput.value == 0) {
+                paramsPointsErrorLabel.hidden = false;
             } else {
-                // First pronoun
-                const th = document.createElement("th");
-                const thInput = document.createElement("input");
-                thInput.type = "text";
-                thInput.placeholder = "Personne";
-                thInput.addEventListener("input", () => {
-                    question.eval.answer.pronouns[0] = thInput.value;
-                    tableauCreate(question);
-                    updateLocalStorage();
-                });
-                th.appendChild(thInput);
-                tRow.appendChild(th);
-                question.elements.pronouns.push(thInput);
-
-                // First verb
-                const td = document.createElement("td");
-                const input = document.createElement("input");
-                input.type = "text";
-                input.placeholder = "Verbe conjugué";
-                input.addEventListener("input", () => {
-                    question.eval.answer.verbs[0][0] = input.value;
-                    tableauCreate(question);
-                    updateLocalStorage();
-                });
-
-                td.appendChild(input);
-                tRow.appendChild(td);
-
-                question.eval.answer.verbs[0][0] = input.value;
-                question.eval.answer.pronouns[0] = thInput.value;
-                tbody.appendChild(tRow);
+                paramsPointsErrorLabel.hidden = true;
             }
+            q.params.points = parseFloat(paramsPointsInput.value);
 
-            //* Buttons
+            updateManager("pointsChange");
+        });
+        paramsPointsDiv.append(
+            paramsPointsLabel,
+            paramsPointsInput,
+            document.createElement("br"),
+            paramsPointsErrorLabel
+        );
 
-            // Add
-            const tRowButton = document.createElement("tr");
-            const addButton = document.createElement("button");
-            addButton.textContent = "+";
-            addButton.addEventListener("click", () => {
-                const tr = document.createElement("tr");
+        // ANCHOR - Accent
+        const paramsAccentDiv = document.createElement("div");
+        const paramsAccentLabel = document.createElement("label");
+        paramsAccentLabel.textContent = "Accents : ";
+        const paramsAccentInput = document.createElement("input");
+        paramsAccentInput.type = "checkbox";
+        paramsAccentInput.addEventListener("input", () => {
+            q.params.accent = paramsAccentInput.checked;
+            updateManager("paramsEdit");
+        }); // NOTE - Make the code here
+        paramsAccentDiv.append(paramsAccentLabel, paramsAccentInput);
 
-                // Pronoun
-                const th = document.createElement("th");
-                const thInputAdded = document.createElement("input");
-                thInputAdded.type = "text";
-                thInputAdded.placeholder = "Personne";
-                thInputAdded.addEventListener("input", () => {
-                    let index = question.elements.pronouns.indexOf(thInputAdded);
-                    question.eval.answer.pronouns[index] = thInputAdded.value;
-                    question.elements.pronouns[index] = thInputAdded;
-                    tableauCreate(question);
-                    updateLocalStorage();
+        // SECTION -  Additional question-specific parameter
+        const paramsAdditionalParamsDiv = document.createElement("div");
+        switch (type) {
+            case "conjugaison":
+                break;
+            case "traduction":
+                // SECTION - Traduction
+                // ANCHOR - Plural
+                const paramsPluralDiv = document.createElement("div");
+                const paramsPluralSubDiv = document.createElement("div");
+                const paramsPluralLabel = document.createElement("label");
+                const paramsPluralInputCheckbox = document.createElement("input");
+                const paramsPluralInputList = document.createElement("input");
+                const paramsPluralAcceptedSpan = document.createElement("span");
+
+                paramsPluralLabel.textContent = "Pluriel : ";
+
+                paramsPluralInputCheckbox.type = "checkbox";
+                paramsPluralInputCheckbox.addEventListener("input", () => {
+                    if (paramsPluralInputCheckbox.checked) {
+                        paramsPluralSubDiv.hidden = false;
+                        let tags = paramsPluralAcceptedSpan.querySelectorAll(".tag");
+
+                        tags.forEach((tag) => {
+                            q.params.plural.push(tag.textContent);
+                        });
+                        updateManager("paramsEdit");
+                    } else {
+                        paramsPluralSubDiv.hidden = true;
+                        q.params.plural = [];
+                        updateManager("paramsEdit");
+                    }
                 });
-                question.eval.answer.pronouns.push(thInputAdded.value);
-                question.elements.pronouns.push(thInputAdded);
-                th.appendChild(thInputAdded);
-                tr.appendChild(th);
 
-                // Verb
-                for (let j = 0; j < question.elements.tenses.length; j++) {
-                    const td = document.createElement("td");
-                    const input = document.createElement("input");
-                    input.type = "text";
-                    input.placeholder = "Verbe conjugué";
-                    input.addEventListener("input", () => {
-                        let i = question.elements.pronouns.indexOf(thInputAdded);
-                        if (!question.eval.answer.verbs[i]) question.eval.answer.verbs[i] = [];
-                        question.eval.answer.verbs[i][j] = input.value;
-                        tableauCreate(question);
-                        updateLocalStorage();
-                    });
-                    let i = question.elements.pronouns.indexOf(thInputAdded);
-                    if (!question.eval.answer.verbs[i]) question.eval.answer.verbs[i] = [];
-                    question.eval.answer.verbs[i][j] = input.value;
+                paramsPluralSubDiv.hidden = !paramsPluralInputCheckbox.checked;
 
-                    td.appendChild(input);
-                    tr.appendChild(td);
-                }
+                paramsPluralInputList.placeholder = "Pluriels autorisés";
+                paramsPluralInputList.type = "text";
+                paramsPluralInputList.addEventListener("keyup", function (e) {
+                    if (e.key === " " || e.key === "Enter") {
+                        const tagElement = document.createElement("span");
+                        tagElement.classList.add("tag");
 
-                tbody.insertBefore(tr, tRowButton);
+                        const tag = this.value.trim();
+                        q.params.plural.push(tag);
 
-                if (tbody.lastChild.previousSibling === tRow) {
-                    deleteButton.disabled = true;
-                } else {
-                    deleteButton.disabled = false;
-                }
-                tableauCreate(question);
-                updateLocalStorage();
-            });
-            tRowButton.appendChild(addButton);
+                        tagElement.textContent = tag;
 
-            // Delete
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "-";
-            deleteButton.disabled = true;
-            deleteButton.addEventListener("click", () => {
-                tbody.removeChild(tbody.lastChild.previousSibling); // Don't delete the buttons ! :)
-                question.eval.answer.pronouns.pop();
-                question.elements.pronouns.pop();
-                if (tbody.lastChild.previousSibling === tRow) {
-                    deleteButton.disabled = true;
-                } else {
-                    deleteButton.disabled = false;
-                }
-                tableauCreate(question);
-                updateLocalStorage();
-            });
-            tRowButton.appendChild(deleteButton);
+                        const deleteButton = document.createElement("button");
+                        deleteButton.textContent = "x";
+                        deleteButton.classList.add("tagDelete");
+                        deleteButton.addEventListener("click", function () {
+                            tagElement.remove();
+                            q.params.plural.splice(
+                                q.params.plural.findIndex((p) => p === tag),
+                                1
+                            );
+                            updateManager("paramsEdit");
+                        });
 
-            tbody.appendChild(tRowButton);
-            table.appendChild(tbody);
-        }
-        body();
+                        tagElement.appendChild(deleteButton);
+                        paramsPluralAcceptedSpan.append(tagElement);
 
-        divA.appendChild(table);
+                        this.value = "";
+                        updateManager("paramsEdit");
+                    }
+                });
+
+                paramsPluralSubDiv.append(paramsPluralAcceptedSpan, paramsPluralInputList);
+                paramsPluralDiv.append(
+                    paramsPluralLabel,
+                    paramsPluralInputCheckbox,
+                    paramsPluralSubDiv
+                );
+
+                // ANCHOR - Determiner
+                const paramsDeterminerDiv = document.createElement("div");
+                const paramsDeterminerSubDiv = document.createElement("div");
+                const paramsDeterminerLabel = document.createElement("label");
+                const paramsDeterminerInputCheckbox = document.createElement("input");
+                const paramsDeterminerInputList = document.createElement("input");
+                const paramsDeterminerAcceptedSpan = document.createElement("span");
+
+                paramsDeterminerLabel.textContent = "Déterminants : ";
+
+                paramsDeterminerInputCheckbox.type = "checkbox";
+                paramsDeterminerInputCheckbox.addEventListener("input", () => {
+                    if (paramsDeterminerInputCheckbox.checked) {
+                        paramsDeterminerSubDiv.hidden = false;
+                        let tags = paramsDeterminerAcceptedSpan.querySelectorAll(".tag");
+
+                        tags.forEach((tag) => {
+                            q.params.determiner.push(tag.textContent);
+                        });
+                        updateManager("paramsEdit");
+                    } else {
+                        paramsDeterminerSubDiv.hidden = true;
+                        q.params.determiner = [];
+                        updateManager("paramsEdit");
+                    }
+                });
+
+                paramsDeterminerSubDiv.hidden = !paramsDeterminerInputCheckbox.checked;
+
+                paramsDeterminerInputList.placeholder = "Pluriels autorisés";
+                paramsDeterminerInputList.type = "text";
+                paramsDeterminerInputList.addEventListener("keyup", function (e) {
+                    if (e.key === " " || e.key === "Enter") {
+                        const tagElement = document.createElement("span");
+                        tagElement.classList.add("tag");
+
+                        const tag = this.value.trim();
+                        q.params.determiner.push(tag);
+
+                        tagElement.textContent = tag;
+
+                        const deleteButton = document.createElement("button");
+                        deleteButton.textContent = "x";
+                        deleteButton.classList.add("tagDelete");
+                        deleteButton.addEventListener("click", function () {
+                            tagElement.remove();
+                            q.params.determiner.splice(
+                                q.params.determiner.findIndex((p) => p === tag),
+                                1
+                            );
+                            updateManager("paramsEdit");
+                        });
+
+                        tagElement.appendChild(deleteButton);
+                        paramsDeterminerAcceptedSpan.append(tagElement);
+
+                        this.value = "";
+                        updateManager("paramsEdit");
+                    }
+                });
+                // NOTE - Make so that is displays a warning message if plural/genre
+                paramsDeterminerSubDiv.append(
+                    paramsDeterminerAcceptedSpan,
+                    paramsDeterminerInputList
+                );
+                paramsDeterminerDiv.append(
+                    paramsDeterminerLabel,
+                    paramsDeterminerInputCheckbox,
+                    paramsDeterminerSubDiv
+                );
+
+                // ANCHOR - Genre
+                const paramsGenreDiv = document.createElement("div");
+                const paramsGenreSubDiv = document.createElement("div");
+                const paramsGenreLabel = document.createElement("label");
+                const paramsGenreInputCheckbox = document.createElement("input");
+                const paramsGenreInputList = document.createElement("input");
+                const paramsGenreAcceptedSpan = document.createElement("span");
+
+                paramsGenreLabel.textContent = "Genre : ";
+
+                paramsGenreInputCheckbox.type = "checkbox";
+                paramsGenreInputCheckbox.addEventListener("input", () => {
+                    if (paramsGenreInputCheckbox.checked) {
+                        paramsGenreSubDiv.hidden = false;
+                        let tags = paramsGenreAcceptedSpan.querySelectorAll(".tag");
+
+                        tags.forEach((tag) => {
+                            q.params.genre.push(tag.textContent);
+                        });
+                        updateManager("paramsEdit");
+                    } else {
+                        paramsGenreSubDiv.hidden = true;
+                        q.params.genre = [];
+                        updateManager("paramsEdit");
+                    }
+                });
+
+                paramsGenreSubDiv.hidden = !paramsGenreInputCheckbox.checked;
+
+                paramsGenreInputList.placeholder = "Pluriels autorisés";
+                paramsGenreInputList.type = "text";
+                paramsGenreInputList.addEventListener("keyup", function (e) {
+                    if (e.key === " " || e.key === "Enter") {
+                        const tagElement = document.createElement("span");
+                        tagElement.classList.add("tag");
+
+                        const tag = this.value.trim();
+                        q.params.genre.push(tag);
+
+                        tagElement.textContent = tag;
+
+                        const deleteButton = document.createElement("button");
+                        deleteButton.textContent = "x";
+                        deleteButton.classList.add("tagDelete");
+                        deleteButton.addEventListener("click", function () {
+                            tagElement.remove();
+                            q.params.genre.splice(
+                                q.params.genre.findIndex((p) => p === tag),
+                                1
+                            );
+                            updateManager("paramsEdit");
+                        });
+
+                        tagElement.appendChild(deleteButton);
+                        paramsGenreAcceptedSpan.append(tagElement);
+
+                        this.value = "";
+                        updateManager("paramsEdit");
+                    }
+                });
+
+                paramsGenreSubDiv.append(paramsGenreAcceptedSpan, paramsGenreInputList);
+                paramsGenreDiv.append(
+                    paramsGenreLabel,
+                    paramsGenreInputCheckbox,
+                    paramsGenreSubDiv
+                );
+
+                paramsAdditionalParamsDiv.append(
+                    paramsPluralDiv,
+                    paramsDeterminerDiv,
+                    paramsGenreDiv
+                );
+                break; // ùSECTION
+        } // ùSECTION
+
+        paramsInsideDiv.append(paramsPointsDiv, paramsAccentDiv, paramsAdditionalParamsDiv);
+        paramsDiv.append(paramsInsideDiv);
+
+        // Way to remove the popup
+
+        window.addEventListener("click", function (event) {
+            if (event.target == paramsDiv) {
+                paramsDiv.style.display = "none";
+            }
+        });
+    }
+    parametersDiv(); // ùSECTION
+
+    // NOTE - Preview
+
+    // ANCHOR - Assembling everything together
+    mainDiv.append(questDiv, paramsDiv);
+
+    questions.push(q);
+    questionsMainDiv.append(mainDiv);
+
+    updateManager("main");
+}
+// ùSECTION
+
+// SECTION - Utility functions
+
+// ANCHOR - Main update manager
+function updateManager(updateType, mainDiv, q) {
+    switch (updateType) {
+        case "questInput":
+            updatePending();
+            updatePreview(mainDiv, q);
+            break;
+        case "main":
+            updatePending();
+            break;
+        case "paramsEdit":
+        case "deletion":
+            updatePending();
+            break;
+        case "pointsChange":
+            updatePending();
+            break;
     }
 }
 
-/** ANCHOR - Ajoute les deux boutons de paramètre
- * @param {HTMLDivElement} divA - div où insérer l'élément
- * @param {HTMLDivElement} questionElement - div de la question entière
- * @param {object} question - objet question
- */
-function params(divA, questionElement, question) {
-    const paramsButton = document.createElement("button");
-    paramsButton.textContent = "⚙";
-    paramsButton.addEventListener("click", () => {
-        if (question.elements.popup.style.display == "block") {
-            question.elements.popup.style.display = "none";
-        } else {
-            question.elements.popup.style.display = "block";
-        }
-    });
+// ANCHOR - Update pending
+function updatePending() {
+    let evalForm = {
+        name: evalNameInput.value,
+        questions: questions,
+    };
+    localStorage.setItem("evalPending", JSON.stringify(evalForm));
+}
+//
 
-    window.addEventListener("click", function (event) {
-        if (event.target == question.elements.popup) {
-            question.elements.popup.style.display = "none";
-        }
-    });
-
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "🗑";
-    deleteButton.addEventListener("click", () => {
-        questionsDiv.removeChild(questionElement);
-        questions.splice(
-            questions.findIndex((q) => q.elements.div == questionElement),
-            1
-        );
-        renameAllQuestions();
-        updateLocalStorage();
-    });
-
-    divA.append(paramsButton, deleteButton);
+// ANCHOR - Update a preview
+function updatePreview(mainDiv, q) {
+    // NOTE - Make the function
+    const prevDiv = mainDiv.querySelector(".prev");
+    switch (q.type) {
+        case "traduction":
+            break;
+        case "conjugaison":
+            break;
+    }
 }
