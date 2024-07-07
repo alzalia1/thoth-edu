@@ -18,7 +18,7 @@ def getEval(data):
         dataAReturn = json.loads(contenu)
 
     # Conversion éval prof en eval élève
-    for i, quest in enumerate(dataAReturn["questions"]):
+    for quest in dataAReturn["questions"]:
         if quest["type"] == "traduction":
             quest["answer"] = {}
         else:
@@ -27,9 +27,9 @@ def getEval(data):
         del quest["params"]
 
     if acces.random == 1:
-        listeData = list(dataAReturn.items())
-        random.shuffle(listeData)
-        dataAReturn = dict(listeData)
+        listeQuest = [question for question in dataAReturn["questions"]]
+        random.shuffle(listeQuest)
+        dataAReturn["questions"] = listeQuest
 
     aReturn = {
         "name": acces.nom,
