@@ -115,3 +115,9 @@ def deleteAccess():
 def saveAccess():
     data = request.get_json()
     return r.dashboard.access.save(data)
+
+
+@app.route("/user/delete", methods=["POST"])
+def deleteUser():
+    data = request.get_json()
+    return r.user.delete(data)
