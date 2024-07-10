@@ -65,7 +65,7 @@ export function construct(questionsDiv, questions, newContent = null) {
             instructionLabel.textContent =
                 "Conjuguez le verbe '" +
                 question.instruction +
-                "' aux tenses et personnes suivantes :";
+                "' aux temps et personnes suivantes :";
 
             const answerInput = document.createElement("table");
 
