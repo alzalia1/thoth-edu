@@ -1,5 +1,5 @@
-import { Puser_check, Perror, Pconfirm, Palert } from "../../shared/scripts/modules/utils.js";
-import { addQuestion } from "./modules/addQuestions.js";
+import { Puser_check, Perror, Pconfirm, Palert } from "/shared/scripts/modules/utils.js";
+import { addQuestion, loadFromID, loadFromPending } from "./modules/addQuestions.js";
 
 // ANCHOR - System to check and refresh user's token !
 await Puser_check();
@@ -22,32 +22,17 @@ async function page() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const evalParam = urlParams.get("e");
-    const evalName = document.getElementById("nom_eval");
     if (!(evalParam == null)) {
-        // Loads questions if a parameter is passed
-        await fetch("https://api.thoth-edu.fr/crea/get", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ id: evalParam }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                evalName.value = data.eval.name;
-                // FIXME - OLD FUNCTION
-                loadFromID(data.eval.questions);
-            })
-            .catch((error) => Perror("Error on crea/get : " + error));
+        // Load with an id passed in URL
+        loadFromID(evalParam);
     } else if (
         localStorage.getItem("evalPending") &&
         localStorage.getItem("evalPending") != "none"
     ) {
         Pconfirm(
-            "Une ancienne évaluation mal enregistrée a été détectée. Voulez-vous la recharger ?",
+            "Une ancienne évaluation mal enregistrée a été détectée. Nous pouvons essayer de la recharger à partir des informations stockées localement. Veuillez confirmer ou non.",
             () => {
-                // FIXME - OLD FUNCTION
-                loadFromPending(JSON.parse(localStorage.getItem("evalPending")));
+                loadFromPending();
             }
         );
     }
@@ -89,7 +74,7 @@ async function page() {
             body: JSON.stringify({
                 eval: evalContent,
                 token: localStorage.getItem("jwt-token"),
-                id: "none",
+                id: evalParam != null ? evalParam : "none",
             }),
         })
             .then((response) => response.json())

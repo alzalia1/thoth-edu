@@ -1,9 +1,4 @@
-import { Palert, Perror } from "../../../shared/scripts/modules/utils.js";
-
-// TODO - Preview
-// TODO - Saving
-// TODO - Stats and renaming at deletion
-// TODO - Loading/reloading
+import { Palert, Perror } from "/shared/scripts/modules/utils.js";
 
 // ANCHOR - Global variables
 let questions = [];
@@ -12,40 +7,44 @@ const evalNameInput = document.getElementById("evalName");
 evalNameInput.addEventListener("input", () => {
     updateManager("paramsEdit");
 });
+const pointsTotalStat = document.getElementById("nbPoints");
+const questionsNumberStat = document.getElementById("nbQuestions");
 
 // SECTION - Adding a question
 export function addQuestion(type, q = null) {
     // ANCHOR - Creating the question var
-    switch (type) {
-        case "traduction":
-            q = {
-                type: "traduction",
-                instruction: "",
-                answer: "",
-                params: {
-                    points: 1.0,
-                    accent: false,
-                    plural: [],
-                    genre: [],
-                    determiner: [],
-                },
-            };
-            break;
-        case "conjugaison":
-            q = {
-                type: "conjugaison",
-                instruction: "",
-                answer: {
-                    tenses: [],
-                    pronouns: [],
-                    verbs: [[]],
-                },
-                params: {
-                    points: 1.0,
-                    accent: false,
-                },
-            };
-            break;
+    if (q === null) {
+        switch (type) {
+            case "traduction":
+                q = {
+                    type: "traduction",
+                    instruction: "",
+                    answer: "",
+                    params: {
+                        points: 1.0,
+                        accent: false,
+                        plural: [],
+                        genre: [],
+                        determiner: [],
+                    },
+                };
+                break;
+            case "conjugaison":
+                q = {
+                    type: "conjugaison",
+                    instruction: "",
+                    answer: {
+                        tenses: [""],
+                        pronouns: [""],
+                        verbs: [[""]],
+                    },
+                    params: {
+                        points: 1.0,
+                        accent: false,
+                    },
+                };
+                break;
+        }
     }
 
     // ANCHOR - Index of the question
@@ -53,11 +52,13 @@ export function addQuestion(type, q = null) {
 
     // ANCHOR - Creating the base div
     const mainDiv = document.createElement("div");
-    mainDiv.id = index.toString(); // NOTE - Change this id at deletion !
+    mainDiv.classList.add("mainDiv");
+    mainDiv.id = index.toString();
 
     // ANCHOR - Creating the three section divs
     const questDiv = document.createElement("div");
     const paramsDiv = document.createElement("div");
+    const prevDiv = document.createElement("div");
 
     // SECTION - Creating the question div
     function questionDiv() {
@@ -76,6 +77,7 @@ export function addQuestion(type, q = null) {
                 questInstructionLabel.textContent = "Consigne : ";
 
                 const questInstructionInputTrad = document.createElement("textarea");
+                questInstructionInputTrad.value = q.instruction;
                 questInstructionInputTrad.placeholder = "Écrivez ici la consigne de la question";
                 questInstructionInputTrad.classList.add("questIns");
                 questInstructionInputTrad.addEventListener("input", () => {
@@ -88,6 +90,7 @@ export function addQuestion(type, q = null) {
                 questInstructionLabel.textContent = "Verbe à conjuguer : ";
 
                 const questInstructionInputConjug = document.createElement("input");
+                questInstructionInputConjug.value = q.instruction;
                 questInstructionInputConjug.placeholder = "Écrivez ici le verbe à conjuguer";
                 questInstructionInputConjug.type = "text";
                 questInstructionInputConjug.classList.add("questIns");
@@ -104,6 +107,7 @@ export function addQuestion(type, q = null) {
         switch (type) {
             case "traduction": // ANCHOR - Traduction
                 const questAnswerInputTrad = document.createElement("input");
+                questAnswerInputTrad.value = q.answer;
                 questAnswerInputTrad.placeholder = "Entrez la réponse ici";
                 questAnswerInputTrad.classList.add("questAns");
                 questAnswerInputTrad.addEventListener("input", () => {
@@ -122,15 +126,18 @@ export function addQuestion(type, q = null) {
 
                 questAnswerFirstRowConjug.insertCell(); // Empty corner cell
 
-                const questFirstTenseCellConjug = questAnswerFirstRowConjug.insertCell();
-                const questFirstTenseInputConjug = document.createElement("input");
-                questFirstTenseInputConjug.placeholder = "Temps";
-                q.answer.tenses.push("");
-                questFirstTenseInputConjug.addEventListener("input", () => {
-                    q.answer.tenses[0] = questFirstTenseInputConjug.value;
-                    updateManager("questInput", mainDiv, q);
-                });
-                questFirstTenseCellConjug.appendChild(questFirstTenseInputConjug);
+                for (let j = 0; j < q.answer.tenses.length; j++) {
+                    const tense = q.answer.tenses[j];
+                    const questTenseCellConjug = questAnswerFirstRowConjug.insertCell();
+                    const questTenseInputConjug = document.createElement("input");
+                    questTenseInputConjug.value = tense;
+                    questTenseInputConjug.placeholder = "Temps";
+                    questTenseInputConjug.addEventListener("input", () => {
+                        q.answer.tenses[j] = questTenseInputConjug.value;
+                        updateManager("questInput", mainDiv, q);
+                    });
+                    questTenseCellConjug.appendChild(questTenseInputConjug);
+                }
 
                 // ANCHOR - C line buttons
                 const questLineButtonCellConjug = questAnswerFirstRowConjug.insertCell();
@@ -143,11 +150,6 @@ export function addQuestion(type, q = null) {
                 questLineDeleteButtonConjug.addEventListener("click", () => {
                     for (let i = 0; i < questAnswerTableConjug.rows.length - 1; i++) {
                         const row = questAnswerTableConjug.rows[i];
-
-                        // if (row.cells.length <= 2) {
-                        //     // Exit in case it is the last column
-                        //     return;
-                        // }
 
                         if (i == 0) {
                             row.deleteCell(row.cells.length - 2);
@@ -215,29 +217,45 @@ export function addQuestion(type, q = null) {
                 );
                 questLineButtonCellConjug.append(questLineButtonSpanConjug);
 
-                // ANCHOR - Second row
+                // ANCHOR - Second(s)
 
-                const questAnswerSecondRowConjug = questAnswerTableConjug.insertRow();
+                for (let i = 0; i < q.answer.pronouns.length; i++) {
+                    const pronoun = q.answer.pronouns[i];
 
-                const questFirstPronounCellConjug = questAnswerSecondRowConjug.insertCell();
-                q.answer.pronouns.push("");
-                const questFirstPronounInputConjug = document.createElement("input");
-                questFirstPronounInputConjug.placeholder = "Pronom";
-                questFirstPronounInputConjug.addEventListener("input", () => {
-                    q.answer.pronouns[0] = questFirstPronounInputConjug.value;
-                    updateManager("questInput", mainDiv, q);
-                });
-                questFirstPronounCellConjug.appendChild(questFirstPronounInputConjug);
+                    const questAnswerRowConjug = questAnswerTableConjug.insertRow();
 
-                const questFirstVerbCellConjug = questAnswerSecondRowConjug.insertCell();
-                q.answer.verbs[0].push("");
-                const questFirstVerbInputConjug = document.createElement("input");
-                questFirstVerbInputConjug.placeholder = "Verbe conjugué";
-                questFirstVerbInputConjug.addEventListener("input", () => {
-                    q.answer.verbs[0][0] = questFirstVerbInputConjug.value;
-                    updateManager("questInput", mainDiv, q);
-                });
-                questFirstVerbCellConjug.appendChild(questFirstVerbInputConjug);
+                    const questPronounCellConjug = questAnswerRowConjug.insertCell();
+                    if (pronoun === null) {
+                        q.answer.pronouns.push("");
+                        pronoun = "";
+                    }
+                    const questPronounInputConjug = document.createElement("input");
+                    questPronounInputConjug.value = pronoun;
+                    questPronounInputConjug.placeholder = "Pronom";
+                    questPronounInputConjug.addEventListener("input", () => {
+                        q.answer.pronouns[i] = questPronounInputConjug.value;
+                        updateManager("questInput", mainDiv, q);
+                    });
+                    questPronounCellConjug.appendChild(questPronounInputConjug);
+
+                    for (let j = 0; j < q.answer.tenses.length; j++) {
+                        const verb = q.answer.verbs[i][j];
+
+                        const questVerbCellConjug = questAnswerRowConjug.insertCell();
+                        if (verb === null) {
+                            q.answer.verbs[i].push("");
+                            verb = "";
+                        }
+                        const questVerbInputConjug = document.createElement("input");
+                        questVerbInputConjug.value = verb;
+                        questVerbInputConjug.placeholder = "Verbe conjugué";
+                        questVerbInputConjug.addEventListener("input", () => {
+                            q.answer.verbs[0][0] = questVerbInputConjug.value;
+                            updateManager("questInput", mainDiv, q);
+                        });
+                        questVerbCellConjug.appendChild(questVerbInputConjug);
+                    }
+                }
 
                 // ANCHOR - Third row (buttons)
 
@@ -319,8 +337,6 @@ export function addQuestion(type, q = null) {
 
                 questAnswerDiv.append(questAnswerTableConjug);
                 break;
-
-            // NOTE - Il faut mtn faire la première cellule, puis la troisième ligne avec les boutons
         } // ùSECTION
 
         // ANCHOR - Lower buttons
@@ -344,7 +360,7 @@ export function addQuestion(type, q = null) {
                 Perror("Question non trouvée");
             }
             mainDiv.remove();
-            updateManager("deletion");
+            updateManager("deletion", mainDiv, q);
         });
 
         questLowerButtonsDiv.append(questParamsButton, questDeleteButton);
@@ -380,7 +396,7 @@ export function addQuestion(type, q = null) {
             }
             q.params.points = parseFloat(paramsPointsInput.value);
 
-            updateManager("pointsChange");
+            updateManager("pointsChange", mainDiv, q);
         });
         paramsPointsDiv.append(
             paramsPointsLabel,
@@ -394,11 +410,12 @@ export function addQuestion(type, q = null) {
         const paramsAccentLabel = document.createElement("label");
         paramsAccentLabel.textContent = "Accents : ";
         const paramsAccentInput = document.createElement("input");
+        paramsAccentInput.checked = q.params.accent;
         paramsAccentInput.type = "checkbox";
         paramsAccentInput.addEventListener("input", () => {
             q.params.accent = paramsAccentInput.checked;
-            updateManager("paramsEdit");
-        }); // NOTE - Make the code here
+            updateManager("paramsEdit", mainDiv, q);
+        });
         paramsAccentDiv.append(paramsAccentLabel, paramsAccentInput);
 
         // SECTION -  Additional question-specific parameter
@@ -419,6 +436,7 @@ export function addQuestion(type, q = null) {
                 paramsPluralLabel.textContent = "Pluriel : ";
 
                 paramsPluralInputCheckbox.type = "checkbox";
+                paramsPluralInputCheckbox.checked = q.params.plural.length > 0 ? true : false;
                 paramsPluralInputCheckbox.addEventListener("input", () => {
                     if (paramsPluralInputCheckbox.checked) {
                         paramsPluralSubDiv.hidden = false;
@@ -427,11 +445,11 @@ export function addQuestion(type, q = null) {
                         tags.forEach((tag) => {
                             q.params.plural.push(tag.textContent);
                         });
-                        updateManager("paramsEdit");
+                        updateManager("paramsEdit", mainDiv, q);
                     } else {
                         paramsPluralSubDiv.hidden = true;
                         q.params.plural = [];
-                        updateManager("paramsEdit");
+                        updateManager("paramsEdit", mainDiv, q);
                     }
                 });
 
@@ -444,7 +462,7 @@ export function addQuestion(type, q = null) {
                         const tagElement = document.createElement("span");
                         tagElement.classList.add("tag");
 
-                        const tag = this.value.trim();
+                        const tag = paramsPluralInputList.value.trim();
                         q.params.plural.push(tag);
 
                         tagElement.textContent = tag;
@@ -458,15 +476,36 @@ export function addQuestion(type, q = null) {
                                 q.params.plural.findIndex((p) => p === tag),
                                 1
                             );
-                            updateManager("paramsEdit");
+                            updateManager("paramsEdit", mainDiv, q);
                         });
 
                         tagElement.appendChild(deleteButton);
                         paramsPluralAcceptedSpan.append(tagElement);
 
-                        this.value = "";
-                        updateManager("paramsEdit");
+                        paramsPluralInputList.value = "";
+                        updateManager("paramsEdit", mainDiv, q);
                     }
+                });
+
+                q.params.plural.forEach((tag) => {
+                    const tagElement = document.createElement("span");
+                    tagElement.classList.add("tag");
+                    tagElement.textContent = tag;
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "x";
+                    deleteButton.classList.add("tagDelete");
+                    deleteButton.addEventListener("click", function () {
+                        tagElement.remove();
+                        q.params.plural.splice(
+                            q.params.plural.findIndex((p) => p === tag),
+                            1
+                        );
+                        updateManager("paramsEdit", mainDiv, q);
+                    });
+
+                    tagElement.appendChild(deleteButton);
+                    paramsPluralAcceptedSpan.append(tagElement);
                 });
 
                 paramsPluralSubDiv.append(paramsPluralAcceptedSpan, paramsPluralInputList);
@@ -487,6 +526,8 @@ export function addQuestion(type, q = null) {
                 paramsDeterminerLabel.textContent = "Déterminants : ";
 
                 paramsDeterminerInputCheckbox.type = "checkbox";
+                paramsDeterminerInputCheckbox.checked =
+                    q.params.determiner.length > 0 ? true : false;
                 paramsDeterminerInputCheckbox.addEventListener("input", () => {
                     if (paramsDeterminerInputCheckbox.checked) {
                         paramsDeterminerSubDiv.hidden = false;
@@ -495,11 +536,11 @@ export function addQuestion(type, q = null) {
                         tags.forEach((tag) => {
                             q.params.determiner.push(tag.textContent);
                         });
-                        updateManager("paramsEdit");
+                        updateManager("paramsEdit", mainDiv, q);
                     } else {
                         paramsDeterminerSubDiv.hidden = true;
                         q.params.determiner = [];
-                        updateManager("paramsEdit");
+                        updateManager("paramsEdit", mainDiv, q);
                     }
                 });
 
@@ -526,16 +567,38 @@ export function addQuestion(type, q = null) {
                                 q.params.determiner.findIndex((p) => p === tag),
                                 1
                             );
-                            updateManager("paramsEdit");
+                            updateManager("paramsEdit", mainDiv, q);
                         });
 
                         tagElement.appendChild(deleteButton);
                         paramsDeterminerAcceptedSpan.append(tagElement);
 
                         this.value = "";
-                        updateManager("paramsEdit");
+                        updateManager("paramsEdit", mainDiv, q);
                     }
                 });
+
+                q.params.determiner.forEach((tag) => {
+                    const tagElement = document.createElement("span");
+                    tagElement.classList.add("tag");
+                    tagElement.textContent = tag;
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "x";
+                    deleteButton.classList.add("tagDelete");
+                    deleteButton.addEventListener("click", function () {
+                        tagElement.remove();
+                        q.params.determiner.splice(
+                            q.params.determiner.findIndex((p) => p === tag),
+                            1
+                        );
+                        updateManager("paramsEdit", mainDiv, q);
+                    });
+
+                    tagElement.appendChild(deleteButton);
+                    paramsDeterminerAcceptedSpan.append(tagElement);
+                });
+
                 // NOTE - Make so that is displays a warning message if plural/genre
                 paramsDeterminerSubDiv.append(
                     paramsDeterminerAcceptedSpan,
@@ -558,6 +621,7 @@ export function addQuestion(type, q = null) {
                 paramsGenreLabel.textContent = "Genre : ";
 
                 paramsGenreInputCheckbox.type = "checkbox";
+                paramsGenreInputCheckbox.checked = q.params.genre.length > 0 ? true : false;
                 paramsGenreInputCheckbox.addEventListener("input", () => {
                     if (paramsGenreInputCheckbox.checked) {
                         paramsGenreSubDiv.hidden = false;
@@ -566,11 +630,11 @@ export function addQuestion(type, q = null) {
                         tags.forEach((tag) => {
                             q.params.genre.push(tag.textContent);
                         });
-                        updateManager("paramsEdit");
+                        updateManager("paramsEdit", mainDiv, q);
                     } else {
                         paramsGenreSubDiv.hidden = true;
                         q.params.genre = [];
-                        updateManager("paramsEdit");
+                        updateManager("paramsEdit", mainDiv, q);
                     }
                 });
 
@@ -597,15 +661,36 @@ export function addQuestion(type, q = null) {
                                 q.params.genre.findIndex((p) => p === tag),
                                 1
                             );
-                            updateManager("paramsEdit");
+                            updateManager("paramsEdit", mainDiv, q);
                         });
 
                         tagElement.appendChild(deleteButton);
                         paramsGenreAcceptedSpan.append(tagElement);
 
                         this.value = "";
-                        updateManager("paramsEdit");
+                        updateManager("paramsEdit", mainDiv, q);
                     }
+                });
+
+                q.params.genre.forEach((tag) => {
+                    const tagElement = document.createElement("span");
+                    tagElement.classList.add("tag");
+                    tagElement.textContent = tag;
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "x";
+                    deleteButton.classList.add("tagDelete");
+                    deleteButton.addEventListener("click", function () {
+                        tagElement.remove();
+                        q.params.genre.splice(
+                            q.params.genre.findIndex((p) => p === tag),
+                            1
+                        );
+                        updateManager("paramsEdit", mainDiv, q);
+                    });
+
+                    tagElement.appendChild(deleteButton);
+                    paramsGenreAcceptedSpan.append(tagElement);
                 });
 
                 paramsGenreSubDiv.append(paramsGenreAcceptedSpan, paramsGenreInputList);
@@ -636,15 +721,19 @@ export function addQuestion(type, q = null) {
     }
     parametersDiv(); // ùSECTION
 
-    // NOTE - Preview
+    // SECTION - Creating the preview div
+    function previewDiv() {
+        prevDiv.classList.add("prev");
+    } // ùSECTION
+    previewDiv();
 
     // ANCHOR - Assembling everything together
-    mainDiv.append(questDiv, paramsDiv);
+    mainDiv.append(questDiv, paramsDiv, prevDiv);
 
     questions.push(q);
     questionsMainDiv.append(mainDiv);
 
-    updateManager("main");
+    updateManager("main", mainDiv, q);
 }
 // ùSECTION
 
@@ -659,13 +748,25 @@ function updateManager(updateType, mainDiv, q) {
             break;
         case "main":
             updatePending();
+            updateQuestionPoints(q);
+            updateQuestionsNumber();
+            updateStats();
             break;
-        case "paramsEdit":
         case "deletion":
             updatePending();
+            updateQuestionsNumber();
+            updateStats();
             break;
         case "pointsChange":
+            updateQuestionPoints(q);
+            updateStats();
             updatePending();
+            break;
+        case "paramsEdit":
+            updatePending();
+            break;
+        case "previewCreation":
+            updatePreview(mainDiv, q);
             break;
     }
 }
@@ -678,16 +779,113 @@ function updatePending() {
     };
     localStorage.setItem("evalPending", JSON.stringify(evalForm));
 }
-//
 
-// ANCHOR - Update a preview
+// ANCHOR - Update global stats
+function updateStats() {
+    questionsNumberStat.textContent = questions.length.toString();
+    pointsTotalStat.textContent = questions.reduce((acc, q) => acc + q.params.points, 0).toString();
+}
+
+// ANCHOR - Update questions numbers
+function updateQuestionsNumber() {
+    const questionsDivs = questionsMainDiv.querySelectorAll(".mainDiv");
+    for (let i = 0; i < questionsDivs.length; i++) {
+        const currentQuestDiv = questionsDivs[i];
+
+        currentQuestDiv.id = (i + 1).toString();
+        const numberSpan = currentQuestDiv.querySelector(".questNb");
+        numberSpan.textContent = (i + 1).toString();
+    }
+}
+
+// ANCHOR - Update a question points
+function updateQuestionPoints(q) {
+    let index = questions.indexOf(q) + 1;
+    const questDiv = document.getElementById(index.toString());
+    const pointsSpan = questDiv.querySelector(".questPts");
+    pointsSpan.textContent = q.params.points.toString();
+}
+
+// SECTION - Update a preview
 function updatePreview(mainDiv, q) {
-    // NOTE - Make the function
     const prevDiv = mainDiv.querySelector(".prev");
+    prevDiv.innerHTML = "";
     switch (q.type) {
         case "traduction":
+            const prevInstructionTrad = document.createElement("p");
+            prevInstructionTrad.textContent = q.instruction;
+
+            const prevAnswerInputTrad = document.createElement("input");
+            prevAnswerInputTrad.type = "text";
+            prevAnswerInputTrad.placeholder = "Indiquez votre réponse ici";
+
+            prevDiv.append(prevInstructionTrad, prevAnswerInputTrad);
             break;
         case "conjugaison":
+            const prevInstructionConjug = document.createElement("p");
+            prevInstructionConjug.textContent = `Conjuguez le verbe '${q.instruction}' aux temps et personnes suivants :`;
+
+            const prevAnswerTableConjug = document.createElement("table");
+            prevAnswerTableConjug.classList.add("questAns");
+
+            // ANCHOR - Tenses row
+            const prevAnswerFirstRowConjug = prevAnswerTableConjug.insertRow();
+
+            prevAnswerFirstRowConjug.insertCell(); // Empty corner cell
+
+            q.answer.tenses.forEach((tense) => {
+                const prevTenseCellConjug = prevAnswerFirstRowConjug.insertCell();
+                prevTenseCellConjug.textContent = tense;
+            });
+
+            // ANCHOR - Other rows
+
+            for (let i = 0; i < q.answer.pronouns.length; i++) {
+                const pronoun = q.answer.pronouns[i];
+
+                const prevPronounRowConjug = prevAnswerTableConjug.insertRow();
+                const prevPronounCellConjug = prevPronounRowConjug.insertCell();
+                prevPronounCellConjug.textContent = pronoun;
+
+                for (let j = 0; j < q.answer.tenses.length; j++) {
+                    const prevVerbCellConjug = prevPronounRowConjug.insertCell();
+                    const prevVerbInputConjug = document.createElement("input");
+                    prevVerbInputConjug.type = "text";
+                    prevVerbInputConjug.placeholder = "Verbe conjugué";
+                    prevVerbCellConjug.append(prevVerbInputConjug);
+                }
+            }
+
+            prevDiv.append(prevInstructionConjug, prevAnswerTableConjug);
+
             break;
     }
+} // ùSECTION
+
+// ANCHOR Loading function
+
+export function loadFromPending() {
+    let evalPending = JSON.parse(localStorage.getItem("evalPending"));
+    evalNameInput.value = evalPending.name;
+    evalPending.questions.forEach((q) => {
+        addQuestion(q.type, q);
+    });
+}
+
+export function loadFromID(code) {
+    fetch("https://api.thoth-edu.fr/crea/get", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: code }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            evalNameInput.value = data.eval.name;
+            data.eval.questions.forEach((q) => {
+                addQuestion(q.type, q);
+            });
+        })
+        .catch((error) => Perror("Error on crea/get : " + error));
 }
