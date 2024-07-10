@@ -1,21 +1,30 @@
-import { addQuestion, questions, loadFromID, loadFromPending } from "./modules/addQuestions.js";
-import { Pconfirm, Palert, Puser_check, Perror } from "../../shared/scripts/modules/utils.js";
+import { Puser_check, Perror, Pconfirm, Palert } from "../../shared/scripts/modules/utils.js";
+import { addQuestion } from "./modules/addQuestions.js";
 
 // ANCHOR - System to check and refresh user's token !
 await Puser_check();
 
 async function page() {
-    // ANCHOR - Setting the page
+    // ANCHOR - Updating constant page content
     const username = document.getElementById("username");
     username.textContent = localStorage.getItem("username");
+    const backToDashboard = document.getElementById("dashboard");
+    backToDashboard.addEventListener("click", () => {
+        Pconfirm(
+            "Attention ! Vous vous apprêtez à quitter sans sauvegarder ! Confirmez-vous ?",
+            () => {
+                window.location.href = "https://professeur.thoth-edu.fr/dashboard";
+            }
+        );
+    });
 
-    // ANCHOR - load or not ?
+    // ANCHOR - Wether to load from an id/a pending or not
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const evalParam = urlParams.get("eval");
+    const evalParam = urlParams.get("e");
     const evalName = document.getElementById("nom_eval");
     if (!(evalParam == null)) {
-        // Loads questions if passed parameter
+        // Loads questions if a parameter is passed
         await fetch("https://api.thoth-edu.fr/crea/get", {
             method: "POST",
             headers: {
@@ -26,6 +35,7 @@ async function page() {
             .then((response) => response.json())
             .then((data) => {
                 evalName.value = data.eval.name;
+                // FIXME - OLD FUNCTION
                 loadFromID(data.eval.questions);
             })
             .catch((error) => Perror("Error on crea/get : " + error));
@@ -36,102 +46,69 @@ async function page() {
         Pconfirm(
             "Une ancienne évaluation mal enregistrée a été détectée. Voulez-vous la recharger ?",
             () => {
+                // FIXME - OLD FUNCTION
                 loadFromPending(JSON.parse(localStorage.getItem("evalPending")));
             }
         );
     }
 
-    // ANCHOR - Adding a question
-    const addType = document.getElementById("addType");
-    const statQuestions = document.getElementById("nbQuestions");
+    // ANCHOR - Logic for the add buttons
+    const addTypeButtonsDiv = document.getElementById("addType");
 
-    const addConjugButton = document.getElementById("addConjug");
-    addConjugButton.addEventListener("click", () => {
-        addQuestion("conjugaison");
-        addType.hidden = true;
-        statQuestions.textContent = "Nombre de questions : " + questions.length.toString();
+    const addQuestionButton = document.getElementById("addQuestion");
+    addQuestionButton.addEventListener("click", () => {
+        addTypeButtonsDiv.hidden = false;
     });
 
     const addTradButton = document.getElementById("addTrad");
     addTradButton.addEventListener("click", () => {
+        addTypeButtonsDiv.hidden = true;
         addQuestion("traduction");
-        addType.hidden = true;
-        statQuestions.textContent = "Nombre de questions : " + questions.length.toString();
     });
 
-    const addQuestionButton = document.getElementById("addQuestion");
-    addQuestionButton.addEventListener("click", () => {
-        addType.hidden = false;
+    const addConjugButton = document.getElementById("addConjug");
+    addConjugButton.addEventListener("click", () => {
+        addTypeButtonsDiv.hidden = true;
+        addQuestion("conjugaison");
     });
 
-    // ANCHOR - Saving
+    // ANCHOR - Logic for the save button
     const saveButton = document.getElementById("save");
     saveButton.addEventListener("click", () => {
-        Pconfirm(
-            "Vous vous appretez à sauvegarder. Cela vous ramènera sur votre dashboard.",
-            () => {
-                // Making the correct data format
-                if (evalName == "") {
-                    Palert("Vous devez indiquer un nom pour l'évaluation");
+        let evalContent = JSON.parse(localStorage.getItem("evalPending"));
+        if (evalContent.name.length <= 0) {
+            Palert("Attention, vous devez renseigner un nom à l'évaluation !");
+            return;
+        }
+
+        fetch("https://api.thoth-edu.fr/crea/save", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                eval: evalContent,
+                token: localStorage.getItem("jwt-token"),
+                id: "none",
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status == "success") {
+                    Palert(
+                        "Votre évaluation a été enregistrée avec succès ! Vous allez être redirigé vers le dashboard.",
+                        () => {
+                            window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+                        }
+                    );
+                    setTimeout(() => {
+                        window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+                    }, 5000);
                 } else {
-                    let evalData = {
-                        name: evalName.value,
-                        questions: [],
-                    };
-
-                    questions.forEach((question) => {
-                        evalData.questions.push(question.eval);
-                    });
-
-                    let formData = {
-                        eval: evalData,
-                        token: localStorage.getItem("jwt-token"),
-                    };
-
-                    if (evalParam) {
-                        formData.id = evalParam;
-                    } else {
-                        formData.id = "none";
-                    }
-
-                    // Sending data
-                    fetch("https://api.thoth-edu.fr/crea/save", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(formData),
-                    })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            if (data.status == "success") {
-                                Palert("Évaluation sauvegardée avec succès", () => {
-                                    localStorage.removeItem("evalPending");
-                                    if (evalParam) {
-                                        window.location.href = `https://professeur.thoth-edu.fr/dashboard/controle?e=${evalParam}`;
-                                    } else {
-                                        window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
-                                    }
-                                });
-                            } else {
-                                console.log("pas ok" + data.reason);
-                            }
-                        })
-                        .catch((error) => Perror("Error on crea/save : " + error));
+                    Palert(data.reason);
                 }
-            }
-        );
-    });
-
-    // ANCHOR - Also the logic for the "dashboard" button
-    const backToDashboard = document.getElementById("dashboard");
-    backToDashboard.addEventListener("click", () => {
-        Pconfirm(
-            "Attention ! Vous vous apprêtez à quitter sans sauvegarder ! Confirmez-vous ?",
-            () => {
-                window.location.href = "https://professeur.thoth-edu.fr/dashboard";
-            }
-        );
+            })
+            .catch((error) => Perror("Error on crea/get : " + error));
     });
 }
 await page();

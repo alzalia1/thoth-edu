@@ -46,7 +46,7 @@ async function page() {
     username.textContent = localStorage.getItem("username");
 
     const evalsDiv = document.getElementById("evals");
-    construct(evalsDiv, userI.evals, { url: "controle", param: "e" });
+    construct(evalsDiv, userI.evals, { url: "eval", param: "e" });
 
     const deconnect = document.getElementById("logout");
     deconnect.addEventListener("click", () => {
