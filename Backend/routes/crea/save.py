@@ -13,6 +13,16 @@ from appInit import db, Eval, secret
 
 def save(data):
     """Sauvegarde ou met à jour le contenu d'une évaluation"""
+
+    # Vérfication de l'existence du nom de l'évaluation
+    if data["eval"]["name"] == "":
+        return jsonify(
+            {
+                "status": "fail",
+                "reason": "Attention : vous devez préciser un nom d'évaluation pour pouvoir l'enregistrer",
+            }
+        )
+
     evalJSON: dict = data["eval"]
     eval = None
 

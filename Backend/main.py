@@ -104,7 +104,14 @@ def getAccess():
     data = request.get_json()
     return r.dashboard.access.get(data)
 
+
 @app.route("/dashboard/access/delete", methods=["POST"])
 def deleteAccess():
     data = request.get_json()
     return r.dashboard.access.delete(data)
+
+
+@app.route("/dashboard/access/save", methods=["POST"])
+def saveAccess():
+    data = request.get_json()
+    return r.dashboard.access.save(data)
