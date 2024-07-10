@@ -32,7 +32,19 @@ export function Palert(text, okHandler = () => {}) {
 /** ANCHOR - To show a bad error !
  * @param {string} error - Error that occured
  */
-export function Perror(error) {
+export function Perror(error = "Non spécifié", page = "Non spécifié", action = "Non spécifié") {
+    const nowTime = new Date();
+    const options = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    };
+
+    const now = nowTime.toLocaleString("fr-FR", options);
+
     const body = document.body;
 
     const Gdiv = document.createElement("div");
@@ -55,31 +67,30 @@ export function Perror(error) {
     const githubLi = document.createElement("li");
     const githubA = document.createElement("a");
     githubA.target = "_blank";
-    githubA.textContent = "Via l'onglet 'Issues' de notre GitHub";
+    githubA.textContent = "Via l'onglet 'Issues' de notre GitHub (Requiert un compte)";
     githubA.href = "https://github.com/alzalia1/thoth-edu/issues";
     githubLi.appendChild(githubA);
 
     const mailLi = document.createElement("li");
     const mailA = document.createElement("a");
-    mailA.textContent = "Par mail à notre support technique";
-    mailA.href = `mailto:error@thoth-edu.fr?subject=Erreur sur la page &body=Message d'erreur: %0D%0A%0D%0A${error}%0D%0A%0D%0ADescription de votre situation :%0D%0A`;
-
+    mailA.textContent = "Par mail à notre support technique (Recommandé)";
+    mailA.href = `mailto:error@thoth-edu.fr?subject=Erreur sur la page &body=Message d'erreur: %0D%0A%0D%0A${error}%0D%0A%0D%0APage concernée : ${page} %0D%0A%0D%0AAction concernée : ${action} %0D%0A%0D%0ASurvenu au ${now}%0D%0A%0D%0ADescription de votre situation :%0D%0A`;
     mailLi.appendChild(mailA);
 
-    ul.append(githubLi, mailLi);
+    ul.append(mailLi, githubLi);
 
     const explain2 = document.createElement("p");
     explain2.textContent =
-        "Merci alors de joindre le message d'erreur ci-dessous, et une description de ce que vous avez fait pour vous retrouver face à cette erreur.";
+        "Ci dessous le message d'erreur auto-généré, que vous pouvez joindre à votre post GitHub (ou au mail s'il ne s'y trouve pas d'office). N'hésitez pas à le compléter de vos commentaires ! (Et à renseigner les catégories 'Non spécifié' si possible)";
 
     // Text
     const p = document.createElement("textarea");
-    p.value = error;
+    p.value = error + `\nPage concernée : ${page}\nAction concernée : ${action}\nSurvenu au ${now}`;
     p.cols = 45;
     const copy = document.createElement("button");
     copy.textContent = "Copier";
     copy.addEventListener("click", () => {
-        navigator.clipboard.writeText(text);
+        navigator.clipboard.writeText(p.value);
     });
 
     // Ok button
