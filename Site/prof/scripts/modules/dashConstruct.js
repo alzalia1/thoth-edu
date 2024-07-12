@@ -2,7 +2,7 @@
  * @param {HTMLDivElement} pDiv - Div dans laquelle insérer la liste
  * @param {Array} list - liste de chaque élément (couple name/id + status/mark)
  */
-export function construct(pDiv, list, pageTo) {
+export function construct(pDiv, list, pageTo = { url, param, sup: "" }) {
     const table = document.createElement("table");
 
     let ref = {
@@ -73,7 +73,7 @@ export function construct(pDiv, list, pageTo) {
         const div = document.createElement("tr");
         div.className = "listRow";
         div.addEventListener("click", () => {
-            window.location.href = `https://professeur.thoth-edu.fr/dashboard/${pageTo.url}?${pageTo.param}=${el.id}`;
+            window.location.href = `https://professeur.thoth-edu.fr/dashboard/${pageTo.url}?${pageTo.param}=${el.id}${pageTo.sup}`;
         });
 
         // Name

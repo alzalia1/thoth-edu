@@ -101,7 +101,7 @@ async function page() {
         " )";
 
     const ansDiv = document.getElementById("ansList");
-    construct(ansDiv, accessI.ans, { url: "answer", param: "c" });
+    construct(ansDiv, accessI.ans, { url: "answer", param: "s", sup: `?a=${accessParam}` });
 
     // ANCHOR - Deleting eval
     const deleteAccess = document.getElementById("delete");

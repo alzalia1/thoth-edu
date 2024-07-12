@@ -1,4 +1,156 @@
-import { Puser_check } from "../../shared/scripts/modules/utils.js";
+import { Puser_check, Perror, Pconfirm, Palert } from "../../shared/scripts/modules/utils.js";
 
+// ANCHOR - Main global vars
+let answers = [];
+const questionsDiv = document.getElementById("questionsList");
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const studentParam = urlParams.get("s");
+const accessParam = urlParams.get("a");
 // System to check and refresh user's token
 await Puser_check();
+
+// SECTION - Get answer info
+/*TEST VALUE
+answers = [
+    {
+        id: "0",
+        type: "conjugaison",
+        instruction: "manger",
+        answer: {
+            ans: {
+                verbs: [
+                    ["manges", "mangerais"],
+                    ["manges", "mangeras"],
+                ],
+            },
+            correction: {
+                tenses: ["Présent", "Futur"],
+                pronouns: ["Je", "Tu"],
+                verbs: [
+                    ["mange", "mangerai"],
+                    ["manges", "mangeras"],
+                ],
+            },
+        },
+        points: {
+            got: 3,
+            max: 5,
+        },
+    },
+    {
+        id: "1",
+        type: "traduction",
+        instruction: "Traduisez le mot 'table' en espagnol",
+        answer: {
+            ans: "mesa",
+            correction: "mesa",
+        },
+        points: {
+            got: 5,
+            max: 5,
+        },
+    },
+]; 
+*/
+await fetch("https://api.thoth-edu.fr/dashboard/ans/get", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id_ans: studentParam, id_access: accessParam }),
+})
+    .then((response) => response.json())
+    .then((data) => (answers = data.ans))
+    .catch((error) => Perror("Error on dashboard/ans/get : " + error));
+// ùSECTION
+
+// SECTION - Create page
+async function page() {
+    // ANCHOR - Set the global stats
+    const studentName = document.getElementById("studentName");
+    studentName.textContent = studentParam;
+
+    const pointsGot = document.getElementById("ptsGot");
+    pointsGot.textContent = answers.reduce((acc, ans) => acc + ans.points.got, 0).toString();
+
+    const pointsMax = document.getElementById("ptsMax");
+    pointsMax.textContent = answers.reduce((acc, ans) => acc + ans.points.max, 0).toString();
+
+    // ANCHOR - Add the answers
+    answers.forEach((answer) => {
+        addQuestion(answer);
+    });
+} // ùSECTION
+await page();
+
+// SECTION - Adding question
+function addQuestion(q) {
+    const index = questionsDiv.querySelectorAll(".quest").length + 1;
+    // ANCHOR - Quest div
+    const questDiv = document.createElement("div");
+    questDiv.classList.add("quest");
+    questDiv.id = index.toString;
+
+    // ANCHOR - Title
+    const questTitle = document.createElement("h1");
+    questTitle.textContent = `Question n°${index.toString()} (${q.points.got}/${q.points.max})`;
+    questDiv.append(questTitle);
+
+    // SECTION - Question's body
+    switch (q.type) {
+        case "traduction": // ANCHOR - Traduction
+            const instructionTrad = document.createElement("p");
+            instructionTrad.textContent = q.instruction;
+
+            const answerGivenTrad = document.createElement("p");
+            answerGivenTrad.textContent = "Réponse de l'élève : " + q.answer.ans;
+
+            const answerExpectedTrad = document.createElement("p");
+            answerExpectedTrad.textContent = "Réponse attendue : " + q.answer.correction;
+
+            questDiv.append(instructionTrad, answerGivenTrad, answerExpectedTrad);
+            break;
+        case "conjugaison": // SECTION - Conjugaison
+            const instructionConjug = document.createElement("p");
+            instructionConjug.textContent = `Conjuguez le verbe '${q.instruction}' aux temps et personnes suivants :`;
+
+            const answerTableConjug = document.createElement("table");
+            answerTableConjug.classList.add("questAns");
+
+            // ANCHOR - Tenses row
+            const answerFirstRowConjug = answerTableConjug.insertRow();
+
+            const answerFirstCellConjug = answerFirstRowConjug.insertCell(); // Empty corner cell
+            answerFirstCellConjug.innerHTML = `<b>élève</b></br><i>correction</i>`;
+
+            q.answer.correction.tenses.forEach((tense) => {
+                const tenseCellConjug = answerFirstRowConjug.insertCell();
+                tenseCellConjug.textContent = tense;
+            });
+
+            // ANCHOR - Other rows
+
+            for (let i = 0; i < q.answer.correction.pronouns.length; i++) {
+                const pronoun = q.answer.correction.pronouns[i];
+
+                const pronounRowConjug = answerTableConjug.insertRow();
+                const pronounCellConjug = pronounRowConjug.insertCell();
+                pronounCellConjug.textContent = pronoun;
+
+                for (let j = 0; j < q.answer.correction.tenses.length; j++) {
+                    const verbCellConjug = pronounRowConjug.insertCell();
+                    const verbInputConjug = document.createElement("p");
+                    verbInputConjug.innerHTML = `<b>${q.answer.ans.verbs[i][j]}</b></br><i>${q.answer.correction.verbs[i][j]}</i>`;
+
+                    verbCellConjug.append(verbInputConjug);
+                }
+            }
+
+            questDiv.append(instructionConjug, answerTableConjug);
+
+            break; // ùSECTION
+    } // ùSECTION
+
+    questionsDiv.append(questDiv);
+} // ùSECTION
