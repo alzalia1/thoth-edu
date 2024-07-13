@@ -1,4 +1,10 @@
-import { Puser_check, Perror, Pconfirm, Palert } from "../../shared/scripts/modules/utils.js";
+import {
+    Puser_check,
+    Perror,
+    Pconfirm,
+    Palert,
+    Pinput,
+} from "../../shared/scripts/modules/utils.js";
 
 // ANCHOR - Main global vars
 let answers = [];
@@ -11,7 +17,7 @@ const accessParam = urlParams.get("a");
 await Puser_check();
 
 // SECTION - Get answer info
-/*TEST VALUE
+// /*TEST VALUE
 answers = [
     {
         id: "0",
@@ -51,8 +57,9 @@ answers = [
             max: 5,
         },
     },
-]; 
-*/
+];
+// */
+/*
 await fetch("https://api.thoth-edu.fr/dashboard/ans/get", {
     method: "POST",
     headers: {
@@ -63,7 +70,7 @@ await fetch("https://api.thoth-edu.fr/dashboard/ans/get", {
     .then((response) => response.json())
     .then((data) => (answers = data.ans))
     .catch((error) => Perror("Error on dashboard/ans/get : " + error));
-// ùSECTION
+// ùSECTION */
 
 // SECTION - Create page
 async function page() {
@@ -80,6 +87,46 @@ async function page() {
     // ANCHOR - Add the answers
     answers.forEach((answer) => {
         addQuestion(answer);
+    });
+
+    // ANCHOR - Deleting answer
+    const deleteAnswer = document.getElementById("delete");
+    deleteAnswer.addEventListener("click", () => {
+        Pconfirm(
+            "Vous allez supprimer la copie. Cette action est IRRÉVERSIBLE, et il sera totalement impossible de récupérer les données de la copie.",
+            () => {
+                Pinput(
+                    `Veuillez recopier l'id de cet accès pour confirmer : \n\n"${studentParam}"`,
+                    (inputDelete) => {
+                        if (inputDelete == studentParam) {
+                            fetch("https://api.thoth-edu.fr/dashboard/ans/delete", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                    id_ans: studentParam,
+                                    id_access: accessParam,
+                                }),
+                            })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                    if (data.status == "fail") {
+                                        Palert(data.reason);
+                                    } else {
+                                        window.location.href = `https://professeur.thoth-edu.fr/dashboard/access?a=${accessParam}`;
+                                    }
+                                })
+                                .catch((error) =>
+                                    Perror("Error on dashboard/ans/delete : " + error)
+                                );
+                        } else {
+                            Palert("Vous avez mal recopié l'id. Veuillez recommencer");
+                        }
+                    }
+                );
+            }
+        );
     });
 } // ùSECTION
 await page();

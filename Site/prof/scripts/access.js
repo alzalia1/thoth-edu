@@ -101,7 +101,7 @@ async function page() {
         " )";
 
     const ansDiv = document.getElementById("ansList");
-    construct(ansDiv, accessI.ans, { url: "answer", param: "s", sup: `?a=${accessParam}` });
+    construct(ansDiv, accessI.ans, { url: "answer", param: "s", sup: `&a=${accessParam}` });
 
     // ANCHOR - Deleting eval
     const deleteAccess = document.getElementById("delete");
@@ -110,7 +110,7 @@ async function page() {
             "Vous allez supprimer l'accès. Cette action est IRRÉVERSIBLE, et il sera totalement impossible de récupérer les données, quelles qu'elles soient, de l'accès et des copies.",
             () => {
                 Pinput(
-                    `Veuillez recopier l'id de cet accès pour confirmer : \n\n${accessParam}`,
+                    `Veuillez recopier l'id de cet accès pour confirmer : \n\n"${accessParam}"`,
                     (inputDelete) => {
                         if (inputDelete == accessParam) {
                             fetch("https://api.thoth-edu.fr/dashboard/access/delete", {
@@ -123,7 +123,7 @@ async function page() {
                                 .then((response) => response.json())
                                 .then((data) => {
                                     if (data.status == "fail") {
-                                        Palert("Il y a eu un problème : ", data.reason);
+                                        Palert(data.reason);
                                     } else {
                                         window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
                                     }

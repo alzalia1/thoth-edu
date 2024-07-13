@@ -142,7 +142,7 @@ async function page() {
             "Vous allez supprimer l'évaluation. Cette action est IRRÉVERSIBLE, et il sera totalement impossible de récupérer les données, quelles qu'elles soient, de l'évaluation, des accès et des copies.",
             () => {
                 Pinput(
-                    `Veuillez recopier l'id de cette évaluation pour confirmer : \n\n${evalParam}`,
+                    `Veuillez recopier l'id de cette évaluation pour confirmer : \n\n"${evalParam}"`,
                     (inputDelete) => {
                         if (inputDelete == evalParam) {
                             fetch("https://api.thoth-edu.fr/dashboard/eval/delete", {
