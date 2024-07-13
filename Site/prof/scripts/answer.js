@@ -188,7 +188,7 @@ function addQuestion(q) {
                 for (let j = 0; j < q.answer.correction.tenses.length; j++) {
                     const verbCellConjug = pronounRowConjug.insertCell();
                     const verbInputConjug = document.createElement("p");
-                    verbInputConjug.innerHTML = `<b>${q.answer.ans.verbs[i][j]}</b></br><i>${q.answer.correction.verbs[i][j]}</i>`;
+                    verbInputConjug.innerHTML = `<b>${q.answer.student.verbs[i][j]}</b></br><i>${q.answer.correction.verbs[i][j]}</i>`;
 
                     verbCellConjug.append(verbInputConjug);
                 }
