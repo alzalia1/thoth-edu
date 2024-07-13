@@ -2,7 +2,8 @@
  * @param {HTMLDivElement} pDiv - Div dans laquelle insérer la liste
  * @param {Array} list - liste de chaque élément (couple name/id + status/mark)
  */
-export function construct(pDiv, list, pageTo = { url, param, sup: "" }) {
+export function construct(pDiv, list, pageTo = { url: undefined, param: undefined }) {
+    pageTo.sup = pageTo.sup || "";
     const table = document.createElement("table");
 
     let ref = {
