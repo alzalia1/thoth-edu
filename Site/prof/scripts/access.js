@@ -237,7 +237,7 @@ async function page() {
 
     // ANCHOR - Generating a QR-Code + Displaying ID
     const access_id_h = document.getElementById("access-id");
-    access_id_h.textContent = "ID de cet accès : " + accesParam;
+    access_id_h.textContent = "ID de cet accès : " + accessParam;
     access_id_h.addEventListener("click", () => {
         navigator.clipboard.writeText(accessParam);
     });
