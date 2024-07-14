@@ -93,10 +93,10 @@ def evalGetEval():
     return r.eval.getEval(data)
 
 
-@app.route("/eval/ans_eleves", methods=["POST"])
+@app.route("/eval/ans_students", methods=["POST"])
 def ansEleves():
     data = request.get_json()
-    return r.eval.ans_students(data)
+    return r.eval.rep_eleves(data)
 
 
 @app.route("/dashboard/access/get", methods=["POST"])

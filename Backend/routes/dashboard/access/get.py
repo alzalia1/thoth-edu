@@ -60,8 +60,8 @@ def get(data):
 
     data = {
         "access": structGenAcces,
-        "note": note,
-        "reps": listeRep,
+        "mark": note,
+        "ans": listeRep,
     }
 
     return jsonify(data)

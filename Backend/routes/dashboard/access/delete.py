@@ -3,13 +3,13 @@ from flask import jsonify
 import csv
 
 # Import app
-from appInit import Acces, Eval
+from appInit import Acces, Eval, db
 
 # return jsonify({ "status" : "success" })
 # return jsonify({ "status" : "fail", "reason" : "" })
 
 
-def delete(data):
+def delete(data: dict):
     """Suppression d'un accès, y compris les réponses concernées dans le fichier CSV
     Agit aussi sur la BDD"""
 
@@ -25,11 +25,14 @@ def delete(data):
     # Recherche des lignes à supprimer
     for ind, rep in enumerate(listeReps[2:]):
         if rep[1] == data["id"]:
-            del listeReps[ind]
+            del listeReps[ind + 1]
 
     # Réécriture des lignes restantes
     with open(eval.cheminCSV, "w", encoding="utf-8") as fichierEval:
         writer = csv.writer(fichierEval)
         writer.writerows(listeReps)
+
+    db.session.delete(acces)
+    db.session.commit()
 
     return jsonify({"status": "success"})
