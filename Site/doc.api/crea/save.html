@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/vs2015.min.css"
+        />
+        <link rel="stylesheet" href="/style.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+        <script src="/script.js" defer></script>
+        <title>/crea/save - Doc.API</title>
+    </head>
+    <body>
+        <div id="buttons" class="sticky-div">
+            <h1>/crea/save</h1>
+            <a href="https://doc.api.thoth-edu.fr/">< retour</a> <br />
+
+            <button id="showTrad" class="selected">Traduction</button>
+            <button id="showConjug">Conjugaison</button>
+        </div>
+
+        <br />
+
+        <div class="content">
+            <div id="description">
+                Sauvegarde une évaluation dans la base de donnée et créé les fichiers JSON et CSV
+                associés.
+            </div>
+            <div id="status">
+                <h2>Status</h2>
+                ✅ Terminé
+            </div>
+
+            <div id="request">
+                <h2>Requête</h2>
+                <div class="traduction">
+                    <pre>
+                        <code class="json">
+{
+    "token" : "token JWT de l'utilisateur",
+    "eval" : {
+        "name": "nom de l'évaluation",
+        "questions": [
+            {
+                {
+                    "type" : "traduction",
+                    "instruction" : "Consigne donnée par le professeur",
+                    "answer" : "Réponse attendue",
+                    "params" : {
+                        "points" : 0, // Points de la question
+                        "determiners" : ["", ... ], // Déterminants acceptés
+                        "plural" : ["", ... ], // Versions au pluriel acceptées
+                        "genre" : ["", ... ], // Les versions genrées acceptées
+                        "accent" : false, // Est-ce que les accents sont acceptés
+                    }
+                }
+            },
+            ...
+        ]
+    },
+    "id": "id de l'éval", // Ce champ n'est présent que lors d'une modification d'une éval
+}
+                        </code>
+                    </pre>
+                    <b>Remarque : </b> Un champ <code>id</code> doit être ajouté à chaque question
+                    de <code>questions</code> pendant l'enregistrement (backend). Le reste de
+                    <code>eval</code> peut être enregistré comme tel.
+                </div>
+                <div class="conjugaison" hidden>
+                    <pre>
+                        <code class="json">
+{
+    "token" : "token JWT de l'utilisateur",
+    "eval" : {
+        "name": "nom de l'évaluation",
+        "questions": [
+            {
+                {
+                    "type" : "conjugaison",
+                    "instruction" : "Verbe à traduire",
+                    "answer" : {
+                        "tenses" : ["", ... ], // Liste des temps demandés
+                        "pronouns" : ["", ... ], // Liste des pronoms demandés
+                        "verbs" : [ ["", ...], ... ], // Double liste des verbes conjugués.
+                    }
+                    "params" : {
+                        "points" : 0, // Points de la question
+                        "accent" : false, // Est-ce que les accents sont acceptés ?
+                    }
+                }
+            },
+            ...
+        ]
+    },
+    "id": "id de l'éval", // Ce champ n'est présent que lors d'une modification d'une éval
+                            }
+                        </code>
+                    </pre>
+                    <b>Remarque : </b> Pour un temps <code>tenses[j]</code> et un pronom
+                    <code>pronouns[i]</code> on a un verbe <code>verbs[i][j]</code>, autrement dit,
+                    <code>verbs[ligne = pronouns][colonne = temps]</code>.
+                </div>
+            </div>
+
+            <hr />
+
+            <div id="answer">
+                <h2>Réponse</h2>
+                <pre>
+                    <code class="json">
+{
+    "status" : "success ou fail",
+    "reason" : "raison du fail ou none"
+}
+                    </code>
+                </pre>
+                <b>Remarque : </b> <code>reason</code> peut soit contenir "none", soit ne pas être
+                renvoyé du tout dans le cas d'un succès.
+            </div>
+
+            <hr />
+
+            <div id="example">
+                <h2>Exemple</h2>
+                <div class="container">
+                    <div class="box traduction">
+                        <pre>
+                            <code class="json">
+{
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ6cTF6YXAiLCJpYXQiOjE3MjA5ODYwMjEuMjUzNTIzMywiZXhwIjoxNzIwOTg5NjIxLjQ0MjczNTJ9.e1LYSbtXVbTrLW7rNftcYw6-up3mxtdrCBl_4CGm2kk",
+    "eval" : {
+        "name": "Conjug - Septembre",
+        "questions": [
+            {
+                {
+                    "type" : "conjugaison",
+                    "instruction" : "manger",
+                    "answer" : "mesa",
+                    "params" : {
+                        "points" : 1,
+                        "determiners" : ["la", "una"],
+                        "plural" : [],
+                        "genre" : [],
+                        "accent" : false,
+                    }
+                }
+            },
+        ]
+    },
+}
+                            </code>
+                        </pre>
+                        <b>Remarque : </b> On prend l'exemple de la création d'une évaluation, d'où
+                        l'absence de <code>id</code>.
+                    </div>
+                    <div class="box conjugaison" hidden>
+                        <pre>
+                            <code class="json">
+{
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ6cTF6YXAiLCJpYXQiOjE3MjA5ODYwMjEuMjUzNTIzMywiZXhwIjoxNzIwOTg5NjIxLjQ0MjczNTJ9.e1LYSbtXVbTrLW7rNftcYw6-up3mxtdrCBl_4CGm2kk",
+    "eval" : {
+        "name": "Vocab - Septembre",
+        "questions": [
+            {
+                {
+                    "type" : "traduction",
+                    "instruction" : "Traduire le mot \"table\" en espagnol",
+                    "answer" : {
+                        "tenses" : ["Présent", "Futur" ],
+                        "pronouns" : ["Je", "Tu", "Il/Elle/On" ],
+                        "verbs" : [ ["mange", "mangerai"], ["manges", "mangeras"], ["mange", "mangera"]],
+                    }
+                    "params" : {
+                        "points" : 6,
+                        "accent" : false,
+                    }
+                }
+            },
+        ]
+    },
+}
+                            </code>
+                        </pre>
+                        <b>Remarque : </b> On prend l'exemple de la création d'une évaluation, d'où
+                        l'absence de <code>id</code>.
+                    </div>
+                    <div class="box small">→</div>
+                    <div class="box">
+                        <pre>
+                            <code class="json">
+{
+    "status" : "success",
+}
+                            </code>
+                        </pre>
+                        <b>Remarque : </b> On a fait ici le choix de ne pas mettre
+                        <code>reason</code> vu que le <code>status</code> est "success".
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

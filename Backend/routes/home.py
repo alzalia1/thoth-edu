@@ -1,6 +1,6 @@
 # Import libraries
+from flask import redirect
+
 
 def home():
-    return (
-        "Hello ! Vous êtes bien arrivé sur la page 'home' du système d'API ThothEdu !"
-    )
+    return redirect("https://doc.api.thoth-edu.fr")

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/vs2015.min.css"
+        />
+        <link rel="stylesheet" href="/style.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+        <script src="/script.js"></script>
+        <title>/dashboard/eval/get - Doc.API</title>
+    </head>
+    <body>
+        <div id="buttons" class="sticky-div">
+            <h1>/dashboard/eval/get</h1>
+            <a href="https://doc.api.thoth-edu.fr/">< retour</a> <br />
+        </div>
+
+        <div class="content">
+            <div id="description">
+                Renvoie une liste d'accès et d'autres informations relatives à une eval
+            </div>
+            <div id="status">
+                <h2>Status</h2>
+                ✅ Terminé
+            </div>
+
+            <div id="request">
+                <h2>Requête</h2>
+                <pre>
+                    <code class="json">
+{
+    "id" : "id de l'eval"
+}
+                    </code>
+                </pre>
+            </div>
+
+            <hr />
+
+            <div id="answer">
+                <h2>Réponse</h2>
+                <pre>
+                    <code class="json">
+{
+    "name" : "nom de l'eval",
+    "mark" : 0, // moyenne de l'évaluation
+    "nb_ans" : 0, // nombre de réponses totales
+    "access" : [ 
+        { 
+            "name" : "nom de l'accès", 
+            "id" : "id de l'accès",
+            "status" : 0, // 0 = Prévu ; 1 = En cours ; 2 = Terminé
+            "mark" : 0, // moyenne de l'accès 
+        },
+        ... 
+    ] 
+}
+                    </code>
+                </pre>
+            </div>
+
+            <hr />
+
+            <div id="example">
+                <h2>Exemple</h2>
+                <div class="container">
+                    <div class="box">
+                        <pre>
+                            <code class="json">
+{
+    "id" : "31r2vm"
+}
+                            </code>
+                        </pre>
+                    </div>
+                    <div class="box small">→</div>
+                    <div class="box">
+                        <pre>
+                            <code class="json">
+{
+    "name" : "Vocab - Septembre",
+    "mark" : 12.6,
+    "nb_ans" : 62,
+    "access" : [ 
+        { 
+            "name" : "TG2", 
+            "id" : "hl1kfbn4r",
+            "status" : 2,
+            "mark" : 12.4,
+        },
+        { 
+            "name" : "TG3", 
+            "id" : "w02fuh9d",
+            "status" : 1,
+            "mark" : 12.8,
+        } 
+    ] 
+}
+                            </code>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

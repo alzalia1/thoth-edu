@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/style.css" />
+        <title>Home - Doc.API</title>
+    </head>
+    <body>
+        <h1>Documentation des API du site thoth-edu</h1>
+        <pre id="tree">
+https://api.thoth-edu.fr/
+├── user/
+│   ├── ✅ <a href="user/check">check</a> - Vérifie la validité d'un token JWT et le rafraîchit
+│   ├── ✅ <a href="user/login">login</a> - Connecte un utilisateur et lui donne un token JWT
+│   ├── ✅ <a href="user/signup">signup</a> - Inscris un utilisateur dans la base de données
+│   ├── 🔨 <a href="user/delete">delete</a> - Supprime un utilisateur de la base de données
+│   └── 📡|❓ <a href="user/logout">logout</a> - Déconnecte un utilisateur en invalidant son token JWT
+├── dashboard/
+│   ├── eval/
+│   │   ├── ✅ <a href="dashboard/eval/get">get</a> - Obtiens les informations relatives à une eval pour modification
+│   │   ├── ✅ <a href="dashboard/eval/create_access">create_access</a> - Ajoute un accès à la base de données
+│   │   └── ✅ <a href="dashboard/eval/delete">delete</a> - Supprime l'évaluation
+│   ├── access/
+│   │   ├── 🔨|📡 <a href="dashboard/access/get">get</a> - Obtiens les informations relatives à un accès
+│   │   ├── 🔨|📡 <a href="dashboard/access/delete">delete</a> - Supprime un accès de la base de données
+│   │   └── 📡|❓ <a href="dashboard/access/save">save</a> - Enregistre des modifications apportées à l'accès
+│   ├── ans/
+│   │   ├── 📡|❓ <a href="dashboard/ans/get">get</a> - Obtiens les informations relatives à la copie d'un élève
+│   │   └── 📡|❓ <a href="dashboard/ans/delete">delete</a> - Supprime la copie d'un élève
+│   └── ✅ <a href="dashboard/infos_user">infos_user</a> - Obtiens les informations relatives à un utilisateur
+├── crea/
+│   └── ✅ <a href="crea/save">save</a> - Ajoute une évaluation à la base de données
+└── eval/
+    ├── ✅ <a href="eval/check_access">check_access</a> - Vérifie l'existence d'un accès par son ID
+    ├── ✅ <a href="eval/get_eval">get_eval</a> - Obtiens les informations relatives à une évaluation pour élève
+    └── ⚠️ <a href="eval/ans_student">ans_student</a> - Enregistre les réponses d'un élève dans la base de données
+        </pre>
+    </body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/vs2015.min.css"
+        />
+        <link rel="stylesheet" href="/style.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+        <script src="/script.js"></script>
+        <title>/dashboard/ans/get - Doc.API</title>
+    </head>
+    <body>
+        <div id="buttons" class="sticky-div">
+            <h1>/dashboard/ans/get</h1>
+            <a href="https://doc.api.thoth-edu.fr/">< retour</a> <br />
+
+            <button id="showTrad" class="selected">Traduction</button>
+            <button id="showConjug">Conjugaison</button>
+        </div>
+
+        <div class="content">
+            <div id="description">Obtiens les informations relatives à la copie d'un élève</div>
+            <div id="status">
+                <h2>Status</h2>
+                📡 Appel API créé -- ❓ Demandée
+            </div>
+
+            <div id="request">
+                <h2>Requête</h2>
+                <pre>
+                    <code class="json">
+{
+    "id_access" : "id de l'accès concerné",
+    "id_ans" : "id de la copie"
+}
+                    </code>
+                </pre>
+            </div>
+
+            <hr />
+
+            <div id="answer">
+                <h2>Réponse</h2>
+                <div class="traduction">
+                    <pre>
+                        <code class="json">
+{
+    "name" : "pseudo du répondant",
+    "ans" : [
+        {
+            "id" : "id de la question",
+            "type" : "traduction",
+            "instruction" : "consigne",
+            "answer" : { 
+                "student" : "réponse de l'élève",
+                "correction" : "réponse attendu"
+            }
+            "points" : {
+                "got" : 0, // points obtenus par l'élève
+                "max" : 0, // points maximal de la question
+            }
+        },
+        ...
+    ]
+}
+                        </code>
+                    </pre>
+                </div>
+                <div class="conjugaison" hidden>
+                    <pre>
+                        <code class="json">
+{
+    "name" : "pseudo du répondant",
+    "ans" : [
+        {
+            "id" : "id de la question",
+            "type" : "conjugaison",
+            "instruction" : "consigne",
+            "answer" : { 
+                "student" : { // réponse de l'élève
+                    "verbs": [["", ... ], ... ],
+                },
+                "correction" : {
+                    "tenses" : ["", ... ],
+                    "pronouns" : ["", ... ],
+                    "verbs" : [["", ... ], ... ]
+                }
+            }
+            "points" : {
+                "got" : 0, // points obtenus par l'élève
+                "max" : 0, // points maximal de la question
+            }
+        },
+        ...
+    ]
+}
+                        </code>
+                    </pre>
+                    <b>Remarque : </b> les champs <code>tenses</code> et
+                    <code>pronouns</code> peuvent être envoyés dans
+                    <code>answer.student</code> aussi, mais ils ne seront pas utilisés, ce serait
+                    donc inutile. (Mais si c'est plus facile de les envoyer, ça ne bloquera)
+                </div>
+            </div>
+
+            <hr />
+
+            <div id="example">
+                <h2>Exemple</h2>
+                <div class="container">
+                    <div class="box">
+                        <pre>
+                            <code class="json">
+{
+    "id_access" : "7a6spqds",
+    "id_ans" : "1"
+}
+                            </code>
+                        </pre>
+                    </div>
+
+                    <div class="box small">→</div>
+                    <div class="box traduction">
+                        <pre>
+                            <code class="json">
+{
+    "name" : "Jeremy N.",
+    "ans" : [
+        {
+            "id" : "1",
+            "type" : "traduction",
+            "instruction" : "Traduisez \"table\" en espagnol",
+            "answer" : { 
+                "student" : "mesa",
+                "correction" : "mesa"
+            }
+            "points" : {
+                "got" : 1,
+                "max" : 1,
+            }
+        }
+    ]
+}
+                            </code>
+                        </pre>
+                    </div>
+                    <div class="box conjugaison" hidden>
+                        <pre>
+                            <code class="json">
+{
+    "name" : "Jeanne D.",
+    "ans" : [
+        {
+            "id" : "1",
+            "type" : "conjugaison",
+            "instruction" : "manger",
+            "answer" : { 
+                "student" : { // réponse de l'élève
+                    "verbs": [["manges", "mangerais"], ["manges", "mangeras"], ["mange", "mangera"]],
+                },
+                "correction" : {
+                    "tenses" : ["Présent", "Futur"],
+                    "pronouns" : ["Je", "Tu", "Il/Elle/On"],
+                    "verbs" : [["mange", "mangerai"], ["manges", "mangeras"], ["mange", "mangera"]],
+                }
+            }
+            "points" : {
+                "got" : 4, // points obtenus par l'élève
+                "max" : 6, // points maximal de la question
+            }
+        },
+    ]
+}
+                            </code>
+                        </pre>
+                        <b>Remarque : </b> on a ici choisi de ne pas inclure les champs
+                        <code>tenses</code> et <code>pronouns</code> dans
+                        <code>answer.student</code>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/vs2015.min.css"
+        />
+        <link rel="stylesheet" href="/style.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+        <script src="/script.js"></script>
+        <title>/dashboard/infos_user - Doc.API</title>
+    </head>
+    <body>
+        <div id="buttons" class="sticky-div">
+            <h1>/dashboard/infos_user</h1>
+            <a href="https://doc.api.thoth-edu.fr/">< retour</a> <br />
+        </div>
+
+        <div class="content">
+            <div id="description">
+                Obtiens les informations relatives à un utilisateur et la liste de ses évaluations
+            </div>
+            <div id="status">
+                <h2>Status</h2>
+                ✅ Terminé
+            </div>
+
+            <div id="request">
+                <h2>Requête</h2>
+                <pre>
+                    <code class="json">
+{
+    "token" : "token JWT de l'utilisateur"
+}
+                    </code>
+                </pre>
+            </div>
+
+            <hr />
+
+            <div id="answer">
+                <h2>Réponse</h2>
+                <pre>
+                    <code class="json">
+{
+    "username" : "pseudo de l'utilisateur",
+    "evals" : [ // Liste des evals
+        { 
+            "name" : "nom de l'eval", 
+            "id" : "id de l'eval" 
+        },
+        ...
+    ],
+}
+                    </code>
+                </pre>
+            </div>
+
+            <hr />
+
+            <div id="example">
+                <h2>Exemple</h2>
+                <div class="container">
+                    <div class="box">
+                        <pre>
+                            <code class="json">
+{
+    "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ6cTF6YXAiLCJpYXQiOjE3MjEwNDQ3NTUuMTUzNjc5OCwiZXhwIjoxNzIxMDUwMTU5LjA2Mjg0NDh9.ukwOZbdaQxekZxy3H0q8nlz0_gpASyfJtN36Lpj1Cek"
+}
+                            </code>
+                        </pre>
+                    </div>
+                    <div class="box small">→</div>
+                    <div class="box">
+                        <pre>
+                            <code class="json">
+{
+    "username" : "test",
+    "evals" : [
+        { 
+            "name" : "Vocab - Sept", 
+            "id" : "i7kao3",
+        },
+        {
+            "name" : "Conjug - Oct",
+            "id" : "31r2vm",
+        }
+    ],
+}
+                            </code>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

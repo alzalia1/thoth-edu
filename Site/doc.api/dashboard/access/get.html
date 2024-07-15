@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/vs2015.min.css"
+        />
+        <link rel="stylesheet" href="/style.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+        <script src="/script.js"></script>
+        <title>/dashboard/access/get - Doc.API</title>
+    </head>
+    <body>
+        <div id="buttons" class="sticky-div">
+            <h1>/dashboard/access/get</h1>
+            <a href="https://doc.api.thoth-edu.fr/">< retour</a> <br />
+        </div>
+
+        <div class="content">
+            <div id="description">
+                Envoie la liste des réponses et autres informations relatives à un accès
+            </div>
+            <div id="status">
+                <h2>Status</h2>
+                🔨 En construction -- 📡 Appel API créé
+            </div>
+
+            <div id="request">
+                <h2>Requête</h2>
+                <pre>
+                    <code class="json">
+{
+    "id" : "id de l'accès concerné"
+}
+                    </code>
+                </pre>
+            </div>
+        </div>
+
+        <hr />
+
+        <div id="answer">
+            <h2>Réponse</h2>
+            <pre>
+                    <code class="json">
+{
+    "access": {
+        "name" : "nom de l'accès",
+        "id_eval" : "id de l'eval associée à cet accès",
+        "random" : true, // Rangement aléatoire des questions
+        "time" : {
+            "start" : "timestamp de début",
+            "end" : "timestamp de fin"
+            }
+        },
+    "mark" : 0, // moyenne des notes de l'accès
+    "ans" : [ 
+        {
+            "name" : "nom de l'élève",
+            "id" : "id de la copie",
+            "mark" : 0, // note de l'élève
+            "answered_at" : "timestamp du moment de rendu",
+        },
+        ... 
+    ]
+}
+                    </code>
+                </pre>
+            <b>Remarque : </b> <code>reason</code> peut soit contenir "none", soit ne pas être
+            renvoyé du tout dans le cas d'un succès.
+        </div>
+
+        <hr />
+
+        <div id="example">
+            <h2>Exemple</h2>
+            <div class="container">
+                <div class="box">
+                    <pre>
+                            <code class="json">
+{
+    "id" : "7a6spqds"
+}
+                            </code>
+                        </pre>
+                </div>
+                <div class="box small">→</div>
+                <div class="box">
+                    <pre>
+                        <code class="json">
+{
+    "access": {
+        "name" : "TG3",
+        "id_eval" : "i7kao3",
+        "random" : true,
+        "time" : {
+            "start" : "1720684800000",
+            "end" : "1720688400000"
+            }
+        },
+    "mark" : 12.8,
+    "ans" : [ 
+        {
+            "name" : "Jeanne D.",
+            "id" : "1",
+            "mark" : 13,
+            "answered_at" : "1720686400000",
+        },
+        {
+            "name" : "Jeremy N.",
+            "id" : "2",
+            "mark" : 12.4,
+            "answered_at" : "1720686900000",
+        }
+    ]
+}
+                        </code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
