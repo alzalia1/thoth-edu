@@ -96,7 +96,7 @@ async function page() {
         startTime.toLocaleString() +
         " - Se termine le " +
         endTime.toLocaleString() +
-        " ( " +
+        " ( Dure " +
         durationStr +
         " )";
 
