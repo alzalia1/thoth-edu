@@ -74,7 +74,7 @@ export function construct(pDiv, list, pageTo = { url: undefined, param: undefine
         const div = document.createElement("tr");
         div.className = "listRow";
         div.addEventListener("click", () => {
-            window.location.href = `https://professeur.thoth-edu.fr/dashboard/${pageTo.url}?${pageTo.param}=${el.id}${pageTo.sup}`;
+            window.location.href = `https://professeur.thoth-edu.fr/dash/${pageTo.url}?${pageTo.param}=${el.id}${pageTo.sup}`;
         });
 
         // Name

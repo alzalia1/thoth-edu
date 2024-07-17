@@ -8,14 +8,16 @@ async function page() {
     // ANCHOR - Updating constant page content
     const username = document.getElementById("username");
     username.textContent = localStorage.getItem("username");
-    const backToDashboard = document.getElementById("dashboard");
-    backToDashboard.addEventListener("click", () => {
-        Pconfirm(
-            "Attention ! Vous vous apprêtez à quitter sans sauvegarder ! Confirmez-vous ?",
-            () => {
-                window.location.href = "https://professeur.thoth-edu.fr/dashboard";
-            }
-        );
+    document.addEventListener("DOMContentLoaded", () => {
+        const backToDashboard = document.getElementById("dashboard");
+        backToDashboard.addEventListener("click", () => {
+            Pconfirm(
+                "Attention ! Vous vous apprêtez à quitter sans sauvegarder ! Confirmez-vous ?",
+                () => {
+                    window.location.href = "https://professeur.thoth-edu.fr/dashboard";
+                }
+            );
+        });
     });
 
     // ANCHOR - Wether to load from an id/a pending or not

@@ -114,7 +114,7 @@ async function page() {
                                     if (data.status == "fail") {
                                         Palert(data.reason);
                                     } else {
-                                        window.location.href = `https://professeur.thoth-edu.fr/dashboard/access?a=${accessParam}`;
+                                        window.location.href = `https://professeur.thoth-edu.fr/dash/access?a=${accessParam}`;
                                     }
                                 })
                                 .catch((error) =>
