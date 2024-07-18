@@ -25,7 +25,7 @@ def delete(data: dict):
     # Recherche des lignes à supprimer
     for ind, rep in enumerate(listeReps[2:]):
         if rep[1] == data["id"]:
-            del listeReps[ind + 1]
+            del listeReps[ind]
 
     # Réécriture des lignes restantes
     with open(eval.cheminCSV, "w", encoding="utf-8") as fichierEval:

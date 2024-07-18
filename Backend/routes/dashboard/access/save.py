@@ -14,21 +14,12 @@ def save(data):
     # Recherche de l'accès correspondant
     acces: Acces = Acces.query.filter_by(id=data["id_access"]).first()
 
-    if data["name"] != acces.nom:
-        acces.nom = data["name"]
-
-    if data["id_eval"] != acces.modele:
-        acces.modele = data["id_eval"]
-
-    if data["random"] != acces.random:
-        acces.random = data["random"]
-
-    if data["time"]["start"] != acces.dateDeb:
-        acces.dateDeb = data["time"]["start"]
-
-    if data["time"]["end"] != acces.dateFin:
-        acces.dateFin = data["time"]["end"]
+    acces.nom = data["name"]
+    acces.modele = data["id_eval"]
+    acces.random = data["random"]
+    acces.dateDeb = data["time"]["start"]
+    acces.dateFin = data["time"]["end"]
 
     db.session.commit()
 
-    return jsonify({"": ""})
+    return jsonify({"status": "success", "reason": "none"})

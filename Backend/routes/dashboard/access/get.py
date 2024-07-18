@@ -53,7 +53,6 @@ def get(data):
     structGenAcces = {
         "name": acces.nom,
         "id_eval": acces.modele,
-        "id_acces": acces.id,
         "random": acces.random,
         "time": {"start": acces.dateDeb, "end": acces.dateFin},
     }

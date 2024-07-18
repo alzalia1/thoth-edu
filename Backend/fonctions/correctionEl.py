@@ -2,7 +2,8 @@ from unidecode import unidecode
 
 
 def touteCombi(question):
-    det = question["params"]["determiners"]
+    print(question)
+    det = question["params"]["determiner"]
     mot = (
         question["params"]["plural"]
         + question["params"]["genre"]
