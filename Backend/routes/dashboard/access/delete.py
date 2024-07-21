@@ -27,6 +27,10 @@ def delete(data: dict):
         if rep[1] == data["id"]:
             del listeReps[ind]
 
+    # Redéfinition des ids
+    for i in range(2, len(listeReps)):
+        listeReps[i][0] == i
+
     # Réécriture des lignes restantes
     with open(eval.cheminCSV, "w", encoding="utf-8") as fichierEval:
         writer = csv.writer(fichierEval)

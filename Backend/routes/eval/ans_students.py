@@ -14,8 +14,12 @@ def rep_eleves(data):
     acces = Acces.query.filter_by(id=data["id_access"]).first()
     evalAssociee = Eval.query.filter_by(id=acces.modele).first()
 
+    # Définition de l'id
+    with open(evalAssociee.cheminCSV, "r", encoding=("utf-8")) as fichierEval:
+        idEleve = sum(1 for _ in fichierEval) + 1
+
     # Création de la ligne à ajouter en CSV
-    ligneEleve = [data["id_el"], data["id_access"], time.time()]
+    ligneEleve = [idEleve, data["id_el"], data["id_access"], time.time()]
 
     listeOrdre = sorted(data["answers"], key=lambda x: x["id"])
 
