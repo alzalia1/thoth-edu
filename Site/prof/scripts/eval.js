@@ -43,10 +43,6 @@ async function page() {
     };
     */
 
-    // ANCHOR - Setting the page stats
-    const username = document.getElementById("username");
-    username.textContent = localStorage.getItem("username");
-
     const EVname = document.getElementById("EVname");
     EVname.textContent = evalI.name;
 
@@ -177,12 +173,6 @@ async function page() {
     const editEval = document.getElementById("edit");
     editEval.addEventListener("click", () => {
         window.location.href = `https://professeur.thoth-edu.fr/crea_eval?e=${evalParam}`;
-    });
-
-    // ANCHOR - Logout button
-    const deconnect = document.getElementById("logout");
-    deconnect.addEventListener("click", () => {
-        Plogout();
     });
 }
 await page();

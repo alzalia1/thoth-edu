@@ -42,16 +42,9 @@ async function page() {
 
     // ANCHOR - Setting the page
     localStorage.setItem("username", userI.username);
-    const username = document.getElementById("username");
-    username.textContent = localStorage.getItem("username");
 
     const evalsDiv = document.getElementById("evals");
     construct(evalsDiv, userI.evals, { url: "eval", param: "e" });
-
-    const deconnect = document.getElementById("logout");
-    deconnect.addEventListener("click", () => {
-        Plogout();
-    });
 }
 await page();
 // ùSECTION
