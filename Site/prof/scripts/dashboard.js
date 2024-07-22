@@ -40,9 +40,7 @@ async function page() {
     */
     console.log(userI);
 
-    // ANCHOR - Setting the page
-    localStorage.setItem("username", userI.username);
-
+    // ANCHOR - Table creation
     const evalsDiv = document.getElementById("evals");
     construct(evalsDiv, userI.evals, { url: "eval", param: "e" });
 }

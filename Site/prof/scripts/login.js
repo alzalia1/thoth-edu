@@ -23,6 +23,7 @@ confirmButton.addEventListener("click", () => {
                 Palert("Erreur : " + data.reason);
             } else {
                 localStorage.setItem("jwt-token", data.token);
+                localStorage.setItem("username", userI.username);
                 window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
             }
         })
