@@ -33,6 +33,7 @@ async function page() {
                                     if (data.status == "fail") {
                                         Palert(data.reason);
                                     } else {
+                                        localStorage.clear();
                                         window.location.href = `https://thoth-edu.fr/`;
                                     }
                                 })
