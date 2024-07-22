@@ -28,21 +28,11 @@ async function page() {
         })
         .catch((error) => Perror("Error on dashboard/infos_user : " + error));
 
-    /*
-        userI = {
-            username: "testy",
-            evals: [
-                { name: "C - Esp4", id: "45Uia8" },
-                { name: "A - Esp5", id: "4520a8" },
-                { name: "D - App7", id: "uAUia8" },
-            ],
-        };
-    */
-    console.log(userI);
-
     // ANCHOR - Table creation
     const evalsDiv = document.getElementById("evals");
     construct(evalsDiv, userI.evals, { url: "eval", param: "e" });
+
+    document.title = `Dashboard - ${localStorage.getItem("username")}`;
 }
 await page();
 // ùSECTION

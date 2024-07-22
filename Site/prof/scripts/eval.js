@@ -36,6 +36,7 @@ async function page() {
 
     const EVname = document.getElementById("EVname");
     EVname.textContent = evalI.name;
+    document.title = `Contrôle - ${evalI.name}`;
 
     const nb_access = document.getElementById("EVaccess");
     nb_access.textContent = "Nombre d'accès à cette évaluation : " + evalI.access.length.toString();

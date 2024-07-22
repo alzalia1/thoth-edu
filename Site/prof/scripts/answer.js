@@ -38,6 +38,7 @@ async function page() {
     // ANCHOR - Set the global stats
     const studentName = document.getElementById("studentName");
     studentName.textContent = studentParam;
+    document.title = `Copie de ${studentParam}`;
 
     const pointsGot = document.getElementById("ptsGot");
     pointsGot.textContent = answers.reduce((acc, ans) => acc + ans.points.got, 0).toString();
@@ -57,7 +58,7 @@ async function page() {
             "Vous allez supprimer la copie. Cette action est IRRÉVERSIBLE, et il sera totalement impossible de récupérer les données de la copie.",
             () => {
                 Pinput(
-                    `Veuillez recopier l'id de cet accès pour confirmer : \n\n"${studentParam}"`,
+                    `Veuillez recopier l'id de cette copie pour confirmer : \n\n"${studentParam}"`,
                     (inputDelete) => {
                         if (inputDelete == studentParam) {
                             fetch("https://api.thoth-edu.fr/dashboard/ans/delete", {

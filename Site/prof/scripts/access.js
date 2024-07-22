@@ -47,6 +47,7 @@ async function page() {
 
     const ACname = document.getElementById("ACname");
     ACname.textContent = accessI.access.name;
+    document.title = `Accès - ${accessI.access.name}`;
 
     const nb_ans = document.getElementById("ACans");
     nb_ans.textContent = "Nombre total de réponses à cet accès : " + accessI.ans.length.toString();
