@@ -3,7 +3,7 @@ import { Perror } from "../../shared/scripts/modules/utils.js";
 // ANCHOR - Connection button
 const connectButton = document.getElementById("connect");
 connectButton.addEventListener("click", () => {
-    window.location.href = `https://professeur.thoth-edu.fr/`;
+    window.location.href = `https://professeur.thoth-edu.fr/login`;
 });
 
 // ANCHOR - Accessing eval
