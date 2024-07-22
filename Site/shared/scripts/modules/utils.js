@@ -32,7 +32,7 @@ export function Palert(text, okHandler = () => {}) {
 /** ANCHOR - To show a bad error !
  * @param {string} error - Error that occured
  */
-export function Perror(error = "Non spécifié", page = "Non spécifié", action = "Non spécifié") {
+export function Perror(error = "Non spécifié") {
     const nowTime = new Date();
     const options = {
         year: "numeric",
@@ -74,7 +74,7 @@ export function Perror(error = "Non spécifié", page = "Non spécifié", action
     const mailLi = document.createElement("li");
     const mailA = document.createElement("a");
     mailA.textContent = "Par mail à notre support technique (Recommandé)";
-    mailA.href = `mailto:error@thoth-edu.fr?subject=Erreur sur la page &body=Message d'erreur: %0D%0A%0D%0A${error}%0D%0A%0D%0APage concernée : ${page} %0D%0A%0D%0AAction concernée : ${action} %0D%0A%0D%0ASurvenu au ${now}%0D%0A%0D%0ADescription de votre situation :%0D%0A`;
+    mailA.href = `mailto:error@thoth-edu.fr?subject=Erreur sur la page &body=Message d'erreur: %0D%0A%0D%0A${error}%0D%0A%0D%0APage concernée : ${window.location} %0D%0A%0D%0ASurvenu au ${now}%0D%0A%0D%0ADescription de votre situation :%0D%0A`;
     mailLi.appendChild(mailA);
 
     ul.append(mailLi, githubLi);
@@ -85,7 +85,7 @@ export function Perror(error = "Non spécifié", page = "Non spécifié", action
 
     // Text
     const p = document.createElement("textarea");
-    p.value = error + `\nPage concernée : ${page}\nAction concernée : ${action}\nSurvenu au ${now}`;
+    p.value = error + `\nPage concernée : ${window.location}\nSurvenu au ${now}`;
     p.cols = 45;
     const copy = document.createElement("button");
     copy.textContent = "Copier";
