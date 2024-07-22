@@ -18,6 +18,10 @@ async function page() {
     const urlParams = new URLSearchParams(queryString);
     const accessParam = urlParams.get("a");
 
+    if (!accessParam) {
+        window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+    }
+
     await fetch("https://api.thoth-edu.fr/dashboard/access/get", {
         method: "POST",
         headers: {
@@ -29,27 +33,6 @@ async function page() {
         .then((response) => response.json())
         .then((data) => (accessI = data))
         .catch((error) => Perror("Error on dashboard/access/get : " + error));
-
-    /*
-    accessI = {
-        access: {
-            name: "TG2",
-            id_eval: "ahbVai1",
-            id_access: "atkrk668",
-            random: true,
-            time: {
-                start: -23890247841000,
-                end: -23890147541000,
-            },
-        },
-        mark: 13,
-        ans: [
-            { name: "Jeremy A.", id: "45Uia8", mark: 18 },
-            { name: "Clarina H.", id: "4520a8", mark: 20 },
-            { name: "Jean-Jacques R.", id: "uAUia8", mark: 15.2 },
-        ],
-    };
-    */
 
     // ANCHOR - Setting the page
     const username = document.getElementById("username");

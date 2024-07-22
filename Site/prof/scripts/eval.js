@@ -19,6 +19,10 @@ async function page() {
     const urlParams = new URLSearchParams(queryString);
     const evalParam = urlParams.get("e");
 
+    if (!evalParam) {
+        window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+    }
+
     await fetch("https://api.thoth-edu.fr/dashboard/eval/get", {
         method: "POST",
         headers: {
@@ -29,19 +33,6 @@ async function page() {
         .then((response) => response.json())
         .then((data) => (evalI = data))
         .catch((error) => Perror("Error on dashboard/eval/get : " + error));
-
-    /*
-    evalI = {
-        name: "Contrôle grammaire - 2024/2025",
-        mark: 12,
-        nb_ans: 78,
-        access: [
-            { name: "TG1", id: "45Uia8", mark: 14 },
-            { name: "TG2", id: "4520a8", status: 0, mark: 16 },
-            { name: "TG3", id: "uAUia8", status: 2, mark: 13 },
-        ],
-    };
-    */
 
     const EVname = document.getElementById("EVname");
     EVname.textContent = evalI.name;

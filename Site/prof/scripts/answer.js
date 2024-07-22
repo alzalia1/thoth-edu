@@ -13,53 +13,14 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const studentParam = urlParams.get("s");
 const accessParam = urlParams.get("a");
+
+if (!studentParam || !accessParam) {
+    window.location.href = `https://professeur.thoth-edu.fr/dashboard`;
+}
 // System to check and refresh user's token
 await Puser_check();
 
 // SECTION - Get answer info
-// /*TEST VALUE
-answers = [
-    {
-        id: "0",
-        type: "conjugaison",
-        instruction: "manger",
-        answer: {
-            ans: {
-                verbs: [
-                    ["manges", "mangerais"],
-                    ["manges", "mangeras"],
-                ],
-            },
-            correction: {
-                tenses: ["Présent", "Futur"],
-                pronouns: ["Je", "Tu"],
-                verbs: [
-                    ["mange", "mangerai"],
-                    ["manges", "mangeras"],
-                ],
-            },
-        },
-        points: {
-            got: 3,
-            max: 5,
-        },
-    },
-    {
-        id: "1",
-        type: "traduction",
-        instruction: "Traduisez le mot 'table' en espagnol",
-        answer: {
-            ans: "mesa",
-            correction: "mesa",
-        },
-        points: {
-            got: 5,
-            max: 5,
-        },
-    },
-];
-// */
-/*
 await fetch("https://api.thoth-edu.fr/dashboard/ans/get", {
     method: "POST",
     headers: {
@@ -70,7 +31,7 @@ await fetch("https://api.thoth-edu.fr/dashboard/ans/get", {
     .then((response) => response.json())
     .then((data) => (answers = data.ans))
     .catch((error) => Perror("Error on dashboard/ans/get : " + error));
-// ùSECTION */
+// ùSECTION
 
 // SECTION - Create page
 async function page() {
