@@ -34,7 +34,7 @@ def rep_eleves(data):
     listeQuestions = sorted(dicoJSON["questions"], key=lambda x: x["id"])
 
     ligneElevePoints = (
-        ligneEleve[:3] + [-1, -1] + correctionEl(listeQuestions, ligneEleve[3:])
+        ligneEleve[:4] + [-1, -1] + correctionEl(listeQuestions, ligneEleve[4:])
     )
 
     with open(

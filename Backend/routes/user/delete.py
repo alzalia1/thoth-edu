@@ -1,10 +1,10 @@
 # Import libraries
 from flask import jsonify
-from flask_jwt_extended import get_jwt_identity
 import os
+import jwt
 
 # Import app
-from appInit import db, User, Eval, Acces
+from appInit import db, User, Eval, Acces, secret
 
 
 def delete_directory(path):
@@ -20,7 +20,8 @@ def delete_directory(path):
 
 def delete(data):
     # Recherche de l'utilisateur
-    userASuppr = User.query.filter_by(id=get_jwt_identity(data["token"])).first()
+    tokenDecode = jwt.decode(data["token"], secret, algorithms=["HS256"])
+    userASuppr = User.query.filter_by(id=tokenDecode["sub"]).first()
 
     if not userASuppr:
         return jsonify(

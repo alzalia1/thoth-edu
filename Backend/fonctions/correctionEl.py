@@ -13,7 +13,9 @@ def touteCombi(question):
 
 
 def correctionEl(quest: list, rep: list):
+    """"""
     repAvecPoints = [x for x in rep]
+    return rep
     for i in range(len(quest)):
         repAvecPoints[i * 5 + 4] = int(quest[i]["params"]["points"])
         if quest[i]["type"] == "conjugaison":

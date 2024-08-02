@@ -73,7 +73,7 @@ def save(data):
     listeQuestions = [
         data["eval"]["questions"][i] for i in range(len(data["eval"]["questions"]))
     ]
-    entete = ["idEleve", "idAcces", "dateRep", "noteTot", "totPoints"]
+    entete = ["idEleve", "nomEleve", "idAcces", "dateRep", "noteTot", "totPoints"]
     for i, quest in enumerate(listeQuestions):
         entete = entete + [
             "id_Q" + str(i),
@@ -82,7 +82,7 @@ def save(data):
             "note_Q" + str(i),
             "note_max_Q" + str(i),
         ]
-    contenu = [None, None, None, None, None]
+    contenu = [None, None, None, None, None, None]
     for i, quest in enumerate(evalJSON["questions"]):
         contenu = contenu + [i, quest, None, None, quest["params"]["points"]]
         quest["id"] = i

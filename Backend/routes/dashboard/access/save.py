@@ -14,6 +14,8 @@ def save(data):
     # Recherche de l'accès correspondant
     acces: Acces = Acces.query.filter_by(id=data["id_access"]).first()
 
+    print(data)
+
     acces.nom = data["name"]
     acces.modele = data["id_eval"]
     acces.random = data["random"]
